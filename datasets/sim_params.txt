@@ -1,0 +1,9 @@
+Parameter;  Set;  Min;  Max
+ N_Agents;    1;    1;  100
+ N_Places;   40;    4;  100
+  N_Types;   20;    3;   50
+    Alpha; 0.25;  0.1;  1.0
+     Beta;    3;    1;   10
+        C; 0.00; 0.01;  1.5
+        D; 0.50; 0.01;  1.5
+  N_Steps;  150;   10; 1000
