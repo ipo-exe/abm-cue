@@ -32,11 +32,12 @@ Where the `Set` field is used in the simulation:
 * `N_Types`: [positive integer] number of action types (orientation of agents and places);
 * `Alpha`: [positive real from 0 to 1] orientation threshold for agent-place interaction;
 * `Beta`: [positive integer > 0] distance threshold for agent movement;
-* `C`: [positive real] place-to-agent degree of interaction influence;
-* `D`: [positive real] agent-to-place degree of interaction influence;
+* `C`: [positive real] place-to-agent degree of interaction influence (agents openness to change);
+* `D`: [positive real] agent-to-place degree of interaction influence (places openness to change);
 * `N_Steps`: [positive integer] number of time steps for simulation.
 
-
+The `Min` and `Max` fields are reserved for future developments (such as sensitivity analysis 
+and model calibration). Those fields are not used in the model standard simulation.
 
 ### The Alpha parameter
 
@@ -47,7 +48,7 @@ threshold = Alpha * N_Types
 ```
 For instance, if `N_Types = 100` and `Alpha = 0.1` then `threshold = 10`. 
 This means that agent-place interactions only will 
-occur when the absolute discrepancy between types is less then 10.
+occur when the absolute discrepancy between types is less than 10.
 
 * When `Alpha = 1`, agents will _always_ interact with places.
 * When `Alpha = 0`, agents will _never_ interact with places.
@@ -64,5 +65,97 @@ Note that the 1-D ring like is _infinite_ in the sense that agents can loop arou
 
 ### The C and D parameters
 
-The `C` and `D` parameters sets the respective strengths of agent-places influences. 
+The `C` and `D` parameters sets the respective strengths of agent-places influences on each other. 
 
+The `C` is the openness of agents to change after interacting with a place:
+
+```markdown
+posterior_agent_type = (prior_agent_type + (C * place_type)) / (1 + C)
+```
+So:
+* When `C = 0`, agents will never be influenced by places;
+* When `C < 1`, agents posterior type will be weakly influenced by places.
+* When `C = 1`, agents posterior type will be the average between agent and place prior types (50% influence);
+* When `C > 1`, agents posterior type will be strongly influenced by places.
+
+The same logic applies to the `D` parameter. 
+The `D` is the openness of places to change after interacting with an agent:
+
+```markdown
+posterior_place_type = (prior_place_type + (D * agent_type)) / (1 + D)
+```
+So:
+* When `D = 0`, places will never be influenced by agents;
+* When `D < 1`, places posterior type will be weakly influenced by agents.
+* When `D = 1`, places posterior type will be the average between agents and places prior types (50% influence);
+* When `D > 1`, places posterior type will be strongly influenced by agents.
+
+### The biased random walk
+
+Agents walk randomly but biased towards places like them. 
+
+For example, let `Alpha = 1` so agents can interact with any place. 
+Now consider an agent with orientation type `Agent_type = 10` surrounded by places of the following
+types: `[1, 20, 11, 8]`. Which place it will move in the next step?
+
+The answer is: _we will never know_, because his movement is **random**.
+However, the likelihood of moving towards the place of type `Place_type = 11` is much higher
+than of moving towards the place of type `Place_type = 20`. 
+In fact, in this example, the probabilities of moving to each place is `[0.09, 0.05, 0.45, 0.41]`.
+
+Now, let `Alpha < 1` in a way that the interaction threshold excludes 
+`Place_type = 1` and `Place_type = 20` from the possibility of interaction.
+In such condition, the probabilities of moving to each place is `[0.0, 0.0, 0.53, 0.47]`.
+
+Finally, in the situation when all places around are beyond the interaction threshold, there is no bias in
+the random walk, and the probabilities of moving to each place is `[0.25, 0.25, 0.25, 0.25]` (just an uniform random walk).
+
+### Benchmark runs
+
+Some bench tests of the model in very restricted conditions were performed in order to get useful insights.
+
+#### Benchmark 0: the agent alone in a boring world
+
+Here a single agent that never interacts walks in a constant world.
+
+Parameters:
+* `N_Agents`: 1
+* `N_Places`: 40
+* `N_Types`: 20
+* `Alpha`: 0 (no interaction)
+* `Beta`: 3
+* `C`: 0 (agent never change)
+* `D`: 1 (places change 50% at each interaction)
+* `N_Steps`: 200
+
+Initial conditions:
+* `Agent_type = 18`
+* `Agent_i = 20` (position)
+* `Place_type = 2` (all)
+
+Output:
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/bench0.gif "bench0")
+
+#### Benchmark 1: the influencer alone in a boring world
+
+Here a single agent that never changes walks in a constant world, changing it.
+
+Parameters:
+* `N_Agents`: 1
+* `N_Places`: 40
+* `N_Types`: 20
+* `Alpha`: 1 (full interaction)
+* `Beta`: 3
+* `C`: 0 (agent never change)
+* `D`: 1 (places change 50% at each interaction)
+* `N_Steps`: 200
+
+Initial conditions:
+* `Agent_type = 18`
+* `Agent_i = 20` (position)
+* `Place_type = 2` (all)
+
+Output:
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/bench1.gif "bench1")

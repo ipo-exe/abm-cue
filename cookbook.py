@@ -101,15 +101,20 @@ def cue_1d_recipe():
         vct_agents_types = np.round(n_types * np.random.random(size=n_agents), 0)
         vct_agents_i = np.random.randint(low=0, high=n_places, size=n_agents, dtype='uint16')
         vct_places_types = np.round(n_types * np.random.random(size=n_places), 0)
+        vct_places_types[: 10] = 5
+        vct_places_types[10: 20] = 15
+        vct_places_types[20: 30] = 10
+        vct_places_types[30:] = 19
     else:
         print('import from file')  # todo import from file
         vct_agents_types = np.ones(shape=n_agents, dtype=s_dtype)
-        vct_agents_types[0] = 19
+        vct_agents_types[0] = 18
         #vct_agents_types[1] = 1
         vct_agents_i = np.ones(shape=n_agents, dtype='uint16')  # np.random.randint(low=0, high=n_spaces, size=n_agents, dtype='uint16')
         vct_agents_i[0] = 20
         #vct_agents_i[1] = 19
-        vct_places_types = 5 * np.ones(shape=n_places, dtype=s_dtype)
+        vct_places_types = 2 * np.ones(shape=n_places, dtype=s_dtype)
+
 
     # deploy simulation dataframes
     df_agents = pd.DataFrame({'Agent_type': vct_agents_types, 'Agent_i': vct_agents_i})
@@ -129,6 +134,8 @@ def cue_1d_recipe():
                          b_trace=b_trace)
 
     if b_trace:
+        # todo export simulation data
+
         # plot stuff
         status('plotting outputs', process=True)
 

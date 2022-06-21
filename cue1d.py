@@ -114,6 +114,7 @@ def play(df_agents, df_places, n_steps, n_beta, n_alpha, r_d_agents, r_c_places,
 
             # compute selection Interac_score
             df_window['Interac_score'] = df_window['Discrepancy'].max() - df_window['Discrepancy'] + 1  # normalize
+            # set score = zero where place is beyond alpha threshold
             df_window['Interac_score'] = df_window['Interac_score'].values * (
                     df_window['Discrepancy'].values <= n_alpha)
 

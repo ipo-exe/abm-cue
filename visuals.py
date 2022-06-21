@@ -93,7 +93,7 @@ def plot_cue_1d_pannel(step, n_types, n_places, n_agents, places_types_t, agents
         vct_lcl_labels = vct_lcl_ticks + (step - n_places)
 
     fig = plt.figure(figsize=(10, 5))  # Width, Height
-    gs = mpl.gridspec.GridSpec(2, 4, wspace=0.0, hspace=0.4, left=0.05, bottom=0.1, top=0.9, right=0.95)  # nrows, ncols
+    gs = mpl.gridspec.GridSpec(2, 4, wspace=0.0, hspace=0.5, left=0.05, bottom=0.1, top=0.9, right=0.95)  # nrows, ncols
     plt.suptitle(ttl)
     #
     # space map
