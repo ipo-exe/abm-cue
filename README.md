@@ -114,7 +114,7 @@ the random walk, and the probabilities of moving to each place is `[0.25, 0.25, 
 
 Some bench tests of the model in very restricted conditions were performed in order to get useful insights.
 
-#### Benchmark 0: the agent alone in a boring world
+#### Benchmark 0: nothing happens
 
 Here a single agent that never interacts walks in a constant world.
 
@@ -137,9 +137,9 @@ Output:
 
 ![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/bench0.gif "bench0")
 
-#### Benchmark 1: the influencer alone in a boring world
+#### Benchmark 1: the closed agent alone in an open world
 
-Here a single agent that never changes walks in a constant world, changing it.
+Here a single agent that never change (closed agent) walks in a constant (but open) world, changing it.
 
 Parameters:
 * `N_Agents`: 1
@@ -159,3 +159,50 @@ Initial conditions:
 Output:
 
 ![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/bench1.gif "bench1")
+
+#### Benchmark 2: the open agent alone in a closed world
+
+Here a single agent that is open to change walks in a world that never change (closed world).
+
+Parameters:
+* `N_Agents`: 1
+* `N_Places`: 40
+* `N_Types`: 20
+* `Alpha`: 1 (full interaction)
+* `Beta`: 3
+* `C`: 0.01 (agent change 1% at each interaction)
+* `D`: 0.0 (places never change)
+* `N_Steps`: 200
+
+Initial conditions:
+* `Agent_type = 18`
+* `Agent_i = 20` (position)
+* `Place_type = 2` (all)
+
+Output:
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/bench2.gif "bench2")
+
+
+#### Benchmark 3: the open agent alone in an open world
+
+Here a single agent that is open to change walks in a world that is also open to change.
+
+Parameters:
+* `N_Agents`: 1
+* `N_Places`: 40
+* `N_Types`: 20
+* `Alpha`: 1 (full interaction)
+* `Beta`: 3
+* `C`: 0.01 (agent change 1% at each interaction)
+* `D`: 0.05 (places change 5% at each interaction)
+* `N_Steps`: 200
+
+Initial conditions:
+* `Agent_type = 18`
+* `Agent_i = 20` (position)
+* `Place_type = 2` (all)
+
+Output:
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/bench3.gif "bench3")
