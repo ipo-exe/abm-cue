@@ -254,3 +254,29 @@ Initial conditions:
 Output:
 
 ![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/bench5.gif "bench5")
+
+#### Benchmark 6: two agents (not that open) in a binary world
+
+Benchmark 5 revisited with two different agents.
+
+Parameters:
+* `N_Agents`: 2
+* `N_Places`: 40
+* `N_Types`: 20
+* `Alpha`: 0.5 (threshold = 10)
+* `Beta`: 3
+* `C`: 0.01 (agent change 1% at each interaction)
+* `D`: 0.05 (places change 5% at each interaction)
+* `N_Steps`: 200
+
+Initial conditions:
+* `Agent_type = 13` (first agent)
+* `Agent_type = 8` (second agent)
+* `Agent_i = 20` (both positions)
+* `Place_type = 18` (first half)
+* `Place_type = 2` (second half)
+
+Output:
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/bench6.gif "bench6")
+

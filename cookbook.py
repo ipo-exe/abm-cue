@@ -109,10 +109,11 @@ def cue_1d_recipe():
         print('import from file')  # todo import from file
         vct_agents_types = np.ones(shape=n_agents, dtype=s_dtype)
         vct_agents_types[0] = 13
+        vct_agents_types[1] = 8
         #vct_agents_types[1] = 1
         vct_agents_i = np.ones(shape=n_agents, dtype='uint16')  # np.random.randint(low=0, high=n_spaces, size=n_agents, dtype='uint16')
-        vct_agents_i[0] = 13
-        #vct_agents_i[1] = 19
+        vct_agents_i[0] = 20
+        vct_agents_i[1] = 20
         vct_places_types = np.ones(shape=n_places, dtype=s_dtype)
         vct_places_types[:20] = 18
         vct_places_types[20:] = 2

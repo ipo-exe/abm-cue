@@ -97,9 +97,12 @@ def play(df_agents, df_places, n_steps, n_beta, n_alpha, r_d_agents, r_c_places,
         grd_traced_agents_i = np.zeros(shape=(n_steps, n_agents), dtype=s_dtype)
         grd_traced_agents_types = np.zeros(shape=(n_steps, n_agents), dtype=s_dtype)
         grd_traced_places_types = np.zeros(shape=(n_steps, n_places), dtype=s_dtype)
+        grd_traced_places_types[0] = df_places['Place_type'].values
+        grd_traced_agents_types[0] = df_agents['Agent_type'].values
+        grd_traced_agents_i[0] = df_agents['Agent_i'].values
 
     # main simulation loop
-    for t in range(n_steps):
+    for t in range(1, n_steps):
         backend.status('simulation step {}'.format(t))
         # agents movements
         for a in range(n_agents):
