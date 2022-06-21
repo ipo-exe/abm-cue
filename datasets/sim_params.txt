@@ -2,7 +2,7 @@ Parameter;  Set;  Min;  Max
  N_Agents;    1;    1;  100
  N_Places;   40;    4;  100
   N_Types;   20;    3;   50
-    Alpha;    1;  0.1;  1.0
+    Alpha;  0.5;  0.1;  1.0
      Beta;    3;    1;   10
         C; 0.01; 0.01;  1.5
         D; 0.05; 0.01;  1.5
