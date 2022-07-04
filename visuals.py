@@ -73,7 +73,7 @@ def plot_sigle_frame(grd,
         return filepath
 
 
-def plot_cue_1d_pannel(step, n_types, n_places, n_agents, places_types_t, agents_types_t, agents_i_t,
+def plot_cue_1d_pannel(step, n_traits, n_places, n_agents, places_traits_t, agents_traits_t, agents_x_t,
                        cmap='viridis', folder='C:/bin', fname='frame',
                        suff='',
                        ttl='',
@@ -84,11 +84,11 @@ def plot_cue_1d_pannel(step, n_types, n_places, n_agents, places_types_t, agents
         plt.style.use('dark_background')
 
     if step < n_places:
-        grd_lcl_spaces = places_types_t[:, : step + 1]
+        grd_lcl_spaces = places_traits_t[:, : step + 1]
         vct_lcl_ticks = np.arange(0, step + 1, 5)
         vct_lcl_labels = vct_lcl_ticks
     else:
-        grd_lcl_spaces = places_types_t[:, step - n_places: step + 1]
+        grd_lcl_spaces = places_traits_t[:, step - n_places: step + 1]
         vct_lcl_ticks = np.arange(0, n_places + 1, 5)
         vct_lcl_labels = vct_lcl_ticks + (step - n_places)
 
@@ -98,29 +98,29 @@ def plot_cue_1d_pannel(step, n_types, n_places, n_agents, places_types_t, agents
     #
     # space map
     ax = fig.add_subplot(gs[:, :2])
-    im = plt.imshow(grd_lcl_spaces, cmap=cmap, vmin=0, vmax=n_types)
+    im = plt.imshow(grd_lcl_spaces, cmap=cmap, vmin=0, vmax=n_traits)
     plt.colorbar(im, shrink=0.4)
     plt.title('places and agents')
     plt.xticks(ticks=vct_lcl_ticks, labels=vct_lcl_labels)
     plt.ylabel('position')
     plt.xlabel('time step')
 
-    for a in range(len(agents_i_t)):
+    for a in range(len(agents_x_t)):
         if step < n_places:
-            vct_lcl_agents_i = agents_i_t[a][: step + 1]
-            vct_lcl_agents_types = agents_types_t[a][:step + 1]
+            vct_lcl_agents_i = agents_x_t[a][: step + 1]
+            vct_lcl_agents_types = agents_traits_t[a][:step + 1]
         else:
-            vct_lcl_agents_i = agents_i_t[a][step - n_places:step + 1]
-            vct_lcl_agents_types = agents_types_t[a][step - n_places:step + 1]
+            vct_lcl_agents_i = agents_x_t[a][step - n_places:step + 1]
+            vct_lcl_agents_types = agents_traits_t[a][step - n_places:step + 1]
         plt.plot(vct_lcl_agents_i, 'white', zorder=1)
 
-    for a in range(len(agents_i_t)):
+    for a in range(len(agents_x_t)):
         if step < n_places:
-            vct_lcl_agents_i = agents_i_t[a][: step + 1]
-            vct_lcl_agents_types = agents_types_t[a][:step + 1]
+            vct_lcl_agents_i = agents_x_t[a][: step + 1]
+            vct_lcl_agents_types = agents_traits_t[a][:step + 1]
         else:
-            vct_lcl_agents_i = agents_i_t[a][step - n_places:step + 1]
-            vct_lcl_agents_types = agents_types_t[a][step - n_places:step + 1]
+            vct_lcl_agents_i = agents_x_t[a][step - n_places:step + 1]
+            vct_lcl_agents_types = agents_traits_t[a][step - n_places:step + 1]
         plt.scatter(np.arange(len(vct_lcl_agents_i)),
                     vct_lcl_agents_i,
                     c=vct_lcl_agents_types,
@@ -128,25 +128,25 @@ def plot_cue_1d_pannel(step, n_types, n_places, n_agents, places_types_t, agents
                     marker='o',
                     cmap=cmap,
                     vmin=0,
-                    vmax=n_types,
+                    vmax=n_traits,
                     zorder=2)
 
     #
     # space hist
     ax = fig.add_subplot(gs[0, 3])
     plt.title('Places histogram')
-    plt.hist(x=places_types_t.transpose()[step], bins=10, range=(0, n_types), color='tab:grey')
+    plt.hist(x=places_traits_t.transpose()[step], bins=10, range=(0, n_traits), color='tab:grey')
     plt.ylim(0, n_places)
-    plt.xlim(0, n_types)
+    plt.xlim(0, n_traits)
     plt.ylabel('count')
     plt.xlabel('types')
     #
     # agents hist
     ax = fig.add_subplot(gs[1, 3])
     plt.title('Agents histogram')
-    plt.hist(x=agents_types_t.transpose()[step], bins=10, range=(0, n_types), color='tab:grey')
+    plt.hist(x=agents_traits_t.transpose()[step], bins=10, range=(0, n_traits), color='tab:grey')
     plt.ylim(0, n_agents)
-    plt.xlim(0, n_types)
+    plt.xlim(0, n_traits)
     plt.ylabel('count')
     plt.xlabel('types')
     if show:

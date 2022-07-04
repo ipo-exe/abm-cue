@@ -47,7 +47,7 @@ from out import export_gif
 
 
 def cue_1d_recipe():
-    import cue1d
+    import cue1d, inp
     from visuals import plot_cue_1d_pannel
 
     # workplace
@@ -57,6 +57,13 @@ def cue_1d_recipe():
     os.mkdir(dir_frames)
 
     # >>> simulation parameters dataframe (import from csv file)
+    f_sim = './samples/param_simulation.txt'
+    dct_param_sim = inp.import_data_table(s_table_name='param_simulation', s_filepath=f_sim)
+    if dct_param_sim['OK Flag']:
+        df_sim_params = dct_param_sim['df']
+    else:
+        print(dct_param_sim['Error Report'])
+
     df_sim_params = pd.read_csv('samples/sim_params.txt', sep=';')
     df_sim_params.columns = df_sim_params.columns.str.strip()
     df_sim_params['Parameter'] = df_sim_params['Parameter'].str.strip()
@@ -127,14 +134,17 @@ def cue_1d_recipe():
 
     status('running cue 1d model')
     b_trace = True
-    dct_out = cue1d.play(df_agents=df_agents,
-                         df_places=df_places,
-                         n_steps=n_steps,
-                         r_d_agents=r_d_agents,
-                         r_c_places=r_c_places,
-                         n_beta=n_beta,
-                         n_alpha=n_alpha,
-                         b_trace=b_trace)
+    """
+    dct_out = cue1d.play_deprec(df_agents=df_agents,
+                                df_places=df_places,
+                                n_steps=n_steps,
+                                r_d_agents=r_d_agents,
+                                r_c_places=r_c_places,
+                                n_beta=n_beta,
+                                n_alpha=n_alpha,
+                                b_trace=b_trace)
+    """
+
 
     if b_trace:
         # todo export simulation data
@@ -150,12 +160,12 @@ def cue_1d_recipe():
         for t in range(n_steps - 1):
             #print('plot {}'.format(t))
             plot_cue_1d_pannel(step=t,
-                               n_types=n_types,
+                               n_traits=n_types,
                                n_places=n_places,
                                n_agents=n_agents,
-                               places_types_t=grd_traced_places_types_t,
-                               agents_types_t=grd_traced_agents_types_t,
-                               agents_i_t=grd_traced_agents_i_t,
+                               places_traits_t=grd_traced_places_types_t,
+                               agents_traits_t=grd_traced_agents_types_t,
+                               agents_x_t=grd_traced_agents_i_t,
                                ttl='Step = {}'.format(t),
                                folder=dir_frames,
                                fname='frame_{}'.format(str(t).zfill(4)),

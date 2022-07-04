@@ -1,0 +1,4 @@
+Id;x;Trait;Alpha;Beta;C;Name;Alias ;Color
+1;5;20;20;3;0.0;Agent A;AgA;red
+2;10;20;20;3;0.0;Agent B;AgB;blue
+3;15;20;20;3;0.0;Agent C;AgC;orange

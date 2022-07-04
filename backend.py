@@ -93,6 +93,12 @@ def get_window_ids(n_rows, n_cols, n_rsize=1, b_flat=True):
         return grd_window_rows, grd_window_cols
 
 
+def timestamp_log():
+    import datetime
+    s_aux = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S.%f')[:-4]
+    return s_aux
+
+
 def timestamp(s_sep='-'):
     """
     Generates a string timestamp
@@ -107,7 +113,8 @@ def timestamp(s_sep='-'):
     hr = def_now.strftime('%H')
     mn = def_now.strftime('%M')
     sg = def_now.strftime('%S')
-    def_lst = [yr, mth, dy, hr, mn, sg]
+    fm = def_now.strftime('%f')[:-4]
+    def_lst = [yr, mth, dy, hr, mn, sg, fm]
     def_s = str(s_sep.join(def_lst))
     return def_s
 
