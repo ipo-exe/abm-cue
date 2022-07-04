@@ -57,7 +57,7 @@ def cue_1d_recipe():
     os.mkdir(dir_frames)
 
     # >>> simulation parameters dataframe (import from csv file)
-    df_sim_params = pd.read_csv('./datasets/sim_params.txt', sep=';')
+    df_sim_params = pd.read_csv('samples/sim_params.txt', sep=';')
     df_sim_params.columns = df_sim_params.columns.str.strip()
     df_sim_params['Parameter'] = df_sim_params['Parameter'].str.strip()
     print(df_sim_params.to_string())
