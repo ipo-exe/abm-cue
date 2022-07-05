@@ -698,13 +698,13 @@ if platform.system().lower() == 'linux':
     n_width_options_check = 2
 elif platform.system().lower() == 'windows':
     root.iconphoto(False, tkinter.PhotoImage(file='./gui/terminal.png'))
-    n_height = 690
-    n_width = 800
-    n_entry_label_width = 15
+    n_height = 580
+    n_width = 610
+    n_entry_label_width = 10
     n_entry_width = 52
     n_frame_padx = 5
     n_frame_pady = 2
-    n_widg_padx = 2
+    n_widg_padx = 4
     n_widg_pady = 2
     n_width_board_button = 70
     n_width_options_labels = 20
