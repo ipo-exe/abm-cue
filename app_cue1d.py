@@ -768,7 +768,7 @@ img_chat = tkinter.PhotoImage(file='gui/chat.png')
 img_terminal = tkinter.PhotoImage(file='gui/terminal.png')
 
 # files setup
-s_title = 'Basic Tool'
+s_title = 'CUE1d Tool'
 root.title(s_title)
 
 # >> set menus
@@ -909,7 +909,7 @@ label_logo = tkinter.Label(frame_logo,
                            foreground=color_fg,
                            activeforeground=color_fg)
 label_logo.pack(side=RIGHT)
-s_head_msg = 'Basic Tool'
+s_head_msg = 'CUE1d Application Tool'
 label_infos = tkinter.Label(frame_info,
                             text=s_head_msg,
                             width=n_width,
