@@ -73,6 +73,36 @@ def plot_sigle_frame(grd,
         return filepath
 
 
+
+def plot_trait_histogram(df_data, n_traits, n_bins=10,
+                         folder='C:/bin',
+                         fname='hist',
+                         suff='',
+                         ttl='',
+                         show=True,
+                         dark=True,
+                         dpi=100):
+    fig = plt.figure(figsize=(8, 4))  # Width, Height
+    plt.title(ttl)
+    plt.hist(x=df_data['Trait'].values, bins=n_bins, range=(0, n_traits), color='tab:grey')
+    plt.ylim(0, len(df_data))
+    plt.xlim(0, n_traits)
+    plt.ylabel('count')
+    plt.xlabel('traits')
+    if show:
+        plt.show()
+        plt.close(fig)
+    else:
+        # export file
+        if suff == '':
+            filepath = folder + '/' + fname + '.png'
+        else:
+            filepath = folder + '/' + fname + '_' + suff + '.png'
+        plt.savefig(filepath, dpi=dpi)
+        plt.close(fig)
+        return filepath
+
+
 def plot_cue_1d_pannel(step, n_traits, n_places, n_agents, places_traits_t, agents_traits_t, agents_x_t,
                        cmap='viridis', folder='C:/bin', fname='frame',
                        suff='',
@@ -135,20 +165,20 @@ def plot_cue_1d_pannel(step, n_traits, n_places, n_agents, places_traits_t, agen
     # space hist
     ax = fig.add_subplot(gs[0, 3])
     plt.title('Places histogram')
-    plt.hist(x=places_traits_t.transpose()[step], bins=10, range=(0, n_traits), color='tab:grey')
+    plt.hist(x=places_traits_t.transpose()[step], bins=n_traits, range=(0, n_traits), color='tab:grey')
     plt.ylim(0, n_places)
     plt.xlim(0, n_traits)
     plt.ylabel('count')
-    plt.xlabel('types')
+    plt.xlabel('traits')
     #
     # agents hist
     ax = fig.add_subplot(gs[1, 3])
     plt.title('Agents histogram')
-    plt.hist(x=agents_traits_t.transpose()[step], bins=10, range=(0, n_traits), color='tab:grey')
+    plt.hist(x=agents_traits_t.transpose()[step], bins=n_traits, range=(0, n_traits), color='tab:grey')
     plt.ylim(0, n_agents)
     plt.xlim(0, n_traits)
     plt.ylabel('count')
-    plt.xlabel('types')
+    plt.xlabel('traits')
     if show:
         plt.show()
         plt.close(fig)

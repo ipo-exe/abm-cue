@@ -1,7 +1,10 @@
-    Metadata;  Value
-   Timestamp; -
-Input Folder; ./samples
-  Run Folder; /home/ipora/Documents/bin
- Places File; ./samples/param_places.txt
- Agents File; ./samples/param_agents.txt
-       Steps; 100
+     Metadata;  Value
+    Timestamp; 2022/07/04 17:47:15.93
+ Input Folder; ./samples
+   Run Folder; /home/ipora/Documents/bin
+  Places File; ./samples/param_places.txt
+  Agents File; ./samples/param_agents.txt
+        Steps; 500
+Return Agents; True
+   Trace Back; True
+ Plot Results; True

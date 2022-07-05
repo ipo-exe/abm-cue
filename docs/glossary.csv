@@ -1,0 +1,33 @@
+Name;Dtype;Description;Units;Category
+Date;date;Date of record;-;field
+Id;unique integer number;Category numerical identifyier;-;field
+Name;text;Category name;-;field
+Alias;text;Category alias (one-word only);-;field
+Color;text;CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`).;-;field
+Alpha;positive real number from 0 to 1;Trait orientation threshold for agent-place interaction from 0 to 1.;-;parameter
+Beta;positive integer number;Distance threshold for agent movement.;cell units;parameter
+C;positive real number;Place-to-agent degree of interaction influence (agents openness to change);-;parameter
+D;positive real number;Agent-to-place degree of interaction influence (places openness to change);-;parameter
+x;positive integer number;Position coordinate in the x axis;cell units;variable
+Trait;positive real number;Trait orientation value;trait units;variable
+Metadata;text;Name of metadata;-;field
+Value;miscellaneus;Value of data;-;field
+Agents File;text;File path to the agents parameter file (ex: C:/data/param_agents.txt);-;keyword
+Places File;text;File path to the places parameter file (ex: C:/data/param_places.txt);-;keyword
+Input Folder;text;Folder path to the input data folder (ex: C:/data);-;keyword
+Run Folder;text;Folder path to the folder to store simulation outputs (ex: C:/output);-;keyword
+Steps;positive integer number;Number of time steps in the simulation;-;parameter
+Stat;text;Keyword for `statistic`;-;keyword
+Sum;positive real number;Keyword for `sum`;-;keyword
+Mean;positive real number;Keyword for `Mean`;-;keyword
+Med;positive real number;Keyword for `Median`;-;keyword
+Min;positive real number;Keyword for `Minimum`;-;keyword
+Max;positive real number;Keyword for `Maximum`;-;keyword
+p05;positive real number;Keyword for `5% percentile`;-;keyword
+p95;positive real number;Keyword for `95% percentile`;-;keyword
+SD;positive real number;Keyword for `Standard Deviation`;-;keyword
+Count;positive integer number;Keyword for `Counting`;-;keyword
+A_Id_x;positive integer number;Position coordinate in the x axis of Agent A_Id (ex: A_12_x);cell units;variable
+P_Id_x;positive integer number;Position coordinate in the x axis of Place P_Id (ex: P_10_x);cell units;variable
+A_Id_Trait;positive real number;Trait orientaiton of Agent A_Id (ex: A_12_Trait);trait units;variable
+P_Id_Trait;positive integer number;Trait orientaiton of Place P_Id (ex: P_10_Trait);trait units;variable
