@@ -46,17 +46,19 @@ import pandas as pd
 import numpy as np
 
 
-def run_cue1d(fsim):
+def run_cue1d(fsim, wkplc=False, s_dir_out='C:/bin'):
 
     # import param_simulation.txt
     dct_fsim = inp.import_data_table(s_table_name='param_simulation', s_filepath=fsim)
     df_param_sim = dct_fsim['df']
+
     # update timestamp value
     df_param_sim.loc[df_param_sim['Metadata'] == 'Timestamp', 'Value'] = backend.timestamp_log()
 
     # get run folder
-    s_workplace = df_param_sim.loc[df_param_sim['Metadata'] == 'Run Folder', 'Value'].values[0].strip()
-    s_dir_out = backend.create_rundir(label='CUE1d', wkplc=s_workplace)
+    if wkplc:
+        s_workplace = df_param_sim.loc[df_param_sim['Metadata'] == 'Run Folder', 'Value'].values[0].strip()
+        s_dir_out = backend.create_rundir(label='CUE1d', wkplc=s_workplace)
 
     # get places file
     f_places = df_param_sim.loc[df_param_sim['Metadata'] == 'Places File', 'Value'].values[0].strip()
@@ -193,4 +195,4 @@ def run_cue1d(fsim):
                                    dark=False)
             status('generating animation', process=True)
             export_gif(dir_output=s_dir_out, dir_images=dir_frames, nm_gif='animation', kind='png', suf='')
-
+    return {'Output folder' : s_dir_out}
