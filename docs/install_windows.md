@@ -6,10 +6,10 @@ Here is a nice installation tutorial for Windows users.
 ## 1) **Download Python**
 Go to https://www.python.org/ and download the latest version of `python 3`;
 > Unless you have good reasons to keep it, we encourage you to first 
-> uninstall older Python versions to avoid problems.  
+> _uninstall_ older Python versions to prevent problems.  
 
 ## 2) **Install Python**
-Double-click the installation file to launch the **installation wizard**. Enable the option:
+Double-click the installation file to launch the **installation wizard**. Then enable the option:
 
 > [x] Add Python 3.# to PATH
 > 
@@ -17,7 +17,7 @@ Double-click the installation file to launch the **installation wizard**. Enable
 > 
 > ![addpath](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/add_to_path.png "add")
 
-Follow through the installation steps in the wizard:
+Click `Install Now` and follow through the installation steps in the wizard:
 
 > ![install](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install.png "install")
 
