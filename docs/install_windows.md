@@ -15,11 +15,11 @@ Double-click the installation file to launch the **installation wizard**. Enable
 > 
 > Example:
 > 
-> ![addpath](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/add_to_path.PNG "add")
+> ![addpath](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/add_to_path.png "add")
 
 Follow through the installation steps in the wizard:
 
-> ![install](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install.PNG "install")
+> ![install](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install.png "install")
 
 ## 3) Install the required dependencies
 Here the easiest way is to open the Windows `Command Prompt` program and 
