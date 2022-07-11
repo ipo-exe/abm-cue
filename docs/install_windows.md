@@ -31,9 +31,9 @@ to the latest version by typing:
 python3.x -m pip install --upgrade pip
 ```
 > Warning: you must replace the `x` in `python3.x` by the version number you just installed.
-> Hence, for Python 3.9: 
+> Hence, for Python 3.10: 
 > ```commandline
-> python3.9 -m pip install --upgrade pip
+> python3.10 -m pip install --upgrade pip
 > ```
 > The same applies to all commands below.
 
@@ -79,16 +79,18 @@ Then open the Command Prompt and type:
 python3.x C:/Users/You/Documents/abm-cue-main/app_cue1d.py
 ```
 > Warning: again, you must replace the `x` in `python3.x` by the version number you just installed.
-> Hence, for Python 3.9: 
+> Hence, for Python 3.10: 
 > ```commandline
-> python3.9 C:/Users/You/Documents/abm-cue-main/app_cue1d.py
+> python3.10 C:/Users/You/Documents/abm-cue-main/app_cue1d.py
 > ```
 
 ### 4.3) Executing via IDLE or third-party IDEs
 
 Alternatively, you may open and execute the app file from the script editor 
 `IDLE` that was installed with Python or third-party IDEs 
-such as PyCharm, Sublime, etc. This is the _unsafest_ way
+such as PyCharm, Sublime, etc.
+
+This is the _unsafest_ way
 to execute the app file since **you might commit unwanted 
 detrimental changes to the source code**. One advantage, tough, is
 that if you are dealing with executing issues you may inform yourself about the 
