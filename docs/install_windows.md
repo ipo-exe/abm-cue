@@ -22,7 +22,7 @@ Click `Install Now` and follow through the installation steps in the wizard:
 > ![install](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install_windows_install.png "install")
 
 ## 3) Install the required dependencies
-Here the easiest way is to open the Windows `Command Prompt` program and 
+Here the safest way is to open the Windows `Command Prompt` program and 
 type some installation commands in sequence. 
 
 If you are already using Python, you may want to upgrade `pip` (the package manager) 
@@ -58,6 +58,11 @@ Then `imageio` installation:
 python3.x -m pip install imageio
 ```
 
+It would look like this:
+
+![install](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install_windows_pip_install.png "install")
+
+
 ## 4) Execute the application file
 
 The application file for the 1-d CUE model is the `app_cue1d.py` file.  
@@ -83,6 +88,10 @@ python3.x C:/Users/You/Documents/abm-cue-main/app_cue1d.py
 > ```commandline
 > python3.10 C:/Users/You/Documents/abm-cue-main/app_cue1d.py
 > ```
+
+It would look like this:
+
+![install](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install_windows_app_cmd.png "install")
 
 ### 4.3) Executing via IDLE or third-party IDEs
 
