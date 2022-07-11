@@ -503,6 +503,15 @@ def update_file(s_entry, b_popup=True, b_report_error=True, b_report_update=True
 
 
 def update_parameter(s_entry, s_entry_type, b_popup=True, b_report_error=True, b_report_update=True):
+    """
+    update parameter entry
+    :param s_entry: string name of entry
+    :param s_entry_type: string type code of entry
+    :param b_popup: boolean to popup messages
+    :param b_report_error: boolean to report error
+    :param b_report_update: boolean to report update
+    :return:
+    """
     global df_meta, dct_etr_params
     s_lcl_key = s_entry
     s_entry_value = dct_etr_params[s_lcl_key].get()
@@ -657,6 +666,10 @@ def print_report_header():
     print_report_msg(s_msg=' {} Basic Tool {} '.format('*' * 30, '*' * 30))
     print_report_msg(s_msg='Initiate session')
 
+
+# >>> change current dir
+s_current_dir = os.path.dirname(os.path.abspath(__file__))  # get file directory
+os.chdir(path=s_current_dir)  # change dir
 
 # >>> define window
 root = tkinter.Tk()
