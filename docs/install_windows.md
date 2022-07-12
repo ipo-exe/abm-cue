@@ -56,14 +56,13 @@ It would look like this:
 
 ![pip install](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install_windows_pip_install.png "pip")
 
-## 4) Download (clone) the source code files
+## 4) Download (clone) the latest release source code
 
-First, open the source code repository page in your web browser: https://github.com/ipo-exe/abm-cue.
-Then open the `code` tab and click in `Download ZIP`:
+First, open the source code releases repository in your web browser: 
+https://github.com/ipo-exe/abm-cue/releases.
+Then in the tab `Assets` of the latest release, download the `ZIP` folder of the source code.
 
-![clone](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install_windows_clone.png "clone")
-
-After downloaded, extract the folder to a place of your preference. 
+After completed download, extract the folder to a location of your preference in your disk. 
 Example: `C:/Users/You/Documents/abm-cue-main`
 
 > Warning: do not change any files and subfolders from the repository. 

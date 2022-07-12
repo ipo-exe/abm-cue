@@ -11,23 +11,53 @@
 5) Agents interact with places only if they are related enough;
 7) During interaction, agents influence the place orientation type to a certain extent, and vice-versa.
 
-### Parameters of the model
-Simulation parameters must be provided in tha plain `.txt` file like this:
+### Files to run the model
+
+There are 3 files needed to run the model:
+1) the simulation parameters file (`param_simulation.txt`);
+2) the agents parameters file (`param_agents.txt`);
+3) the places parameters file (`param_places.txt`).
+
+All files to run the model are plain `.txt` files.
+
+The simulation parameter file looks like this:
+```text
+     Metadata; Value
+    Timestamp; 2022/07/05 07:59:57.65
+ Input Folder; C:/Users/You/Documents/abm-cue/samples
+   Run Folder; C:/Users/You/Documents/outputs
+  Agents File; C:/Users/You/Documents/abm-cue/samples/param_agents.txt
+  Places File; C:/Users/You/Documents/abm-cue/samples/param_places.txt
+        Steps; 100
+Return Agents; False
+   Trace Back; False
+ Plot Results; True
+```
+Where the `Value` column can be edited either manually or via the Graphical User Interface.
+
+* `Input Folder` [text]: system path to a folder where the input file are stored;
+* `Run Folder` [text]: system path to a folder used for simulation outputs;
+* `Agents File` [text]: system path to the param_agents.txt file;
+* `Places File `[text]: system path to the param_places.txt file;
+* `Steps` [positive integer number]: number of time steps in the simulation;
+* `Return Agents` [boolean: False or True]: option to return agents to the initial
+place every time step;
+* `Trace Back` [boolean: False or True]: option to keep track of all steps in the simulation;
+> Note that if Trace Back = True, the simulation may turn out to be computationally heavy. 
+* `Plot Results` [boolean: False or True]: option to create graphics after simulation.
+
+The agents parameters must be provided in tha plain `.txt` file like this:
 
 ```text
-Parameter;  Set;  Min;  Max
- N_Agents;    2;    1;  100
- N_Places;   40;    4;  100
-  N_Types;   20;    3;   50
-    Alpha;  1.0;  0.1;  1.0
-     Beta;    6;    1;   10
-        C; 0.01; 0.01;  1.5
-        D; 0.90; 0.01;  1.5
-  N_Steps;   30;   10; 1000
+Id;  x; Trait; Alpha; Beta;    C;    Name; Alias; Color
+ 1;  5;    20;    20;    5;  0.0; Agent A;   AgA; red
+ 2; 10;    20;    20;    5;  0.0; Agent B;   AgB; blue
+ 3; 15;     1;    20;    5; 0.01; Agent C;   AgC; orange
+ 4; 35;     1;    20;    3; 0.01; Agent C;   AgC; orange
 ```
 
 Where the `Set` field is used in the simulation:
-* `N_Agents`: [positive integer] number of agents;
+* `x`: [positive integer] is the agent position;
 * `N_Places`: [positive integer] number of places;
 * `N_Types`: [positive integer] number of action types (orientation of agents and places);
 * `Alpha`: [positive real from 0 to 1] orientation threshold for agent-place interaction;

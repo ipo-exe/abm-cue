@@ -2,3 +2,14 @@ Name;Extension;Source;Format;Description;Dtype;Units;Scale;NoData value;Mandator
 param_agents;txt;imported by user;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & Trait & Alpha & Beta & C;Name & Alias & Color;none
 param_places;txt;imported by user;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & x & Trait & D;Name & Alias & Color;none
 param_simulation;txt;imported by user;Data Table;Table of simulation parameters;none;none;none;none;Metadata & Value;none;none
+param_agents_start;txt;process output;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & Trait & Alpha & Beta & C;none;none
+param_agents_end;txt;process output;Data Table;Table of agents parameters and final conditions;none;none;none;none;Id & x & Trait & Alpha & Beta & C;none;none
+param_places_start;txt;process output;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & x & Trait & D;none;none
+param_places_end;txt;process output;Data Table;Table of places parameters and final conditions;none;none;none;none;Id & x & Trait & D;none;none
+hist_agents_start;txt;process output;Data Table;Histogram table of agents on initial conditions;none;none;none;none;Trait & Count;none;none
+hist_agents_end;txt;process output;Data Table;Histogram table of agents on final conditions;none;none;none;none;Trait & Count;none;none
+hist_places_start;txt;process output;Data Table;Histogram table places of placess on initial conditions;none;none;none;none;Trait & Count;none;none
+hist_places_end;txt;process output;Data Table;Histogram table places of places on final conditions;none;none;none;none;Trait & Count;none;none
+traced_agents_traits;txt;process output;Time Series;Time series table of agents traits;none;none;none;none;Step & A_Id_Trait;none;none
+traced_agents_x;txt;process output;Time Series;Time series table of agents positions;none;none;none;none;Step & A_Id_x;none;none
+traced_places_traits;txt;process output;Time Series;Time series table of places traits;none;none;none;none;Step & P_Id_Trait;none;none

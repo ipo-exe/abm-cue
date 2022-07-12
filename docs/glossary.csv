@@ -4,7 +4,7 @@ Id;unique integer number;Category numerical identifyier;-;field
 Name;text;Category name;-;field
 Alias;text;Category alias (one-word only);-;field
 Color;text;CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`).;-;field
-Alpha;positive real number from 0 to 1;Trait orientation threshold for agent-place interaction from 0 to 1.;-;parameter
+Alpha;positive real number;Trait orientation threshold for agent-place interaction;-;parameter
 Beta;positive integer number;Distance threshold for agent movement.;cell units;parameter
 C;positive real number;Place-to-agent degree of interaction influence (agents openness to change);-;parameter
 D;positive real number;Agent-to-place degree of interaction influence (places openness to change);-;parameter
@@ -31,3 +31,5 @@ A_Id_x;positive integer number;Position coordinate in the x axis of Agent A_Id (
 P_Id_x;positive integer number;Position coordinate in the x axis of Place P_Id (ex: P_10_x);cell units;variable
 A_Id_Trait;positive real number;Trait orientaiton of Agent A_Id (ex: A_12_Trait);trait units;variable
 P_Id_Trait;positive integer number;Trait orientaiton of Place P_Id (ex: P_10_Trait);trait units;variable
+Step;positive integer number;Time step number;-;field
+Count;positive integer number;Couting units;-;field

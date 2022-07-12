@@ -139,7 +139,7 @@ def run_cue1d(fsim, wkplc=False, s_dir_out='C:/bin'):
                                  n_bins=n_traits,
                                  ttl=lst_ttl[i],
                                  folder=s_dir_out,
-                                 fname=lst_nms[i],
+                                 fname='view_' + lst_nms[i],
                                  dpi=100,
                                  show=False)
 
@@ -159,12 +159,12 @@ def run_cue1d(fsim, wkplc=False, s_dir_out='C:/bin'):
         df_traced_agents_traits = pd.DataFrame({'Step': np.arange(0, n_steps)})
         for i in range(n_agents):
             s_lcl_agent_x = 'A_{}_x'.format(df_agents['Id'].values[i])
-            s_lcl_agent_trait = 'A_{}_trait'.format(df_agents['Id'].values[i])
+            s_lcl_agent_trait = 'A_{}_Trait'.format(df_agents['Id'].values[i])
             df_traced_agents_x[s_lcl_agent_x] = grd_traced_agents_x_t[i]
             df_traced_agents_traits[s_lcl_agent_trait] = grd_traced_agents_traits_t[i]
         df_traced_places_traits = pd.DataFrame({'Step': np.arange(0, n_steps)})
         for i in range(n_places):
-            s_lcl_place_trait = 'P_{}_trait'.format(df_places['Id'].values[i])
+            s_lcl_place_trait = 'P_{}_Trait'.format(df_places['Id'].values[i])
             df_traced_places_traits[s_lcl_place_trait] = grd_traced_places_traits_t[i]
         df_traced_agents_x.to_csv('{}/traced_agents_x.txt'.format(s_dir_out), sep=';', index=False)
         df_traced_agents_traits.to_csv('{}/traced_agents_traits.txt'.format(s_dir_out), sep=';', index=False)

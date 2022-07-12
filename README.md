@@ -26,7 +26,7 @@ For Windows, Mac and Linux, follow these generic steps:
    * `pandas`;
    * `matplotlib`;
    * `imageio`;
-3) Clone this repository (download zip folder);
+3) Clone the latest release of this repository (download zip folder);
 4) Extract the files to a folder of preference (ex: `C:\Users\Home\Documents\abm-cue-main`);
 > **Warning**: do not change internal folder and file names.
 6) Execute the `app_cue1d.py` file for the CUE 1-d model.
