@@ -21,7 +21,7 @@ This repository includes:
 
 The result is an evolving urban environment:
 
-![intro](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/intro.gif "intro")
+![intro](https://github.com/ipo-exe/abm-cue/blob/main/figs/intro.gif "intro")
 
 ## Installing and Running CUE on a local machine
 

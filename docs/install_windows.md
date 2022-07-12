@@ -15,11 +15,11 @@ Double-click the installation file to launch the **installation wizard**. Then e
 > 
 > Example:
 > 
-> ![addpath](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install_windows_add_to_path.png "add")
+> ![addpath](https://github.com/ipo-exe/abm-cue/blob/main/figs/install_windows_add_to_path.png "add")
 
 Click `Install Now` and follow through the installation steps in the wizard:
 
-> ![install](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install_windows_install.png "install")
+> ![install](https://github.com/ipo-exe/abm-cue/blob/main/figs/install_windows_install.png "install")
 
 ## 3) Install the required dependencies
 Here the safest way is to open the Windows `Command Prompt` program and 
@@ -54,7 +54,7 @@ python -m pip install imageio
 
 It would look like this:
 
-![pip install](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install_windows_pip_install.png "pip")
+![pip install](https://github.com/ipo-exe/abm-cue/blob/main/figs/install_windows_pip_install.png "pip")
 
 ## 4) Download (clone) the latest release source code
 
@@ -90,7 +90,7 @@ python C:/Users/You/Documents/abm-cue-main/app_cue1d.py
 
 It would look like this:
 
-![app](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/install_windows_app_cmd.png "app")
+![app](https://github.com/ipo-exe/abm-cue/blob/main/figs/install_windows_app_cmd.png "app")
 
 ### 5.3) Executing via IDLE or third-party IDEs
 

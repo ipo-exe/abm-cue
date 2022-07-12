@@ -190,7 +190,7 @@ Initial conditions:
 
 Output:
 
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/bench0.gif "bench0")
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench0.gif "bench0")
 
 #### Benchmark 1: the closed agent alone in an open world
 
@@ -213,7 +213,7 @@ Initial conditions:
 
 Output:
 
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/bench1.gif "bench1")
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench1.gif "bench1")
 
 #### Benchmark 2: the open agent alone in a closed world
 
@@ -236,7 +236,7 @@ Initial conditions:
 
 Output:
 
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/bench2.gif "bench2")
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench2.gif "bench2")
 
 
 #### Benchmark 3: the open agent alone in an open world
@@ -260,7 +260,7 @@ Initial conditions:
 
 Output:
 
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/bench3.gif "bench3")
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench3.gif "bench3")
 
 
 #### Benchmark 4: agent with larger window of sigth
@@ -284,7 +284,7 @@ Initial conditions:
 
 Output:
 
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/bench4.gif "bench4")
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench4.gif "bench4")
 
 #### Benchmark 5: an agent (not that open) in a binary world
 
@@ -308,7 +308,7 @@ Initial conditions:
 
 Output:
 
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/bench5.gif "bench5")
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench5.gif "bench5")
 
 #### Benchmark 6: two agents (not that open) in a binary world
 
@@ -333,5 +333,5 @@ Initial conditions:
 
 Output:
 
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/bench6.gif "bench6")
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench6.gif "bench6")
 
