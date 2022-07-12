@@ -232,10 +232,8 @@ for i in range(len(lst_dfs)):
         #
         lst_file.append(" - **Data view**:\n")
         s_view_filepath = "./samples/view_{}.png".format(s_filename)
-        print(s_view_filepath)
         s_view_file = "view_{}.png".format(s_filename)
         if os.path.isfile(s_view_filepath):
-            print('ok')
             s_ax = '\n![{}]({}/{} "{}")\n'.format(
                 s_filename, s_dir_samples_url, s_view_file, s_filename
             )
