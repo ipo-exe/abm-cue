@@ -1,4 +1,4 @@
-'''
+"""
 
 Tools scripts source code
 
@@ -38,161 +38,285 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-'''
-import cue1d
-import inp, backend
-from backend import status
+"""
 import pandas as pd
 import numpy as np
+import cue1d
+import inp, backend
+import visuals
+from backend import status
 
 
-def run_cue1d(fsim, wkplc=False, s_dir_out='C:/bin'):
+def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
+    """
+    tool for the CUE1d model
+    :param s_fsim: string file path of simulation parameters
+    :param b_wkplc: boolean to consider workplace or not
+    :param s_dir_out: string path to output dictionary
+    :return:
+    """
 
     # import param_simulation.txt
-    dct_fsim = inp.import_data_table(s_table_name='param_simulation', s_filepath=fsim)
-    df_param_sim = dct_fsim['df']
+    dct_fsim = inp.import_data_table(s_table_name="param_simulation", s_filepath=s_fsim)
+    df_param_sim = dct_fsim["df"]
 
     # update timestamp value
-    df_param_sim.loc[df_param_sim['Metadata'] == 'Timestamp', 'Value'] = backend.timestamp_log()
+    df_param_sim.loc[
+        df_param_sim["Metadata"] == "Timestamp", "Value"
+    ] = backend.timestamp_log()
 
     # get run folder
-    if wkplc:
-        s_workplace = df_param_sim.loc[df_param_sim['Metadata'] == 'Run Folder', 'Value'].values[0].strip()
-        s_dir_out = backend.create_rundir(label='CUE1d', wkplc=s_workplace)
+    if b_wkplc:
+        s_workplace = (
+            df_param_sim.loc[df_param_sim["Metadata"] == "Run Folder", "Value"]
+            .values[0]
+            .strip()
+        )
+        s_dir_out = backend.create_rundir(label="CUE1d", wkplc=s_workplace)
 
     # get places file
-    f_places = df_param_sim.loc[df_param_sim['Metadata'] == 'Places File', 'Value'].values[0].strip()
+    f_places = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Places File", "Value"]
+        .values[0]
+        .strip()
+    )
+
     # get agents file
-    f_agents = df_param_sim.loc[df_param_sim['Metadata'] == 'Agents File', 'Value'].values[0].strip()
+    f_agents = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Agents File", "Value"]
+        .values[0]
+        .strip()
+    )
 
     # get simulation parameters
-    n_steps = int(df_param_sim.loc[df_param_sim['Metadata'] == 'Steps', 'Value'].values[0].strip())
-    s_return = df_param_sim.loc[df_param_sim['Metadata'] == 'Return Agents', 'Value'].values[0].strip()
-    s_trace = df_param_sim.loc[df_param_sim['Metadata'] == 'Trace Back', 'Value'].values[0].strip()
-    s_plot = df_param_sim.loc[df_param_sim['Metadata'] == 'Plot Results', 'Value'].values[0].strip()
+    n_steps = int(
+        df_param_sim.loc[df_param_sim["Metadata"] == "Steps", "Value"].values[0].strip()
+    )
+    s_return = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Return Agents", "Value"]
+        .values[0]
+        .strip()
+    )
+    s_trace = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Trace Back", "Value"]
+        .values[0]
+        .strip()
+    )
+    s_plot = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Plot Results", "Value"]
+        .values[0]
+        .strip()
+    )
     b_return = False
     b_trace = False
     b_plot = False
-    if s_trace == 'True':
+    if s_trace == "True":
         b_trace = True
-    if s_return == 'True':
+    if s_return == "True":
         b_return = True
-    if s_plot == 'True':
+    if s_plot == "True":
         b_plot = True
 
     # import places file
-    dct_places = inp.import_data_table(s_table_name='param_places', s_filepath=f_places)
-    df_places = dct_places['df']
+    dct_places = inp.import_data_table(s_table_name="param_places", s_filepath=f_places)
+    df_places = dct_places["df"]
 
-    df_places['Trait'] = df_places['Trait'].astype('float64')
+    df_places["Trait"] = df_places["Trait"].astype("float64")
 
     # import agents file
-    dct_agents = inp.import_data_table(s_table_name='param_agents', s_filepath=f_agents)
-    df_agents = dct_agents['df']
-
-    df_agents['Trait'] = df_agents['Trait'].astype('float64')
-
+    dct_agents = inp.import_data_table(s_table_name="param_agents", s_filepath=f_agents)
+    df_agents = dct_agents["df"]
+    df_agents["Trait"] = df_agents["Trait"].astype("float64")
 
     # extra params
     n_agents = len(df_agents)
     n_places = len(df_places)
-    n_traits = int(max([df_agents['Trait'].max(), df_places['Trait'].max()]))
+    n_traits = int(max([df_agents["Trait"].max(), df_places["Trait"].max()]))
 
+    # ------------------------------
+    #
     # run model
-    dct_out = cue1d.play(df_agents=df_agents.copy(),
-                         df_places=df_places.copy(),
-                         n_steps=n_steps,
-                         b_return=b_return,
-                         b_trace=b_trace)
+    dct_out = cue1d.play(
+        df_agents=df_agents.copy(),
+        df_places=df_places.copy(),
+        n_steps=n_steps,
+        b_tui=True,
+        b_return=b_return,
+        b_trace=b_trace,
+    )
+    #
+    # ------------------------------
 
     # retrieve outputs
-    df_agents_end = dct_out['Agents']
-    df_places_end = dct_out['Places']
+    df_agents_end = dct_out["Agents"]
+    df_places_end = dct_out["Places"]
 
     # export results
-    status('exporting start/end results datasets')
-    df_agents.to_csv('{}/param_agents_start.txt'.format(s_dir_out), sep=';', index=False)
-    df_agents_end.to_csv('{}/param_agents_end.txt'.format(s_dir_out), sep=';', index=False)
-    df_places.to_csv('{}/param_places_start.txt'.format(s_dir_out), sep=';', index=False)
-    df_places_end.to_csv('{}/param_places_end.txt'.format(s_dir_out), sep=';', index=False)
+    status("exporting start/end results datasets")
+    df_agents.to_csv(
+        "{}/param_agents_start.txt".format(s_dir_out), sep=";", index=False
+    )
+    df_agents_end.to_csv(
+        "{}/param_agents_end.txt".format(s_dir_out), sep=";", index=False
+    )
+    df_places.to_csv(
+        "{}/param_places_start.txt".format(s_dir_out), sep=";", index=False
+    )
+    df_places_end.to_csv(
+        "{}/param_places_end.txt".format(s_dir_out), sep=";", index=False
+    )
+
     # aux lists
     lst_df = [df_agents, df_agents_end, df_places, df_places_end]
-    lst_nms = ['hist_agents_start',
-               'hist_agents_end',
-               'hist_places_start',
-               'hist_places_end']
-    lst_ttl = ['Agents Histogram | Start',
-               'Agents Histogram | End',
-               'Places Histogram | Start',
-               'Places Histogram | End',]
+    lst_nms = [
+        "hist_agents_start",
+        "hist_agents_end",
+        "hist_places_start",
+        "hist_places_end",
+    ]
+    lst_ttl = [
+        "Agents Histogram | Start",
+        "Agents Histogram | End",
+        "Places Histogram | Start",
+        "Places Histogram | End",
+    ]
+
     # export histograms
     if b_plot:
         from visuals import plot_trait_histogram
     for i in range(len(lst_df)):
         df_lcl = lst_df[i]
-        vct_hist, vct_bins = np.histogram(a=df_lcl['Trait'].values, bins=n_traits, range=(0, n_traits))
-        df_hist = pd.DataFrame({'Trait': vct_bins[1:], 'Count': vct_hist})
-        df_hist.to_csv('{}/{}.txt'.format(s_dir_out, lst_nms[i]), sep=';', index=False)
+        vct_hist, vct_bins = np.histogram(
+            a=df_lcl["Trait"].values, bins=n_traits, range=(0, n_traits)
+        )
+        df_hist = pd.DataFrame({"Trait": vct_bins[1:], "Count": vct_hist})
+        df_hist.to_csv("{}/{}.txt".format(s_dir_out, lst_nms[i]), sep=";", index=False)
         if b_plot:
-            plot_trait_histogram(df_data=df_lcl,
-                                 n_traits=n_traits,
-                                 n_bins=n_traits,
-                                 ttl=lst_ttl[i],
-                                 folder=s_dir_out,
-                                 fname='view_' + lst_nms[i],
-                                 dpi=100,
-                                 show=False)
+            plot_trait_histogram(
+                df_data=df_lcl,
+                n_traits=n_traits,
+                n_bins=n_traits,
+                s_ttl=lst_ttl[i],
+                s_dir_out=s_dir_out,
+                s_file_name="view_" + lst_nms[i],
+                n_dpi=100,
+                b_show=False,
+            )
 
     if b_trace:
         import os
         from visuals import plot_cue_1d_pannel
         from out import export_gif
 
-        status('exporting traced results datasets')
-        grd_traced_places_traits_t = dct_out['Simulation']['Places_traits'].transpose()
-        grd_traced_agents_x_t = dct_out['Simulation']['Agents_x'].transpose()
-        grd_traced_agents_traits_t = dct_out['Simulation']['Agents_traits'].transpose()
+        status("exporting traced results datasets")
 
+        # transpose grids
+        grd_traced_places_traits_t = dct_out["Simulation"]["Places_traits"].transpose()
+        grd_traced_agents_x_t = dct_out["Simulation"]["Agents_x"].transpose()
+        grd_traced_agents_traits_t = dct_out["Simulation"]["Agents_traits"].transpose()
+
+        # get fill size
         n_fill = int(np.log10(n_steps)) + 1
 
-        df_traced_agents_x = pd.DataFrame({'Step': np.arange(0, n_steps)})
-        df_traced_agents_traits = pd.DataFrame({'Step': np.arange(0, n_steps)})
+        # deploy agents dataframes
+        df_traced_agents_x = pd.DataFrame({"Step": np.arange(0, n_steps)})
+        df_traced_agents_traits = pd.DataFrame({"Step": np.arange(0, n_steps)})
+
+        # loop to append fields to dataframe
         for i in range(n_agents):
-            s_lcl_agent_x = 'A_{}_x'.format(df_agents['Id'].values[i])
-            s_lcl_agent_trait = 'A_{}_Trait'.format(df_agents['Id'].values[i])
+            s_lcl_agent_x = "A_{}_x".format(df_agents["Id"].values[i])
+            s_lcl_agent_trait = "A_{}_Trait".format(df_agents["Id"].values[i])
             df_traced_agents_x[s_lcl_agent_x] = grd_traced_agents_x_t[i]
             df_traced_agents_traits[s_lcl_agent_trait] = grd_traced_agents_traits_t[i]
-        df_traced_places_traits = pd.DataFrame({'Step': np.arange(0, n_steps)})
+
+        # deploy places dataframes
+        df_traced_places_traits = pd.DataFrame({"Step": np.arange(0, n_steps)})
+
+        # loop to append fields to dataframe
         for i in range(n_places):
-            s_lcl_place_trait = 'P_{}_Trait'.format(df_places['Id'].values[i])
+            s_lcl_place_trait = "P_{}_Trait".format(df_places["Id"].values[i])
             df_traced_places_traits[s_lcl_place_trait] = grd_traced_places_traits_t[i]
-        df_traced_agents_x.to_csv('{}/traced_agents_x.txt'.format(s_dir_out), sep=';', index=False)
-        df_traced_agents_traits.to_csv('{}/traced_agents_traits.txt'.format(s_dir_out), sep=';', index=False)
-        df_traced_places_traits.to_csv('{}/traced_places_traits.txt'.format(s_dir_out), sep=';', index=False)
 
-        # plot frames
+        # export csv files
+        df_traced_agents_x.to_csv(
+            "{}/traced_agents_x.txt".format(s_dir_out), sep=";", index=False
+        )
+        df_traced_agents_traits.to_csv(
+            "{}/traced_agents_traits.txt".format(s_dir_out), sep=";", index=False
+        )
+        df_traced_places_traits.to_csv(
+            "{}/traced_places_traits.txt".format(s_dir_out), sep=";", index=False
+        )
+
+        # plot series
         if b_plot:
-            dir_frames = '{}/frames'.format(s_dir_out)
+            from visuals import plot_traced_traits, plot_traced_positions
+
+            # agents
+            plot_traced_traits(
+                df_data=df_traced_agents_traits,
+                df_params=df_agents,
+                n_traits=n_traits,
+                s_dir_out=s_dir_out,
+                s_file_name="view_traced_agents_traits",
+                s_ttl="Agents Traits",
+                b_dark=False,
+                b_show=False,
+            )
+            plot_traced_positions(
+                df_data=df_traced_agents_traits,
+                df_params=df_agents,
+                n_positions=len(df_places),
+                s_dir_out=s_dir_out,
+                s_file_name="view_traced_agents_x",
+                s_ttl="Agents Positions",
+                b_dark=False,
+                b_show=False,
+            )
+            # places
+            plot_traced_traits(
+                df_data=df_traced_places_traits,
+                df_params=df_places,
+                s_dir_out=s_dir_out,
+                n_traits=n_traits,
+                s_file_name="view_traced_places_traits",
+                s_ttl="Places Traits",
+                b_dark=False,
+                b_show=False,
+            )
+        # plot animation frames
+        if b_plot:
+            dir_frames = "{}/frames".format(s_dir_out)
             os.mkdir(path=dir_frames)
-            status('plotting frames', process=True)
-
-            s_cmap = 'viridis'  # 'tab20c'
-
-
-            for t in range(n_steps - 1):
-                status('plot {}'.format(t))
-                plot_cue_1d_pannel(step=t,
-                                   n_traits=n_traits,
-                                   n_places=n_places,
-                                   n_agents=n_agents,
-                                   places_traits_t=grd_traced_places_traits_t,
-                                   agents_traits_t=grd_traced_agents_traits_t,
-                                   agents_x_t=grd_traced_agents_x_t,
-                                   ttl='Step = {}'.format(t),
-                                   folder=dir_frames,
-                                   fname='frame_{}'.format(str(t).zfill(n_fill)),
-                                   show=False,
-                                   dark=False)
-            status('generating animation', process=True)
-            export_gif(dir_output=s_dir_out, dir_images=dir_frames, nm_gif='animation', kind='png', suf='')
-    return {'Output folder' : s_dir_out}
+            status("plotting frames", process=True)
+            s_cmap = "viridis"  # 'tab20c'
+            for t in range(n_steps):
+                status(
+                    "CUE1d :: plotting step {} [{:.2f}%]".format(
+                        t, 100 * (t + 1) / n_steps
+                    )
+                )
+                plot_cue_1d_pannel(
+                    n_step=t,
+                    n_traits=n_traits,
+                    n_places=n_places,
+                    n_agents=n_agents,
+                    grd_places_traits_t=grd_traced_places_traits_t,
+                    grd_agents_traits_t=grd_traced_agents_traits_t,
+                    grd_agents_x_t=grd_traced_agents_x_t,
+                    s_ttl="Step = {}".format(t),
+                    s_dir_out=dir_frames,
+                    s_file_name="frame_{}".format(str(t).zfill(n_fill)),
+                    b_show=False,
+                    b_dark=False,
+                )
+            # export animation
+            status("generating gif animation", process=True)
+            export_gif(
+                dir_output=s_dir_out,
+                dir_images=dir_frames,
+                nm_gif="animation",
+                kind="png",
+                suf="",
+            )
+    return {"Output folder": s_dir_out, "Error Status": "OK"}

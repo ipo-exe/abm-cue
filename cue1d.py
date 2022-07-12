@@ -47,15 +47,25 @@ import pandas as pd
 import backend
 
 
-def play(df_agents, df_places, n_steps, b_return=False, b_trace=True):
+def play(
+        df_agents,
+        df_places,
+        n_steps,
+        b_tui=False,
+        b_return=False,
+        b_trace=True
+    ):
     """
     Run the CUE 1d simulation
     :param df_agents: pandas dataframe of agents
     :param df_places: pandas dataframe of places
     :param n_steps: int number of time steps
+    :param b_tui: boolean to terminal display
+    :param b_return: boolean to return agent back to initial position every time step
     :param b_trace: boolean to trace back simulation
-    :return:
+    :return: output dictionary
     """
+    # start up
     s_dtype = 'float32'
     n_agents = len(df_agents)
     n_places = len(df_places)
@@ -84,16 +94,21 @@ def play(df_agents, df_places, n_steps, b_return=False, b_trace=True):
 
         # deploy recyclable window dataframe
         n_window_size = len(vct_rows_base_ids)
-        df_window = pd.DataFrame({
-                                  'x': np.zeros(n_window_size, dtype='uint16'),
-                                  'Trait': np.zeros(n_window_size, dtype=s_dtype),
-                                  'D': np.zeros(n_window_size, dtype=s_dtype),
-                                  'Discrepancy': np.zeros(n_window_size, dtype=s_dtype),
-                                  'Interac_score': np.zeros(n_window_size, dtype=s_dtype),
-                                  'Interac_prob': np.zeros(n_window_size, dtype=s_dtype),
-                                  })
+        df_window = pd.DataFrame(
+            {
+            'x': np.zeros(n_window_size, dtype='uint16'),
+            'Trait': np.zeros(n_window_size, dtype=s_dtype),
+            'D': np.zeros(n_window_size, dtype=s_dtype),
+            'Discrepancy': np.zeros(n_window_size, dtype=s_dtype),
+            'Interac_score': np.zeros(n_window_size, dtype=s_dtype),
+            'Interac_prob': np.zeros(n_window_size, dtype=s_dtype)
+            }
+        )
         # append to dict
-        dct_window[str(n_beta)] = {'ids': vct_rows_base_ids, 'df': df_window}
+        dct_window[str(n_beta)] = {
+            'ids': vct_rows_base_ids,
+            'df': df_window
+        }
 
     # define random seeds prior to simulation loop
     np.random.seed(backend.get_seed())
@@ -114,7 +129,8 @@ def play(df_agents, df_places, n_steps, b_return=False, b_trace=True):
 
     # main simulation loop
     for t in range(1, n_steps):
-        backend.status('CUE1d :: simulation step {} [{:.2f}%]'.format(t, 100 * t / n_steps))
+        if b_tui:
+            backend.status('CUE1d :: simulation step {} [{:.2f}%]'.format(t, 100 * t / n_steps))
         # agents movements
         for a in range(n_agents):
             # get agent variables
@@ -180,10 +196,17 @@ def play(df_agents, df_places, n_steps, b_return=False, b_trace=True):
             # reset x
             df_agents['x'] = vct_agents_origin_x
 
-    dct_output = {'Agents': df_agents, 'Places': df_places}
+    # prepare output dict
+    dct_output = {
+        'Agents': df_agents,
+        'Places': df_places
+    }
+    # append extra content
     if b_trace:
-        dct_output['Simulation'] = {'Places_traits': grd_traced_places_traits,
-                                    'Agents_traits': grd_traced_agents_traits,
-                                    'Agents_x': grd_traced_agents_x}
+        dct_output['Simulation'] = {
+            'Places_traits': grd_traced_places_traits,
+            'Agents_traits': grd_traced_agents_traits,
+            'Agents_x': grd_traced_agents_x
+        }
     return dct_output
 

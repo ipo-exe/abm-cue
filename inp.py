@@ -1,4 +1,4 @@
-'''
+"""
 
 CUE 1d input routines
 
@@ -40,11 +40,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-'''
+"""
 import pandas as pd
 
 
-def open_df(s_filepath, s_sep=';', s_date_field='', s_mandatory_fields='',):
+def open_df(
+    s_filepath,
+    s_sep=";",
+    s_date_field="",
+    s_mandatory_fields="",
+):
     """
     general dataframe openner
     :param s_filepath: string to file
@@ -55,34 +60,37 @@ def open_df(s_filepath, s_sep=';', s_date_field='', s_mandatory_fields='',):
     """
     try:
         # handle date field
-        if s_date_field == '':
+        if s_date_field == "":
             df_lcl = pd.read_csv(s_filepath, sep=s_sep, skipinitialspace=True)
         else:
-            df_lcl = pd.read_csv(s_filepath, sep=s_sep, parse_dates=[s_date_field], skipinitialspace=True)
+            df_lcl = pd.read_csv(
+                s_filepath, sep=s_sep, parse_dates=[s_date_field], skipinitialspace=True
+            )
         # handle mandatory fields:
-        if s_mandatory_fields == '':
+        if s_mandatory_fields == "":
             pass
         else:
-            lst_fields = s_mandatory_fields.split(' & ')
+            lst_fields = s_mandatory_fields.split(" & ")
             for f in lst_fields:
                 try:
                     df_aux = df_lcl[f]
                 except KeyError:
-                    return {'Error Report': 'Invalid formatting.', 'OK Flag': False}
-        return {'df': df_lcl, 'Error Report': 'File OK', 'OK Flag': True}
+                    return {"Error Report": "Invalid formatting.", "OK Flag": False}
+        return {"df": df_lcl, "Error Report": "File OK", "OK Flag": True}
     except FileNotFoundError:
-        return {'Error Report': 'File not found', 'OK Flag': False}
+        return {"Error Report": "File not found", "OK Flag": False}
     except ValueError:
-        return {'Error Report': 'Invalid formatting', 'OK Flag': False}
+        return {"Error Report": "Invalid formatting", "OK Flag": False}
 
 
 def import_data_table(s_table_name, s_filepath):
     # import documentation file
-    df_iofiles = pd.read_csv('./docs/iofiles.csv', sep=';', skipinitialspace=True)
+    df_iofiles = pd.read_csv("./docs/iofiles.csv", sep=";", skipinitialspace=True)
     # retrieve mandatory fields
     df_file = df_iofiles.query('Name == "{}"'.format(s_table_name))
-    s_mandatory_fields = df_file['Mandatory Fields'].values[0]
+    s_mandatory_fields = df_file["Mandatory Fields"].values[0]
     # get opening object
-    dct_open = open_df(s_filepath=s_filepath, s_sep=';', s_mandatory_fields=s_mandatory_fields)
+    dct_open = open_df(
+        s_filepath=s_filepath, s_sep=";", s_mandatory_fields=s_mandatory_fields
+    )
     return dct_open
-

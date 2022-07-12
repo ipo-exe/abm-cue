@@ -1,4 +1,4 @@
-'''
+"""
 
 Visuals routines source code
 
@@ -38,156 +38,375 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-'''
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 
-def plot_sigle_frame(grd,
-                     cmap='Greys',
-                     folder='C:/bin',
-                     fname='frame',
-                     suff='',
-                     ttl='',
-                     show=False,
-                     dark=True,
-                     dpi=100):
-    if dark:
-        plt.style.use('dark_background')
+def plot_sigle_frame(
+    grd,
+    s_cmap="Greys",
+    s_dir_out="C:/bin",
+    s_file_name="frame",
+    s_suff="",
+    s_ttl="",
+    b_show=False,
+    b_dark=True,
+    n_dpi=100,
+):
+    """
+    Plot single grid frame
+    :param grd: 2d numpy array of current grid
+    :param s_cmap: string cmap code
+    :param s_dir_out: string output folder
+    :param s_file_name: string file name
+    :param s_suff: string suffix
+    :param s_ttl: string title
+    :param b_show: boolean to show
+    :param b_dark: boolean to dark mode
+    :param n_dpi: int dpi resolution
+    :return: string file name
+    """
+    if b_dark:
+        plt.style.use("dark_background")
     fig = plt.figure(figsize=(4, 4))  # Width, Height
-    plt.suptitle(ttl)
-    plt.imshow(grd, cmap=cmap)
-    plt.axis('off')
-    if show:
+    plt.suptitle(s_ttl)
+    plt.imshow(grd, cmap=s_cmap)
+    plt.axis("off")
+    if b_show:
         plt.show()
         plt.close(fig)
     else:
         # export file
-        if suff == '':
-            filepath = folder + '/' + fname + '.png'
+        if s_suff == "":
+            filepath = s_dir_out + "/" + s_file_name + ".png"
         else:
-            filepath = folder + '/' + fname + '_' + suff + '.png'
-        plt.savefig(filepath, dpi=dpi)
+            filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
+        plt.savefig(filepath, dpi=n_dpi)
         plt.close(fig)
         return filepath
 
 
-
-def plot_trait_histogram(df_data, n_traits, n_bins=10,
-                         folder='C:/bin',
-                         fname='hist',
-                         suff='',
-                         ttl='',
-                         show=True,
-                         dark=True,
-                         dpi=100):
+def plot_traced_traits(
+    df_data,
+    df_params,
+    n_traits,
+    s_dir_out="C:/bin",
+    s_file_name="frame",
+    s_suff="",
+    s_ttl="",
+    b_show=False,
+    b_dark=False,
+    n_dpi=100,
+):
+    """
+    plot time series of traits
+    :param df_data: pandas dataframe of time series (Step field required)
+    :param df_params: pandas dataframe of parameters (agents or places)
+    :param n_traits: int max number of places
+    :param s_dir_out: string output folder
+    :param s_file_name: string file name
+    :param s_suff: string suffix
+    :param s_ttl: string title
+    :param b_show: boolean to show fig
+    :param b_dark: boolean to dark mode
+    :param n_dpi: int dpi resolution
+    :return:
+    """
+    if b_dark:
+        plt.style.use("dark_background")
     fig = plt.figure(figsize=(8, 4))  # Width, Height
-    plt.title(ttl)
-    plt.hist(x=df_data['Trait'].values, bins=n_bins, range=(0, n_traits), color='tab:grey')
+    plt.title(s_ttl)
+    # get colors
+    b_colors = False
+    try:
+        # check if color field is provided
+        colors = df_params["Color"].values
+        b_colors = True
+    except KeyError:
+        pass
+    s_lcl_color = "tab:blue"
+    b_colors = False
+    for i in range(1, len(df_data.columns)):
+        s_lcl_col = df_data.columns[i]
+        if b_colors:
+            # get id
+            s_lcl_id = s_lcl_col.split("_")[1]
+            # get color
+            s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[
+                0
+            ]
+        plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
+        plt.ylabel("Traits")
+        plt.xlabel("Steps")
+        plt.xlim(0, df_data["Step"].max() + 1)
+        plt.ylim(0, n_traits + 1)
+    if b_show:
+        plt.show()
+        plt.close(fig)
+    else:
+        # export file
+        if s_suff == "":
+            filepath = s_dir_out + "/" + s_file_name + ".png"
+        else:
+            filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
+        plt.savefig(filepath, dpi=n_dpi)
+        plt.close(fig)
+        return filepath
+
+
+def plot_traced_positions(
+    df_data,
+    df_params,
+    n_positions,
+    s_dir_out="C:/bin",
+    s_file_name="frame",
+    s_suff="",
+    s_ttl="",
+    b_show=False,
+    b_dark=False,
+    n_dpi=100,
+):
+    """
+    plot time series of traits
+    :param df_data: pandas dataframe of time series (Step field required)
+    :param df_params: pandas dataframe of parameters (agents or places)
+    :param n_traits: int max number of places
+    :param s_dir_out: string output folder
+    :param s_file_name: string file name
+    :param s_suff: string suffix
+    :param s_ttl: string title
+    :param b_show: boolean to show fig
+    :param b_dark: boolean to dark mode
+    :param n_dpi: int dpi resolution
+    :return:
+    """
+    if b_dark:
+        plt.style.use("dark_background")
+    fig = plt.figure(figsize=(8, 4))  # Width, Height
+    plt.title(s_ttl)
+    # get colors
+    b_colors = False
+    try:
+        # check if color field is provided
+        colors = df_params["Color"].values
+        b_colors = True
+    except KeyError:
+        pass
+    s_lcl_color = "tab:blue"
+    b_colors = False
+    for i in range(1, len(df_data.columns)):
+        s_lcl_col = df_data.columns[i]
+        if b_colors:
+            # get id
+            s_lcl_id = s_lcl_col.split("_")[1]
+            # get color
+            s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[
+                0
+            ]
+        plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
+        plt.ylabel("x")
+        plt.xlabel("Steps")
+        plt.xlim(0, df_data["Step"].max() + 1)
+        plt.ylim(0, n_positions + 1)
+    if b_show:
+        plt.show()
+        plt.close(fig)
+    else:
+        # export file
+        if s_suff == "":
+            filepath = s_dir_out + "/" + s_file_name + ".png"
+        else:
+            filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
+        plt.savefig(filepath, dpi=n_dpi)
+        plt.close(fig)
+        return filepath
+
+
+def plot_trait_histogram(
+    df_data,
+    n_traits,
+    n_bins=10,
+    s_dir_out="C:/bin",
+    s_file_name="hist",
+    s_suff="",
+    s_ttl="",
+    b_show=True,
+    b_dark=False,
+    n_dpi=100,
+):
+    """
+    plot histogram
+    :param df_data: pandas dataframe
+    :param n_traits: int number of traits
+    :param n_bins: int number of hist bins
+    :param s_dir_out: string output directory
+    :param s_file_name: string filename
+    :param s_suff: string suffix
+    :param s_ttl: string title
+    :param b_show: boolean to show
+    :param b_dark: boolean to dark mode
+    :param n_dpi: int dpi resolution
+    :return: string file path
+    """
+    if b_dark:
+        plt.style.use("dark_background")
+    fig = plt.figure(figsize=(8, 4))  # Width, Height
+    plt.title(s_ttl)
+    plt.hist(
+        x=df_data["Trait"].values, bins=n_bins, range=(0, n_traits), color="tab:grey"
+    )
     plt.ylim(0, len(df_data))
     plt.xlim(0, n_traits)
-    plt.ylabel('count')
-    plt.xlabel('traits')
-    if show:
+    plt.ylabel("count")
+    plt.xlabel("traits")
+    if b_show:
         plt.show()
         plt.close(fig)
     else:
         # export file
-        if suff == '':
-            filepath = folder + '/' + fname + '.png'
+        if s_suff == "":
+            filepath = s_dir_out + "/" + s_file_name + ".png"
         else:
-            filepath = folder + '/' + fname + '_' + suff + '.png'
-        plt.savefig(filepath, dpi=dpi)
+            filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
+        plt.savefig(filepath, dpi=n_dpi)
         plt.close(fig)
         return filepath
 
 
-def plot_cue_1d_pannel(step, n_traits, n_places, n_agents, places_traits_t, agents_traits_t, agents_x_t,
-                       cmap='viridis', folder='C:/bin', fname='frame',
-                       suff='',
-                       ttl='',
-                       show=True,
-                       dark=True,
-                       dpi=100):
-    if dark:
-        plt.style.use('dark_background')
+def plot_cue_1d_pannel(
+    n_step,
+    n_traits,
+    n_places,
+    n_agents,
+    grd_places_traits_t,
+    grd_agents_traits_t,
+    grd_agents_x_t,
+    s_cmap="viridis",
+    s_dir_out="C:/bin",
+    s_file_name="frame",
+    s_suff="",
+    s_ttl="",
+    b_show=True,
+    b_dark=False,
+    n_dpi=100,
+):
+    """
+    pannel of 1d CUE model
+    :param n_step: int step
+    :param n_traits: int traits
+    :param n_places: int places
+    :param n_agents: int agents
+    :param grd_places_traits_t: 2d numpy array places traits transposed grid
+    :param grd_agents_traits_t: 2d numpy array agents traits transposed grid
+    :param grd_agents_x_t: 2d numpy array places position transposed grid
+    :param s_cmap: string cmap code
+    :param s_dir_out: string output folder
+    :param s_file_name: string file name
+    :param s_suff: string suffix
+    :param s_ttl: string title
+    :param b_show: boolean to show
+    :param b_dark: boolean to dark mode
+    :param n_dpi: int dpi resolution
+    :return: string file name
+    """
+    if b_dark:
+        plt.style.use("dark_background")
 
-    if step < n_places:
-        grd_lcl_spaces = places_traits_t[:, : step + 1]
-        vct_lcl_ticks = np.arange(0, step + 1, 5)
+    if n_step < n_places:
+        grd_lcl_spaces = grd_places_traits_t[:, : n_step + 1]
+        vct_lcl_ticks = np.arange(0, n_step + 1, 5)
         vct_lcl_labels = vct_lcl_ticks
     else:
-        grd_lcl_spaces = places_traits_t[:, step - n_places: step + 1]
+        grd_lcl_spaces = grd_places_traits_t[:, n_step - n_places : n_step + 1]
         vct_lcl_ticks = np.arange(0, n_places + 1, 5)
-        vct_lcl_labels = vct_lcl_ticks + (step - n_places)
+        vct_lcl_labels = vct_lcl_ticks + (n_step - n_places)
 
     fig = plt.figure(figsize=(10, 5))  # Width, Height
-    gs = mpl.gridspec.GridSpec(2, 4, wspace=0.0, hspace=0.5, left=0.05, bottom=0.1, top=0.9, right=0.95)  # nrows, ncols
-    plt.suptitle(ttl)
+    gs = mpl.gridspec.GridSpec(
+        2, 4, wspace=0.0, hspace=0.5, left=0.05, bottom=0.1, top=0.9, right=0.95
+    )  # nrows, ncols
+    plt.suptitle(s_ttl)
     #
     # space map
     ax = fig.add_subplot(gs[:, :2])
-    im = plt.imshow(grd_lcl_spaces, cmap=cmap, vmin=0, vmax=n_traits)
+    im = plt.imshow(grd_lcl_spaces, cmap=s_cmap, vmin=0, vmax=n_traits)
     plt.colorbar(im, shrink=0.4)
-    plt.title('places and agents')
+    plt.title("places and agents")
     plt.xticks(ticks=vct_lcl_ticks, labels=vct_lcl_labels)
-    plt.ylabel('position')
-    plt.xlabel('time step')
+    plt.ylabel("position")
+    plt.xlabel("time step")
 
-    for a in range(len(agents_x_t)):
-        if step < n_places:
-            vct_lcl_agents_i = agents_x_t[a][: step + 1]
-            vct_lcl_agents_types = agents_traits_t[a][:step + 1]
+    for a in range(len(grd_agents_x_t)):
+        if n_step < n_places:
+            vct_lcl_agents_i = grd_agents_x_t[a][: n_step + 1]
+            vct_lcl_agents_types = grd_agents_traits_t[a][: n_step + 1]
         else:
-            vct_lcl_agents_i = agents_x_t[a][step - n_places:step + 1]
-            vct_lcl_agents_types = agents_traits_t[a][step - n_places:step + 1]
-        plt.plot(vct_lcl_agents_i, 'white', zorder=1)
+            vct_lcl_agents_i = grd_agents_x_t[a][n_step - n_places : n_step + 1]
+            vct_lcl_agents_types = grd_agents_traits_t[a][
+                n_step - n_places : n_step + 1
+            ]
+        plt.plot(vct_lcl_agents_i, "white", zorder=1)
 
-    for a in range(len(agents_x_t)):
-        if step < n_places:
-            vct_lcl_agents_i = agents_x_t[a][: step + 1]
-            vct_lcl_agents_types = agents_traits_t[a][:step + 1]
+    for a in range(len(grd_agents_x_t)):
+        if n_step < n_places:
+            vct_lcl_agents_i = grd_agents_x_t[a][: n_step + 1]
+            vct_lcl_agents_types = grd_agents_traits_t[a][: n_step + 1]
         else:
-            vct_lcl_agents_i = agents_x_t[a][step - n_places:step + 1]
-            vct_lcl_agents_types = agents_traits_t[a][step - n_places:step + 1]
-        plt.scatter(np.arange(len(vct_lcl_agents_i)),
-                    vct_lcl_agents_i,
-                    c=vct_lcl_agents_types,
-                    edgecolors='white',
-                    marker='o',
-                    cmap=cmap,
-                    vmin=0,
-                    vmax=n_traits,
-                    zorder=2)
+            vct_lcl_agents_i = grd_agents_x_t[a][n_step - n_places : n_step + 1]
+            vct_lcl_agents_types = grd_agents_traits_t[a][
+                n_step - n_places : n_step + 1
+            ]
+        plt.scatter(
+            np.arange(len(vct_lcl_agents_i)),
+            vct_lcl_agents_i,
+            c=vct_lcl_agents_types,
+            edgecolors="white",
+            marker="o",
+            cmap=s_cmap,
+            vmin=0,
+            vmax=n_traits,
+            zorder=2,
+        )
 
     #
     # space hist
     ax = fig.add_subplot(gs[0, 3])
-    plt.title('Places histogram')
-    plt.hist(x=places_traits_t.transpose()[step], bins=n_traits, range=(0, n_traits), color='tab:grey')
+    plt.title("Places histogram")
+    plt.hist(
+        x=grd_places_traits_t.transpose()[n_step],
+        bins=n_traits,
+        range=(0, n_traits),
+        color="tab:grey",
+    )
     plt.ylim(0, n_places)
     plt.xlim(0, n_traits)
-    plt.ylabel('count')
-    plt.xlabel('traits')
+    plt.ylabel("count")
+    plt.xlabel("traits")
     #
     # agents hist
     ax = fig.add_subplot(gs[1, 3])
-    plt.title('Agents histogram')
-    plt.hist(x=agents_traits_t.transpose()[step], bins=n_traits, range=(0, n_traits), color='tab:grey')
+    plt.title("Agents histogram")
+    plt.hist(
+        x=grd_agents_traits_t.transpose()[n_step],
+        bins=n_traits,
+        range=(0, n_traits),
+        color="tab:grey",
+    )
     plt.ylim(0, n_agents)
     plt.xlim(0, n_traits)
-    plt.ylabel('count')
-    plt.xlabel('traits')
-    if show:
+    plt.ylabel("count")
+    plt.xlabel("traits")
+    if b_show:
         plt.show()
         plt.close(fig)
     else:
         # export file
-        if suff == '':
-            filepath = folder + '/' + fname + '.png'
+        if s_suff == "":
+            filepath = s_dir_out + "/" + s_file_name + ".png"
         else:
-            filepath = folder + '/' + fname + '_' + suff + '.png'
-        plt.savefig(filepath, dpi=dpi)
+            filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
+        plt.savefig(filepath, dpi=n_dpi)
         plt.close(fig)
         return filepath

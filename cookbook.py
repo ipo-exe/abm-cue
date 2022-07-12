@@ -43,6 +43,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 def cue_1d_recipe():
     from tools import run_cue1d
     fsim = './samples/param_simulation.txt'
-    run_cue1d(fsim=fsim, wkplc=True)
+    run_cue1d(s_fsim=fsim, b_wkplc=True)
 
 cue_1d_recipe()

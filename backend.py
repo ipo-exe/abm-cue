@@ -1,4 +1,4 @@
-'''
+"""
 
 Backend routines source code
 
@@ -38,7 +38,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-'''
+"""
 import os
 import numpy as np
 
@@ -58,7 +58,9 @@ def drop_center_cell(vct_window_rows, vct_window_cols):
         else:
             lst_aux_rows.append(vct_window_rows[i])
             lst_aux_cols.append((vct_window_cols[i]))
-    return np.array(lst_aux_rows, dtype='uint16'), np.array(lst_aux_cols, dtype='uint16')
+    return np.array(lst_aux_rows, dtype="uint16"), np.array(
+        lst_aux_cols, dtype="uint16"
+    )
 
 
 def get_window_ids(n_rows, n_cols, n_rsize=1, b_flat=True):
@@ -79,12 +81,12 @@ def get_window_ids(n_rows, n_cols, n_rsize=1, b_flat=True):
     lst_aux = list()
     for r in range(len(vct_window_base)):
         lst_aux.append(vct_window_base[r] * np.ones(shape=np.shape(vct_window_base)))
-    grd_window_rows = np.array(lst_aux, dtype='uint16')
+    grd_window_rows = np.array(lst_aux, dtype="uint16")
     # generate grid for cols
     lst_aux = list()
     for r in range(len(vct_window_base)):
         lst_aux.append(vct_window_base)
-    grd_window_cols = np.array(lst_aux, dtype='uint16')
+    grd_window_cols = np.array(lst_aux, dtype="uint16")
     if b_flat:
         vct_window_rows = grd_window_rows.flatten()
         vct_window_cols = grd_window_cols.flatten()
@@ -95,25 +97,27 @@ def get_window_ids(n_rows, n_cols, n_rsize=1, b_flat=True):
 
 def timestamp_log():
     import datetime
-    s_aux = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S.%f')[:-4]
+
+    s_aux = datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S.%f")[:-4]
     return s_aux
 
 
-def timestamp(s_sep='-'):
+def timestamp(s_sep="-"):
     """
     Generates a string timestamp
     :param s_sep: string separator
     :return: string timestamp
     """
     import datetime
+
     def_now = datetime.datetime.now()
-    yr = def_now.strftime('%Y')
-    mth = def_now.strftime('%m')
-    dy = def_now.strftime('%d')
-    hr = def_now.strftime('%H')
-    mn = def_now.strftime('%M')
-    sg = def_now.strftime('%S')
-    fm = def_now.strftime('%f')[:-4]
+    yr = def_now.strftime("%Y")
+    mth = def_now.strftime("%m")
+    dy = def_now.strftime("%d")
+    hr = def_now.strftime("%H")
+    mn = def_now.strftime("%M")
+    sg = def_now.strftime("%S")
+    fm = def_now.strftime("%f")[:-4]
     def_lst = [yr, mth, dy, hr, mn, sg, fm]
     def_s = str(s_sep.join(def_lst))
     return def_s
@@ -125,26 +129,27 @@ def get_seed():
     :return: int
     """
     import datetime
+
     def_now = datetime.datetime.now()
-    hr = def_now.strftime('%H')
-    mn = def_now.strftime('%M')
-    sg = def_now.strftime('%S')
+    hr = def_now.strftime("%H")
+    mn = def_now.strftime("%M")
+    sg = def_now.strftime("%S")
     return int(sg + mn + hr)
 
 
-def create_rundir(label='', wkplc='C:'):
+def create_rundir(label="", wkplc="C:"):
     """
     Create a run directory
     :param label: string label
     :param wkplc: string folder path
     :return: string path to directory
     """
-    dir_nm = wkplc + '/' + label + '_' + timestamp()
+    dir_nm = wkplc + "/" + label + "_" + timestamp()
     os.mkdir(dir_nm)
     return dir_nm
 
 
-def status(msg='Status message', process=True):
+def status(msg="Status message", process=True):
     """
     status message routine
     :param msg: string message
@@ -152,6 +157,6 @@ def status(msg='Status message', process=True):
     :return: none
     """
     if process:
-        print('\t>>> {:60}...'.format(msg))
+        print("\t>>> {:60}...".format(msg))
     else:
-        print('\n\t>>> {:60}\n'.format(msg))
+        print("\n\t>>> {:60}\n".format(msg))
