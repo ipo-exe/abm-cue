@@ -101,6 +101,6 @@ such as PyCharm, Sublime, etc.
 This is the _unsafest_ way
 to execute the app file since **you might commit unwanted 
 detrimental changes to the source code**. One advantage, tough, is
-that if you are dealing with executing issues you may inform yourself about the 
+that if you are dealing with execution issues you may inform yourself about the 
 error types returned from the system.
 
