@@ -12,8 +12,16 @@ This repository includes:
 ## Quick intro to the model
 > **Note**: see the [User Guide](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md)
 
- - text and view
+1) Agents walk randomly around a ring-like 1-D world of places;
+2) Agents and places have orientation types;
+3) Agents have a _bias_ to go to places like themselves;
+4) Agents have a limited window of sight to the nearest places to go;
+5) Agents interact with places only if they are related enough;
+7) During interaction, agents influence the place orientation type to a certain extent, and vice-versa.
 
+The result is an evolving urban environment:
+
+![intro](https://github.com/ipo-exe/abm-cue/blob/main/docs/figs/intro.gif "intro")
 
 ## Installing and Running CUE on a local machine
 
