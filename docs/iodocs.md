@@ -128,14 +128,14 @@ missing file
  - **Formating example**:
 ```
      Metadata;                                                        Value
-    Timestamp;                                       2022/07/05 07:59:57.65
+    Timestamp;                                       2022/07/12 10:31:09.36
  Input Folder;                  /home/ipora/PycharmProjects/abm-cue/samples
    Run Folder;                                    /home/ipora/Documents/bin
   Agents File; /home/ipora/PycharmProjects/abm-cue/samples/param_agents.txt
   Places File; /home/ipora/PycharmProjects/abm-cue/samples/param_places.txt
         Steps;                                                          100
 Return Agents;                                                        False
-   Trace Back;                                                        False
+   Trace Back;                                                         True
  Plot Results;                                                         True
 ```
  - **Requirements**:
@@ -544,7 +544,7 @@ Step; A_1_Trait; A_2_Trait; A_3_Trait; A_4_Trait
 |` A_Id_Trait` | positive real number | Trait orientaiton of Agent A_Id (ex: A_12_Trait) | trait units|
  - **Data view**:
 
-missing file
+![traced_agents_traits](https://github.com/ipo-exe/abm-cue/blob/main/samples/view_traced_agents_traits.png "traced_agents_traits")
 
 ## `traced_agents_x.txt`
  - **Description**: Time series table of agents positions;
@@ -574,7 +574,7 @@ Step; A_1_x; A_2_x; A_3_x; A_4_x
 |` A_Id_x` | positive integer number | Position coordinate in the x axis of Agent A_Id (ex: A_12_x) | cell units|
  - **Data view**:
 
-missing file
+![traced_agents_x](https://github.com/ipo-exe/abm-cue/blob/main/samples/view_traced_agents_x.png "traced_agents_x")
 
 ## `traced_places_traits.txt`
  - **Description**: Time series table of places traits;
@@ -604,7 +604,7 @@ Step; P_1_Trait; P_2_Trait; P_3_Trait; P_4_Trait; P_5_Trait; P_6_Trait; P_7_Trai
 |` P_Id_Trait` | positive integer number | Trait orientaiton of Place P_Id (ex: P_10_Trait) | trait units|
  - **Data view**:
 
-missing file
+![traced_places_traits](https://github.com/ipo-exe/abm-cue/blob/main/samples/view_traced_places_traits.png "traced_places_traits")
 
 ## Glossary
 
