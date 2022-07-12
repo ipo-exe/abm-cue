@@ -23,6 +23,11 @@ The result is an evolving urban environment:
 
 ![intro](https://github.com/ipo-exe/abm-cue/blob/main/figs/intro.gif "intro")
 
+The traits of places changes over time:
+
+![intro_places](https://github.com/ipo-exe/abm-cue/blob/main/samples/view_traced_places_traits.png "places")
+
+
 ## Installing and Running CUE on a local machine
 
 > **Note**: see the [installation tutorial for Windows](https://github.com/ipo-exe/abm-cue/blob/main/docs/install_windows.md)
