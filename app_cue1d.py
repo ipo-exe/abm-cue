@@ -739,7 +739,8 @@ root = tkinter.Tk()
 lst_lbls_wplc = ["Input Folder", "Run Folder"]
 # input files
 lst_lbls_inp = ["Agents File", "Places File"]
-lst_urls_inp = ["https://www.google.com", "https://www.google.com"]
+lst_urls_inp = ["https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agentstxt",
+                "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_placestxt"]
 lst_types_inp = [("Text File", "*.txt"), ("Text File", "*.txt")]
 # parameters
 lst_lbls_params = ["Steps"]
