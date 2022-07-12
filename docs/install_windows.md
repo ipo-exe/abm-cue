@@ -1,11 +1,11 @@
 # Installation guide for Windows users
 
 Here is a nice installation tutorial for Windows users. 
-> **Tip**: read _all_ the steps _before_ executing them! You may anticipate some issues.
+> **Note**: read _all_ the steps _before_ executing them! You may anticipate some issues.
 
 ## 1) **Download Python**
 Go to https://www.python.org/ and download the latest version of `Python 3`;
-> Note: unless you have good reasons to keep it, we encourage you to first 
+> **Note**: unless you have good reasons to keep it, we encourage you to first 
 > _uninstall_ older Python versions to prevent problems.  
 
 ## 2) **Install Python**
@@ -65,7 +65,7 @@ Then in the tab `Assets` of the latest release, download the `ZIP` folder of the
 After completed download, extract the folder to a location of your preference in your disk. 
 Example: `C:/Users/You/Documents/abm-cue-main`
 
-> Warning: do not change any files and subfolders from the repository. 
+> **Warning**: do not change any files and subfolders from the repository. 
 
 ## 5) Execute the application file
 
