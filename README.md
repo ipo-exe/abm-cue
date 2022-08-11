@@ -1,4 +1,4 @@
-# Agent-based Modelling - Coorperation of Urban Environments (CUE) 
+# Agent-based Modelling - Cooperation in Urban Environments (CUE) 
 
 This repository includes:
 - [x] All files required to run `abm-cue` models;
