@@ -45,6 +45,7 @@ import cue1d
 import inp, backend
 import visuals
 from backend import status
+from analyst import shannon_entropy
 
 
 def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
@@ -144,13 +145,29 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         b_return=b_return,
         b_trace=b_trace,
     )
-    #
-    # ------------------------------
 
+    # ------------------------------
+    #
     # retrieve outputs
     df_agents_end = dct_out["Agents"]
     df_places_end = dct_out["Places"]
 
+    # ------------------------------
+    #
+    # run analyst
+    n_shannon_agents_start = shannon_entropy(grd=df_agents['Trait'].values)
+    n_shannon_agents_end = shannon_entropy(grd=df_agents_end['Trait'].values)
+    n_shannon_places_start = shannon_entropy(grd=df_places['Trait'].values)
+    n_shannon_places_end = shannon_entropy(grd=df_places_end['Trait'].values)
+    dct_analyst = {
+        'Step': ['Start', 'End'],
+        'H_agents': [n_shannon_agents_start, n_shannon_agents_end],
+        'H_places': [n_shannon_places_start, n_shannon_places_end],
+    }
+    df_analyst = pd.DataFrame(dct_analyst)
+
+    # ------------------------------
+    #
     # export results
     status("exporting start/end results datasets")
     df_agents.to_csv(
@@ -165,8 +182,11 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     df_places_end.to_csv(
         "{}/param_places_end.txt".format(s_dir_out), sep=";", index=False
     )
-
-    # aux lists
+    status("exporting start/end analyst")
+    df_analyst.to_csv(
+        "{}/analyst_start_end.txt".format(s_dir_out), sep=";", index=False
+    )
+    # set aux lists
     lst_df = [df_agents, df_agents_end, df_places, df_places_end]
     lst_nms = [
         "hist_agents_start",
@@ -180,7 +200,9 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         "Places Histogram | Start",
         "Places Histogram | End",
     ]
-
+    # ------------------------------
+    #
+    # VISUALS
     # export histograms
     if b_plot:
         from visuals import plot_trait_histogram
@@ -320,3 +342,4 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
                 suf="",
             )
     return {"Output folder": s_dir_out, "Error Status": "OK"}
+

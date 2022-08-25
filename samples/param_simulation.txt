@@ -1,10 +1,10 @@
 Metadata;Value
-Timestamp;2022/07/12 10:31:09.36
-Input Folder;/home/ipora/PycharmProjects/abm-cue/samples
-Run Folder;/home/ipora/Documents/bin
-Agents File;/home/ipora/PycharmProjects/abm-cue/samples/param_agents.txt
-Places File;/home/ipora/PycharmProjects/abm-cue/samples/param_places.txt
+Timestamp;2022/08/25 16:48:07.86
+Input Folder;C:/000_myFiles/myCodes/abm-cue/samples
+Run Folder;C:/bin
+Agents File;C:/000_myFiles/myCodes/abm-cue/samples/param_agents.txt
+Places File;C:/000_myFiles/myCodes/abm-cue/samples/param_places.txt
 Steps;100
-Return Agents;False
-Trace Back;True
+Return Agents;True
+Trace Back;False
 Plot Results;True
