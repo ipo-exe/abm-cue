@@ -172,7 +172,7 @@ def plot_traced_traits(
         colors = df_params["Color"].values
         b_colors = True
     except KeyError:
-        s_lcl_color = "tab:blue"
+        s_lcl_color = "tab:grey"
         b_colors = False
     for i in range(len(df_data.columns)):
         s_lcl_col = df_data.columns[i]
@@ -182,7 +182,12 @@ def plot_traced_traits(
                 s_lcl_id = s_lcl_col.split("_")[1]
                 # get color
                 s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[0]
-            plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
+                try:
+                    plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
+                except ValueError:
+                    plt.plot(df_data["Step"], df_data[s_lcl_col], c='tab:grey')
+            else:
+                plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
             plt.ylabel("Traits")
             plt.xlabel("Steps")
             plt.xlim(0, df_data["Step"].max() + 1)
@@ -238,7 +243,7 @@ def plot_traced_positions(
         colors = df_params["Color"].values
         b_colors = True
     except KeyError:
-        s_lcl_color = "tab:blue"
+        s_lcl_color = "tab:grey"
         b_colors = False
     for i in range(len(df_data.columns)):
         s_lcl_col = df_data.columns[i]
@@ -248,7 +253,12 @@ def plot_traced_positions(
                 s_lcl_id = s_lcl_col.split("_")[1]
                 # get color
                 s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[0]
-            plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
+                try:
+                    plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
+                except ValueError:
+                    plt.plot(df_data["Step"], df_data[s_lcl_col], c='tab:grey')
+            else:
+                plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
             plt.ylabel("x")
             plt.xlabel("Steps")
             plt.xlim(0, df_data["Step"].max() + 1)

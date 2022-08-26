@@ -56,9 +56,9 @@ import backend, inp, tools
 def callsub():
     import subprocess
 
-    subprocess.run(["inkscape"])
+    subprocess.run(["python", "app_data_places.py"])
 
-
+# todo replace this
 def command_demo():
     print("Hey")
 
@@ -726,7 +726,7 @@ def print_report_header():
     print_report_msg(s_msg="Initiate session")
 
 
-# >>> change current dir
+# >>> change current dir to here
 s_current_dir = os.path.dirname(os.path.abspath(__file__))  # get file directory
 os.chdir(path=s_current_dir)  # change dir
 
@@ -754,6 +754,23 @@ reset_status()
 # geometry setup
 
 # define for different platforms
+
+dct_geometry = {
+    'linux': {
+        'height' : 630,
+        'width': 800,
+        'entry label width': 11,
+        'entry width': 55,
+        'frame padx': 5,
+        'frame pady': 2,
+        'widget padx': 2,
+        'widget pady': 2,
+        'board button width': 70,
+        # todo better geometry handler
+    },
+
+}
+
 if platform.system().lower() == "linux":
     root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
     n_height = 630
@@ -844,7 +861,7 @@ root.title(s_title)
 
 # >> set menus
 
-# Add the manu
+# Add the menu
 menubar = tkinter.Menu(
     root, bg=color_bg, activeforeground=color_actbg, foreground=color_fg, bd=0
 )
@@ -907,6 +924,36 @@ menu_file.add_command(
 menubar.add_cascade(
     label="File",
     menu=menu_file,
+    activeforeground=color_fg,
+    activebackground=color_actbg,
+)
+
+# >> create the Tool Menu
+menu_data = tkinter.Menu(
+    menubar, tearoff=0, bg=color_bg_alt, activebackground=color_actbg
+)
+# add menu items to the Settings menu
+menu_data.add_command(
+    label="Set Agents File",
+    image=img_file,
+    compound=LEFT,
+    foreground=color_fg,
+    activeforeground=color_fg,
+    command=callsub,
+)
+# add menu items to the Settings menu
+menu_data.add_command(
+    label="Set Places File",
+    image=img_file,
+    compound=LEFT,
+    foreground=color_fg,
+    activeforeground=color_fg,
+    command=callsub,
+)
+# add the File menu to the menubar
+menubar.add_cascade(
+    label="Data",
+    menu=menu_data,
     activeforeground=color_fg,
     activebackground=color_actbg,
 )
@@ -1064,7 +1111,7 @@ for i in range(len(lst_lbls_wplc)):
         row=i, column=3, pady=n_widg_pady, padx=n_widg_padx
     )
 
-# >> Input files
+# >> Input files layout
 
 # place widgets in dicts
 dct_lbls_inp = dict()

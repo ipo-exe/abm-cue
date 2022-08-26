@@ -10,6 +10,7 @@ hist_agents_start;txt;process output;Data Table;Histogram table of agents on ini
 hist_agents_end;txt;process output;Data Table;Histogram table of agents on final conditions;none;none;none;none;Trait & Count;none;none
 hist_places_start;txt;process output;Data Table;Histogram table places of placess on initial conditions;none;none;none;none;Trait & Count;none;none
 hist_places_end;txt;process output;Data Table;Histogram table places of places on final conditions;none;none;none;none;Trait & Count;none;none
-traced_agents_traits;txt;process output;Time Series;Time series table of agents traits;none;none;none;none;Step & A_Id_Trait;none;none
+traced_agents_traits;txt;process output;Time Series;Time series table of agents traits;none;none;none;none;Step & A_Id_Trait & H;none;none
 traced_agents_x;txt;process output;Time Series;Time series table of agents positions;none;none;none;none;Step & A_Id_x;none;none
-traced_places_traits;txt;process output;Time Series;Time series table of places traits;none;none;none;none;Step & P_Id_Trait;none;none
+traced_places_traits;txt;process output;Time Series;Time series table of places traits;none;none;none;none;Step & P_Id_Trait & H;none;none
+analyst_start_end;txt;process output;Data Table;Table of Start-End analysis of Shannon Entropy;none;none;none;none;Step & H_agents & H_places;none;none

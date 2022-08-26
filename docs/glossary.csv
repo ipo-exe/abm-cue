@@ -29,7 +29,10 @@ SD;positive real number;Keyword for `Standard Deviation`;-;keyword
 Count;positive integer number;Keyword for `Counting`;-;keyword
 A_Id_x;positive integer number;Position coordinate in the x axis of Agent A_Id (ex: A_12_x);cell units;variable
 P_Id_x;positive integer number;Position coordinate in the x axis of Place P_Id (ex: P_10_x);cell units;variable
-A_Id_Trait;positive real number;Trait orientaiton of Agent A_Id (ex: A_12_Trait);trait units;variable
-P_Id_Trait;positive integer number;Trait orientaiton of Place P_Id (ex: P_10_Trait);trait units;variable
+A_Id_Trait;positive real number;Trait orientation of Agent A_Id (ex: A_12_Trait);trait units;variable
+P_Id_Trait;positive integer number;Trait orientation of Place P_Id (ex: P_10_Trait);trait units;variable
 Step;positive integer number;Time step number;-;field
-Count;positive integer number;Couting units;-;field
+Count;positive integer number;Counting units;-;field
+H;real number;Shannon Entropy;Bits;field
+H_agents;real number;Shannon Entropy of Agents;Bits;field
+H_places;real number;Shannon Entropy of Places;Bits;field

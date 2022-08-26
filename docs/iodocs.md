@@ -23,7 +23,10 @@ Id;  x; Trait; Alpha; Beta;    C;    Name; Alias ;  Color
  1;  5;    20;    20;    5;  0.0; Agent A;    AgA;    red
  2; 10;    20;    20;    5;  0.0; Agent B;    AgB;   blue
  3; 15;     1;    20;    5; 0.01; Agent C;    AgC; orange
- 4; 35;     1;    20;    3; 0.01; Agent C;    AgC; orange
+ 4; 20;     1;    20;    3; 0.01; Agent C;    AgC; orange
+ 5; 25;     1;    20;    3; 0.01; Agent C;    AgC; orange
+ 6; 30;     1;    20;    3; 0.01; Agent C;    AgC; orange
+ 7; 35;     1;    20;    3; 0.01; Agent C;    AgC; orange
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -56,47 +59,47 @@ missing file
  - **Format**: Data Table;
  - **Formating example**:
 ```
-Id;  x; Trait;   D;    Name; Alias
- 1;  0;     5; 0.1; Place A;    PA
- 2;  1;     5; 0.1; Place A;    PA
- 3;  2;     5; 0.1; Place A;    PA
- 4;  3;     5; 0.1; Place A;    PA
- 5;  4;     5; 0.1; Place A;    PA
- 6;  5;     5; 0.1; Place A;    PA
- 7;  6;     5; 0.1; Place A;    PA
- 8;  7;     5; 0.1; Place A;    PA
- 9;  8;     5; 0.1; Place A;    PA
-10;  9;     5; 0.1; Place A;    PA
-11; 10;     5; 0.1; Place A;    PA
-12; 11;     5; 0.1; Place A;    PA
-13; 12;     5; 0.1; Place A;    PA
-14; 13;     5; 0.1; Place A;    PA
-15; 14;     5; 0.1; Place A;    PA
-16; 15;     5; 0.1; Place A;    PA
-17; 16;     5; 0.1; Place A;    PA
-18; 17;     5; 0.1; Place A;    PA
-19; 18;     5; 0.1; Place A;    PA
-20; 19;     5; 0.1; Place A;    PA
-21; 20;     5; 0.1; Place B;    PB
-22; 21;     5; 0.1; Place B;    PB
-23; 22;     5; 0.1; Place B;    PB
-24; 23;     5; 0.1; Place B;    PB
-25; 24;     5; 0.1; Place B;    PB
-26; 25;     5; 0.1; Place B;    PB
-27; 26;     5; 0.1; Place B;    PB
-28; 27;     5; 0.1; Place B;    PB
-29; 28;     5; 0.1; Place B;    PB
-30; 29;     5; 0.1; Place B;    PB
-31; 30;     5; 0.1; Place B;    PB
-32; 31;     5; 0.1; Place B;    PB
-33; 32;     5; 0.1; Place B;    PB
-34; 33;     5; 0.1; Place B;    PB
-35; 34;     5; 0.1; Place B;    PB
-36; 35;     5; 0.1; Place B;    PB
-37; 36;     5; 0.1; Place B;    PB
-38; 37;     5; 0.1; Place B;    PB
-39; 38;     5; 0.1; Place B;    PB
-40; 39;     5; 0.1; Place B;    PB
+Id;  x; Trait;   D;    Name; Alias; Color
+ 1;  0;     5; 0.1; Place A;    PA;  blue
+ 2;  1;     5; 0.1; Place A;    PA;   NaN
+ 3;  2;     5; 0.1; Place A;    PA;  blue
+ 4;  3;     5; 0.1; Place A;    PA;  blue
+ 5;  4;     5; 0.1; Place A;    PA;  blue
+ 6;  5;     5; 0.1; Place A;    PA;  blue
+ 7;  6;     5; 0.1; Place A;    PA;  blue
+ 8;  7;     5; 0.1; Place A;    PA;  blue
+ 9;  8;     5; 0.1; Place A;    PA;  blue
+10;  9;     5; 0.1; Place A;    PA;  blue
+11; 10;     5; 0.1; Place A;    PA;  blue
+12; 11;     5; 0.1; Place A;    PA;  blue
+13; 12;     5; 0.1; Place A;    PA;  blue
+14; 13;     5; 0.1; Place A;    PA;  blue
+15; 14;     5; 0.1; Place A;    PA;  blue
+16; 15;     5; 0.1; Place A;    PA;  blue
+17; 16;     5; 0.1; Place A;    PA;  blue
+18; 17;     5; 0.1; Place A;    PA;  blue
+19; 18;     5; 0.1; Place A;    PA;  blue
+20; 19;     5; 0.1; Place A;    PA;   red
+21; 20;     5; 0.1; Place B;    PB;   red
+22; 21;     5; 0.1; Place B;    PB;   red
+23; 22;     5; 0.1; Place B;    PB;   red
+24; 23;     5; 0.1; Place B;    PB;   red
+25; 24;     5; 0.1; Place B;    PB;   red
+26; 25;     5; 0.1; Place B;    PB;   red
+27; 26;     5; 0.1; Place B;    PB;   red
+28; 27;     5; 0.1; Place B;    PB;   red
+29; 28;     5; 0.1; Place B;    PB;   red
+30; 29;     5; 0.1; Place B;    PB;   red
+31; 30;     5; 0.1; Place B;    PB;   red
+32; 31;     5; 0.1; Place B;    PB;   red
+33; 32;     5; 0.1; Place B;    PB;   red
+34; 33;     5; 0.1; Place B;    PB;   red
+35; 34;     5; 0.1; Place B;    PB;   red
+36; 35;     5; 0.1; Place B;    PB;   red
+37; 36;     5; 0.1; Place B;    PB;   red
+38; 37;     5; 0.1; Place B;    PB;   red
+39; 38;     5; 0.1; Place B;    PB;   red
+40; 39;     5; 0.1; Place B;    PB;   red
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -127,16 +130,16 @@ missing file
  - **Format**: Data Table;
  - **Formating example**:
 ```
-     Metadata;                                                        Value
-    Timestamp;                                       2022/07/12 10:31:09.36
- Input Folder;                  /home/ipora/PycharmProjects/abm-cue/samples
-   Run Folder;                                    /home/ipora/Documents/bin
-  Agents File; /home/ipora/PycharmProjects/abm-cue/samples/param_agents.txt
-  Places File; /home/ipora/PycharmProjects/abm-cue/samples/param_places.txt
-        Steps;                                                          100
-Return Agents;                                                        False
-   Trace Back;                                                         True
- Plot Results;                                                         True
+     Metadata;                                                   Value
+    Timestamp;                                  2022/08/25 16:48:07.86
+ Input Folder;                  C:/000_myFiles/myCodes/abm-cue/samples
+   Run Folder;                                                  C:/bin
+  Agents File; C:/000_myFiles/myCodes/abm-cue/samples/param_agents.txt
+  Places File; C:/000_myFiles/myCodes/abm-cue/samples/param_places.txt
+        Steps;                                                     100
+Return Agents;                                                    True
+   Trace Back;                                                    True
+   Plot Steps;                                                   False
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -167,6 +170,7 @@ These files are generated by the program. Note that the user may source it as in
 |[traced_agents_traits.txt](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#traced_agents_traitstxt) | process output | Time Series|
 |[traced_agents_x.txt](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#traced_agents_xtxt) | process output | Time Series|
 |[traced_places_traits.txt](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#traced_places_traitstxt) | process output | Time Series|
+|[analyst_start_end.txt](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#analyst_start_endtxt) | process output | Data Table|
 
 ## `param_agents_start.txt`
  - **Description**: Table of agents parameters and initial conditions;
@@ -522,14 +526,14 @@ Trait; Count
  - **Format**: Time Series;
  - **Formating example**:
 ```
-Step; A_1_Trait; A_2_Trait; A_3_Trait; A_4_Trait
-   0;      20.0;      20.0;       1.0;       1.0
-   1;      20.0;      20.0;  1.039604;  1.039604
-   2;      20.0;      20.0; 1.0788158; 1.0788158
-   3;      20.0;      20.0; 1.1311407; 1.1140391
-   4;      20.0;      20.0; 1.2063798; 1.1489491
-   5;      20.0;      20.0; 1.2439404; 1.1870784
-   6;      20.0;      20.0; 1.2775286; 1.2248302
+Step; A_1_Trait; A_2_Trait; A_3_Trait; A_4_Trait; A_5_Trait; A_6_Trait; A_7_Trait;          H
+   0;      20.0;      20.0;       1.0;       1.0;       1.0;       1.0;       1.0; 0.86312056
+   1;      20.0;      20.0;  1.039604; 1.0360036;  1.039604; 1.0360036;  1.039604; 0.86312056
+   2;      20.0;      20.0; 1.0788158; 1.0752511; 1.0788158; 1.0752511; 1.0788158; 0.86312056
+   3;      20.0;      20.0; 1.1176394;   1.11411; 1.1176394;  1.110542; 1.1176394; 0.86312056
+   4;      20.0;      20.0; 1.1525106; 1.1490515; 1.1525139; 1.1454868;  1.149337; 0.86312056
+   5;      20.0;      20.0; 1.1906046; 1.1804706; 1.1838727;  1.180121; 1.1778394; 0.86312056
+   6;      20.0;      20.0; 1.2652549; 1.2087224; 1.2120702; 1.2057272; 1.2011404; 0.86312056
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -541,7 +545,8 @@ Step; A_1_Trait; A_2_Trait; A_3_Trait; A_4_Trait
 |Field Name | Data Type | Description | Units|
 |:--- | :--- | :--- | :---|
 |`Step ` | positive integer number | Time step number | -|
-|` A_Id_Trait` | positive real number | Trait orientaiton of Agent A_Id (ex: A_12_Trait) | trait units|
+|` A_Id_Trait ` | positive real number | Trait orientation of Agent A_Id (ex: A_12_Trait) | trait units|
+|` H` | real number | Shannon Entropy | Bits|
  - **Data view**:
 
 ![traced_agents_traits](https://github.com/ipo-exe/abm-cue/blob/main/samples/view_traced_agents_traits.png "traced_agents_traits")
@@ -552,14 +557,14 @@ Step; A_1_Trait; A_2_Trait; A_3_Trait; A_4_Trait
  - **Format**: Time Series;
  - **Formating example**:
 ```
-Step; A_1_x; A_2_x; A_3_x; A_4_x
-   0;   5.0;  10.0;  15.0;  35.0
-   1;   7.0;   7.0;  13.0;  36.0
-   2;  10.0;   5.0;  12.0;  37.0
-   3;  15.0;   9.0;  10.0;  36.0
-   4;  10.0;   7.0;   7.0;  37.0
-   5;  15.0;  10.0;  11.0;  38.0
-   6;  10.0;  14.0;  13.0;   0.0
+Step; A_1_x; A_2_x; A_3_x; A_4_x; A_5_x; A_6_x; A_7_x
+   0;   5.0;  10.0;  15.0;  20.0;  25.0;  30.0;  35.0
+   1;   8.0;  10.0;  19.0;  19.0;  27.0;  27.0;  37.0
+   2;  10.0;  11.0;  12.0;  17.0;  26.0;  29.0;  32.0
+   3;   4.0;  12.0;  20.0;  22.0;  24.0;  29.0;  33.0
+   4;   3.0;   8.0;  17.0;  22.0;  26.0;  32.0;  32.0
+   5;   6.0;  10.0;  16.0;  22.0;  26.0;  33.0;  32.0
+   6;   6.0;  11.0;  10.0;  22.0;  26.0;  32.0;  32.0
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -582,14 +587,14 @@ Step; A_1_x; A_2_x; A_3_x; A_4_x
  - **Format**: Time Series;
  - **Formating example**:
 ```
-Step; P_1_Trait; P_2_Trait; P_3_Trait; P_4_Trait; P_5_Trait; P_6_Trait; P_7_Trait; P_8_Trait; P_9_Trait; P_10_Trait; P_11_Trait; P_12_Trait; P_13_Trait; P_14_Trait; P_15_Trait; P_16_Trait; P_17_Trait; P_18_Trait; P_19_Trait; P_20_Trait; P_21_Trait; P_22_Trait; P_23_Trait; P_24_Trait; P_25_Trait; P_26_Trait; P_27_Trait; P_28_Trait; P_29_Trait; P_30_Trait; P_31_Trait; P_32_Trait; P_33_Trait; P_34_Trait; P_35_Trait; P_36_Trait; P_37_Trait; P_38_Trait; P_39_Trait; P_40_Trait
-   0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0
-   1;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;  7.603306;       5.0;        5.0;        5.0;        5.0;        5.0;  4.6363635;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;  4.6363635;        5.0;        5.0;        5.0
-   2;       5.0;       5.0;       5.0;       5.0;       5.0; 6.3636365;       5.0;  7.603306;       5.0;        5.0;  6.3636365;        5.0;   4.639964;  4.6363635;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;  4.6363635;   4.639964;        5.0;        5.0
-   3;       5.0;       5.0;       5.0;       5.0;       5.0; 6.3636365;       5.0;  7.603306;       5.0;  6.3636365;  5.8831983;        5.0;   4.639964;  4.6363635;        5.0;  6.3636365;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;    4.31295;   4.639964;        5.0;        5.0
-   4;       5.0;       5.0;       5.0;       5.0;       5.0; 6.3636365;       5.0;  8.039448;       5.0;  6.3636365;   7.166544;        5.0;   4.639964;  4.6363635;        5.0;  6.3636365;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;    4.31295;  4.3194256;        5.0;        5.0
-   5;       5.0;       5.0;       5.0;       5.0;       5.0; 6.3636365;       5.0;  8.039448;       5.0;  6.3636365;   8.333221;  4.6551256;   4.639964;  4.6363635;        5.0;   7.603306;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;    4.31295;  4.3194256;  4.6499043;        5.0
-   6;  4.653371;       5.0;       5.0;       5.0;       5.0; 6.3636365;       5.0;  8.039448;       5.0;  6.3636365;   9.393838;  4.6551256;   4.639964;  4.3279614;  6.3636365;   7.603306;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;    4.31295;  4.3194256;  4.6499043;        5.0
+Step; P_1_Trait; P_2_Trait; P_3_Trait; P_4_Trait; P_5_Trait; P_6_Trait; P_7_Trait; P_8_Trait; P_9_Trait; P_10_Trait; P_11_Trait; P_12_Trait; P_13_Trait; P_14_Trait; P_15_Trait; P_16_Trait; P_17_Trait; P_18_Trait; P_19_Trait; P_20_Trait; P_21_Trait; P_22_Trait; P_23_Trait; P_24_Trait; P_25_Trait; P_26_Trait; P_27_Trait; P_28_Trait; P_29_Trait; P_30_Trait; P_31_Trait; P_32_Trait; P_33_Trait; P_34_Trait; P_35_Trait; P_36_Trait; P_37_Trait; P_38_Trait; P_39_Trait; P_40_Trait;          H
+   0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;       -0.0
+   1;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0; 6.3636365;        5.0;  6.3636365;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;   4.305785;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;   4.305785;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;  4.6363635;        5.0;        5.0; 0.66493326
+   2;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0;       5.0; 6.3636365;        5.0;   7.603306;  6.3636365;   4.639964;        5.0;        5.0;        5.0;        5.0;  4.6396365;        5.0;   4.305785;        5.0;        5.0;        5.0;        5.0;        5.0;        5.0;   4.639964;   4.305785;        5.0;  4.6396365;        5.0;        5.0;   4.639964;        5.0;        5.0;        5.0;        5.0;  4.6363635;        5.0;        5.0;  1.1498919
+   3;       5.0;       5.0;       5.0;       5.0; 6.3636365;       5.0;       5.0;       5.0; 6.3636365;        5.0;   7.603306;  6.3636365;  6.0363307;        5.0;        5.0;        5.0;        5.0;  4.6396365;        5.0;   4.305785;   4.643529;        5.0;  4.6432047;        5.0;   4.643529;        5.0;   4.639964;   4.305785;        5.0;   4.315602;        5.0;        5.0;   4.639964;   4.643529;        5.0;        5.0;        5.0;  4.6363635;        5.0;        5.0;  1.4196069
+   4;       5.0;       5.0;       5.0; 6.3636365; 6.3636365;       5.0;       5.0;       5.0;  7.603306;        5.0;   7.603306;  6.3636365;  6.0363307;        5.0;        5.0;        5.0;        5.0;   4.319455;        5.0;   4.305785;   4.643529;        5.0;  4.3223777;        5.0;   4.643529;        5.0;  4.3197527;   4.305785;        5.0;   4.315602;        5.0;        5.0;  4.0280647;   4.643529;        5.0;        5.0;        5.0;  4.6363635;        5.0;        5.0;  1.5195363
+   5;       5.0;       5.0;       5.0; 6.3636365; 6.3636365;       5.0; 6.3636365;       5.0;  7.603306;        5.0;   8.730278;  6.3636365;  6.0363307;        5.0;        5.0;        5.0;   4.650228;   4.319455;        5.0;   4.305785;   4.643529;        5.0;  4.0338936;        5.0;   4.643529;        5.0;  4.0318217;   4.305785;        5.0;   4.315602;        5.0;        5.0;  3.7663624;   4.325525;        5.0;        5.0;        5.0;  4.6363635;        5.0;        5.0;  1.7743767
+   6;       5.0;       5.0;       5.0; 6.3636365; 6.3636365;       5.0;  7.603306;       5.0;  7.603306;        5.0;   8.044853;   7.603306;  6.0363307;        5.0;        5.0;        5.0;   4.650228;   4.319455;        5.0;   4.305785;   4.643529;        5.0;  3.7744915;        5.0;   4.643529;        5.0;  3.7729175;   4.305785;        5.0;   4.315602;        5.0;        5.0;  3.3173032;   4.325525;        5.0;        5.0;        5.0;  4.6363635;        5.0;        5.0;  1.9461118
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -601,17 +606,42 @@ Step; P_1_Trait; P_2_Trait; P_3_Trait; P_4_Trait; P_5_Trait; P_6_Trait; P_7_Trai
 |Field Name | Data Type | Description | Units|
 |:--- | :--- | :--- | :---|
 |`Step ` | positive integer number | Time step number | -|
-|` P_Id_Trait` | positive integer number | Trait orientaiton of Place P_Id (ex: P_10_Trait) | trait units|
+|` P_Id_Trait ` | positive integer number | Trait orientation of Place P_Id (ex: P_10_Trait) | trait units|
+|` H` | real number | Shannon Entropy | Bits|
  - **Data view**:
 
 ![traced_places_traits](https://github.com/ipo-exe/abm-cue/blob/main/samples/view_traced_places_traits.png "traced_places_traits")
+
+## `analyst_start_end.txt`
+ - **Description**: Table of Start-End analysis of Shannon Entropy;
+ - **Source**: process output;
+ - **Format**: Data Table;
+ - **Formating example**:
+```
+ Step;           H_agents;           H_places
+Start;  0.863120568566631;               -0.0
+  End; 1.3787834934861753; 3.0199309752155794
+```
+ - **Requirements**:
+	 - Field separator: semicolon `;`;
+	 - Decimal separator: period `.`;
+ - **Mandatory Fields**:
+
+|Field Name | Data Type | Description | Units|
+|:--- | :--- | :--- | :---|
+|`Step ` | positive integer number | Time step number | -|
+|` H_agents ` | real number | Shannon Entropy of Agents | Bits|
+|` H_places` | real number | Shannon Entropy of Places | Bits|
+ - **Data view**:
+
+missing file
 
 ## Glossary
 
 ### By A-Z order
 |Keyword | Data Type | Description | Units | Category|
 |:--- | :--- | :--- | :--- | :---|
-|`A_Id_Trait` | positive real number | Trait orientaiton of Agent A_Id (ex: A_12_Trait) | trait units | variable|
+|`A_Id_Trait` | positive real number | Trait orientation of Agent A_Id (ex: A_12_Trait) | trait units | variable|
 |`A_Id_x` | positive integer number | Position coordinate in the x axis of Agent A_Id (ex: A_12_x) | cell units | variable|
 |`Agents File` | text | File path to the agents parameter file (ex: C:/data/param_agents.txt) | - | keyword|
 |`Alias` | text | Category alias (one-word only) | - | field|
@@ -619,10 +649,13 @@ Step; P_1_Trait; P_2_Trait; P_3_Trait; P_4_Trait; P_5_Trait; P_6_Trait; P_7_Trai
 |`Beta` | positive integer number | Distance threshold for agent movement. | cell units | parameter|
 |`C` | positive real number | Place-to-agent degree of interaction influence (agents openness to change) | - | parameter|
 |`Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | - | field|
-|`Count` | positive integer number | Couting units | - | field|
+|`Count` | positive integer number | Counting units | - | field|
 |`Count` | positive integer number | Keyword for `Counting` | - | keyword|
 |`D` | positive real number | Agent-to-place degree of interaction influence (places openness to change) | - | parameter|
 |`Date` | date | Date of record | - | field|
+|`H` | real number | Shannon Entropy | Bits | field|
+|`H_agents` | real number | Shannon Entropy of Agents | Bits | field|
+|`H_places` | real number | Shannon Entropy of Places | Bits | field|
 |`Id` | unique integer number | Category numerical identifyier | - | field|
 |`Input Folder` | text | Folder path to the input data folder (ex: C:/data) | - | keyword|
 |`Max` | positive real number | Keyword for `Maximum` | - | keyword|
@@ -631,7 +664,7 @@ Step; P_1_Trait; P_2_Trait; P_3_Trait; P_4_Trait; P_5_Trait; P_6_Trait; P_7_Trai
 |`Metadata` | text | Name of metadata | - | field|
 |`Min` | positive real number | Keyword for `Minimum` | - | keyword|
 |`Name` | text | Category name | - | field|
-|`P_Id_Trait` | positive integer number | Trait orientaiton of Place P_Id (ex: P_10_Trait) | trait units | variable|
+|`P_Id_Trait` | positive integer number | Trait orientation of Place P_Id (ex: P_10_Trait) | trait units | variable|
 |`P_Id_x` | positive integer number | Position coordinate in the x axis of Place P_Id (ex: P_10_x) | cell units | variable|
 |`Places File` | text | File path to the places parameter file (ex: C:/data/param_places.txt) | - | keyword|
 |`Run Folder` | text | Folder path to the folder to store simulation outputs (ex: C:/output) | - | keyword|
@@ -651,9 +684,9 @@ Step; P_1_Trait; P_2_Trait; P_3_Trait; P_4_Trait; P_5_Trait; P_6_Trait; P_7_Trai
 #### Variable
 |Keyword | Data Type | Description | Units | Category|
 |:--- | :--- | :--- | :--- | :---|
-|`A_Id_Trait` | positive real number | Trait orientaiton of Agent A_Id (ex: A_12_Trait) | trait units | variable|
+|`A_Id_Trait` | positive real number | Trait orientation of Agent A_Id (ex: A_12_Trait) | trait units | variable|
 |`A_Id_x` | positive integer number | Position coordinate in the x axis of Agent A_Id (ex: A_12_x) | cell units | variable|
-|`P_Id_Trait` | positive integer number | Trait orientaiton of Place P_Id (ex: P_10_Trait) | trait units | variable|
+|`P_Id_Trait` | positive integer number | Trait orientation of Place P_Id (ex: P_10_Trait) | trait units | variable|
 |`P_Id_x` | positive integer number | Position coordinate in the x axis of Place P_Id (ex: P_10_x) | cell units | variable|
 |`Trait` | positive real number | Trait orientation value | trait units | variable|
 |`x` | positive integer number | Position coordinate in the x axis | cell units | variable|
@@ -681,8 +714,11 @@ Step; P_1_Trait; P_2_Trait; P_3_Trait; P_4_Trait; P_5_Trait; P_6_Trait; P_7_Trai
 |:--- | :--- | :--- | :--- | :---|
 |`Alias` | text | Category alias (one-word only) | - | field|
 |`Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | - | field|
-|`Count` | positive integer number | Couting units | - | field|
+|`Count` | positive integer number | Counting units | - | field|
 |`Date` | date | Date of record | - | field|
+|`H` | real number | Shannon Entropy | Bits | field|
+|`H_agents` | real number | Shannon Entropy of Agents | Bits | field|
+|`H_places` | real number | Shannon Entropy of Places | Bits | field|
 |`Id` | unique integer number | Category numerical identifyier | - | field|
 |`Metadata` | text | Name of metadata | - | field|
 |`Name` | text | Category name | - | field|
