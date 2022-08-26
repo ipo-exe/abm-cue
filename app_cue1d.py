@@ -746,7 +746,7 @@ lst_types_inp = [("Text File", "*.txt"), ("Text File", "*.txt")]
 lst_lbls_params = ["Steps"]
 lst_widget_params = ["Int"]
 # boolean options
-lst_lbls_opts = ["Return Agents", "Trace Back", "Plot Results"]
+lst_lbls_opts = ["Return Agents", "Trace Back", "Plot Steps"]
 
 # reset status
 reset_status()
@@ -1189,7 +1189,6 @@ for i in range(len(lst_lbls_params)):
     dct_btn_upd_params[s_lcl_key].pack(side=LEFT)
 
 # >> Tool Options
-
 # place options checkbuttons
 dct_lbls_opts = dict()
 dct_checks_opts = dict()
@@ -1219,7 +1218,6 @@ for i in range(len(lst_lbls_opts)):
     dct_lbls_opts[s_lcl_key].pack(side=LEFT)
     dct_checks_opts[s_lcl_key].pack(side=LEFT)
 
-dct_var_opts[lst_lbls_opts[2]].set(True)
 
 # >> Main Board
 # run button

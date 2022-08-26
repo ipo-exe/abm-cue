@@ -88,6 +88,53 @@ def plot_sigle_frame(
         return filepath
 
 
+def plot_traced_h(
+    df_data,
+    s_field='H',
+    s_dir_out="C:/bin",
+    s_file_name="frame",
+    s_suff="",
+    s_ttl="",
+    b_show=False,
+    b_dark=False,
+    n_dpi=100,
+):
+    """
+    plot time series of H
+    :param df_data: pandas dataframe of time series (Step field required)
+    :param s_field: string field of H
+    :param s_dir_out: string output folder
+    :param s_file_name: string file name
+    :param s_suff: string suffix
+    :param s_ttl: string title
+    :param b_show: boolean to show fig
+    :param b_dark: boolean to dark mode
+    :param n_dpi: int dpi resolution
+    :return: string filepath
+    """
+    if b_dark:
+        plt.style.use("dark_background")
+    fig = plt.figure(figsize=(8, 4))  # Width, Height
+    plt.title(s_ttl)
+    plt.plot(df_data["Step"], df_data[s_field], c='tab:grey')
+    plt.ylabel("H")
+    plt.xlabel("Steps")
+    plt.xlim(0, df_data["Step"].max() + 1)
+    plt.ylim(0, 1.1 * df_data[s_field].max())
+    if b_show:
+        plt.show()
+        plt.close(fig)
+    else:
+        # export file
+        if s_suff == "":
+            filepath = s_dir_out + "/" + s_file_name + ".png"
+        else:
+            filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
+        plt.savefig(filepath, dpi=n_dpi)
+        plt.close(fig)
+        return filepath
+
+
 def plot_traced_traits(
     df_data,
     df_params,
@@ -112,7 +159,7 @@ def plot_traced_traits(
     :param b_show: boolean to show fig
     :param b_dark: boolean to dark mode
     :param n_dpi: int dpi resolution
-    :return:
+    :return: string filepath
     """
     if b_dark:
         plt.style.use("dark_background")
@@ -125,23 +172,21 @@ def plot_traced_traits(
         colors = df_params["Color"].values
         b_colors = True
     except KeyError:
-        pass
-    s_lcl_color = "tab:blue"
-    b_colors = False
-    for i in range(1, len(df_data.columns)):
+        s_lcl_color = "tab:blue"
+        b_colors = False
+    for i in range(len(df_data.columns)):
         s_lcl_col = df_data.columns[i]
-        if b_colors:
-            # get id
-            s_lcl_id = s_lcl_col.split("_")[1]
-            # get color
-            s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[
-                0
-            ]
-        plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
-        plt.ylabel("Traits")
-        plt.xlabel("Steps")
-        plt.xlim(0, df_data["Step"].max() + 1)
-        plt.ylim(0, n_traits + 1)
+        if 'Trait' in s_lcl_col:
+            if b_colors:
+                # get id
+                s_lcl_id = s_lcl_col.split("_")[1]
+                # get color
+                s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[0]
+            plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
+            plt.ylabel("Traits")
+            plt.xlabel("Steps")
+            plt.xlim(0, df_data["Step"].max() + 1)
+            plt.ylim(0, n_traits + 1)
     if b_show:
         plt.show()
         plt.close(fig)
@@ -172,7 +217,7 @@ def plot_traced_positions(
     plot time series of traits
     :param df_data: pandas dataframe of time series (Step field required)
     :param df_params: pandas dataframe of parameters (agents or places)
-    :param n_traits: int max number of places
+    :param n_positions: int max number of places
     :param s_dir_out: string output folder
     :param s_file_name: string file name
     :param s_suff: string suffix
@@ -193,23 +238,21 @@ def plot_traced_positions(
         colors = df_params["Color"].values
         b_colors = True
     except KeyError:
-        pass
-    s_lcl_color = "tab:blue"
-    b_colors = False
-    for i in range(1, len(df_data.columns)):
+        s_lcl_color = "tab:blue"
+        b_colors = False
+    for i in range(len(df_data.columns)):
         s_lcl_col = df_data.columns[i]
-        if b_colors:
-            # get id
-            s_lcl_id = s_lcl_col.split("_")[1]
-            # get color
-            s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[
-                0
-            ]
-        plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
-        plt.ylabel("x")
-        plt.xlabel("Steps")
-        plt.xlim(0, df_data["Step"].max() + 1)
-        plt.ylim(0, n_positions + 1)
+        if 'Trait' in s_lcl_col:
+            if b_colors:
+                # get id
+                s_lcl_id = s_lcl_col.split("_")[1]
+                # get color
+                s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[0]
+            plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
+            plt.ylabel("x")
+            plt.xlabel("Steps")
+            plt.xlim(0, df_data["Step"].max() + 1)
+            plt.ylim(0, n_positions + 1)
     if b_show:
         plt.show()
         plt.close(fig)

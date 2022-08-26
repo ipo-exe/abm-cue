@@ -104,7 +104,7 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         .strip()
     )
     s_plot = (
-        df_param_sim.loc[df_param_sim["Metadata"] == "Plot Results", "Value"]
+        df_param_sim.loc[df_param_sim["Metadata"] == "Plot Steps", "Value"]
         .values[0]
         .strip()
     )
@@ -204,8 +204,7 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     #
     # VISUALS
     # export histograms
-    if b_plot:
-        from visuals import plot_trait_histogram
+    from visuals import plot_trait_histogram
     for i in range(len(lst_df)):
         df_lcl = lst_df[i]
         vct_hist, vct_bins = np.histogram(
@@ -213,17 +212,16 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         )
         df_hist = pd.DataFrame({"Trait": vct_bins[1:], "Count": vct_hist})
         df_hist.to_csv("{}/{}.txt".format(s_dir_out, lst_nms[i]), sep=";", index=False)
-        if b_plot:
-            plot_trait_histogram(
-                df_data=df_lcl,
-                n_traits=n_traits,
-                n_bins=n_traits,
-                s_ttl=lst_ttl[i],
-                s_dir_out=s_dir_out,
-                s_file_name="view_" + lst_nms[i],
-                n_dpi=100,
-                b_show=False,
-            )
+        plot_trait_histogram(
+            df_data=df_lcl,
+            n_traits=n_traits,
+            n_bins=n_traits,
+            s_ttl=lst_ttl[i],
+            s_dir_out=s_dir_out,
+            s_file_name="view_" + lst_nms[i],
+            n_dpi=100,
+            b_show=False,
+        )
 
     if b_trace:
         import os
@@ -258,6 +256,26 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         for i in range(n_places):
             s_lcl_place_trait = "P_{}_Trait".format(df_places["Id"].values[i])
             df_traced_places_traits[s_lcl_place_trait] = grd_traced_places_traits_t[i]
+        #
+        # ------------------------------
+        #
+        # run series analyst
+        # set H field for agents
+        vct_h = np.zeros(len(df_traced_agents_traits), dtype='float32')
+        for t in range(len(df_traced_agents_traits)):
+            # get local traits
+            vct_lcl_traits = df_traced_agents_traits.values[t][1:]
+            # compute H
+            vct_h[t] = shannon_entropy(grd=vct_lcl_traits)
+        df_traced_agents_traits['H'] = vct_h
+        # set H field for places
+        vct_h = np.zeros(len(df_traced_places_traits), dtype='float32')
+        for t in range(len(df_traced_places_traits)):
+            # get local traits
+            vct_lcl_traits = df_traced_places_traits.values[t][1:]
+            # compute H
+            vct_h[t] = shannon_entropy(grd=vct_lcl_traits)
+        df_traced_places_traits['H'] = vct_h
 
         # export csv files
         df_traced_agents_x.to_csv(
@@ -271,41 +289,56 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         )
 
         # plot series
-        if b_plot:
-            from visuals import plot_traced_traits, plot_traced_positions
+        from visuals import plot_traced_traits, plot_traced_positions, plot_traced_h
 
-            # agents
-            plot_traced_traits(
-                df_data=df_traced_agents_traits,
-                df_params=df_agents,
-                n_traits=n_traits,
-                s_dir_out=s_dir_out,
-                s_file_name="view_traced_agents_traits",
-                s_ttl="Agents Traits",
-                b_dark=False,
-                b_show=False,
-            )
-            plot_traced_positions(
-                df_data=df_traced_agents_traits,
-                df_params=df_agents,
-                n_positions=len(df_places),
-                s_dir_out=s_dir_out,
-                s_file_name="view_traced_agents_x",
-                s_ttl="Agents Positions",
-                b_dark=False,
-                b_show=False,
-            )
-            # places
-            plot_traced_traits(
-                df_data=df_traced_places_traits,
-                df_params=df_places,
-                s_dir_out=s_dir_out,
-                n_traits=n_traits,
-                s_file_name="view_traced_places_traits",
-                s_ttl="Places Traits",
-                b_dark=False,
-                b_show=False,
-            )
+        # agents
+        plot_traced_traits(
+            df_data=df_traced_agents_traits,
+            df_params=df_agents,
+            n_traits=n_traits,
+            s_dir_out=s_dir_out,
+            s_file_name="view_traced_agents_traits",
+            s_ttl="Agents Traits",
+            b_dark=False,
+            b_show=False,
+        )
+        plot_traced_positions(
+            df_data=df_traced_agents_traits,
+            df_params=df_agents,
+            n_positions=len(df_places),
+            s_dir_out=s_dir_out,
+            s_file_name="view_traced_agents_x",
+            s_ttl="Agents Positions",
+            b_dark=False,
+            b_show=False
+        )
+        plot_traced_h(
+            df_data=df_traced_agents_traits,
+            s_dir_out=s_dir_out,
+            s_file_name="view_traced_agents_H",
+            s_ttl="Agents H",
+            b_dark=False,
+            b_show=False
+        )
+        # places
+        plot_traced_traits(
+            df_data=df_traced_places_traits,
+            df_params=df_places,
+            s_dir_out=s_dir_out,
+            n_traits=n_traits,
+            s_file_name="view_traced_places_traits",
+            s_ttl="Places Traits",
+            b_dark=False,
+            b_show=False,
+        )
+        plot_traced_h(
+            df_data=df_traced_places_traits,
+            s_dir_out=s_dir_out,
+            s_file_name="view_traced_places_H",
+            s_ttl="Places H",
+            b_dark=False,
+            b_show=False
+        )
         # plot animation frames
         if b_plot:
             dir_frames = "{}/frames".format(s_dir_out)
