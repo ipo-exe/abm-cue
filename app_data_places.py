@@ -46,6 +46,7 @@ import os
 import tkinter
 from tkinter import filedialog as fd
 from tkinter import messagebox
+from tkinter import font
 from tkinter import END, RIGHT, LEFT, BooleanVar, DISABLED, NORMAL, ANCHOR
 import platform
 import pandas as pd
@@ -68,7 +69,9 @@ def new_session():
     """
     b_ans = messagebox.askokcancel(title="New Session", message="Confirm new?")
     if b_ans:
-        print('OK')
+        s1 = '{:<15}'.format('ok')
+        s2 = '{:<15}'.format('OKOK')
+        print(s1 + s2)
         """clear_metadata()
         # fix colors
         for k in dct_lbls_wplc:
@@ -88,20 +91,197 @@ def command_demo():
     print("Hey")
 
 
+def format_string(lst_block):
+    s_aux = ' {:<6s} {:<6s} {:<6s} {:<12s} {:<8s} {:<8s}'.format(
+        lst_block[0].strip(),
+        lst_block[1].strip(),
+        lst_block[2].strip(),
+        lst_block[3].strip(),
+        lst_block[4].strip(),
+        lst_block[5].strip(),
+    )
+    return s_aux
+
+
 def add_block():
-    s_aux = "Wubba Lubba Dubdub! {}".format(np.random.randint(10, 20))
-    listbox_blocks.insert(END, s_aux)
+    global b_ok_to_add
+    update_all_entries(b_popup=False)
+    if b_ok_to_add:
+        lst_entries = get_entries_list()
+        s_entries = format_string(lst_block=lst_entries)
+        listbox_blocks.insert(END, s_entries)
+    else:
+        messagebox.showwarning(
+            title="Warning",
+            message="Invalid Entry Found"
+        )
 
 
 def remove_block():
     n_current = listbox_blocks.curselection()
-    print(n_current)
-    s_item = listbox_blocks.get(n_current)
-    print(s_item)
-    if 'Size' in s_item or '-' in s_item:
-        pass
+    if len(n_current) > 0:
+        s_item = listbox_blocks.get(n_current)
+        if 'Size' in s_item or '-' in s_item:
+            messagebox.showwarning(
+                title="Warning",
+                message="Select a Block Item"
+            )
+        else:
+            b_ans = messagebox.askokcancel(
+                title="Remove Block",
+                message="Confirm remove?"
+            )
+            if b_ans:
+                listbox_blocks.delete(ANCHOR)
     else:
-        listbox_blocks.delete(ANCHOR)
+        messagebox.showwarning(
+            title="Warning",
+            message="Select a Block Item"
+        )
+
+
+def new_block():
+    b_ans = messagebox.askokcancel(title="New Block", message="Confirm new block?")
+    if b_ans:
+        clear_entries()
+    authorize_add()
+
+
+def get_entries_list():
+    lst_etr_values = list()
+    for k in dct_lbls_blocks:
+        lst_etr_values.append(dct_etr_blocks[k].get())
+    return lst_etr_values
+
+
+def clear_entries():
+    for k in dct_lbls_blocks:
+        dct_etr_blocks[k].delete(0, END)
+        dct_lbls_blocks[k].config(foreground=color_fg)
+        dct_status[k] = False
+
+
+def validate_int(entry_value):
+    """
+    Validate integer entry
+    :param entry_value: int entry value
+    :return:
+    """
+    b_valid = True
+    try:
+        entry_value_int = int(entry_value)
+        entry_value_float = float(entry_value)
+        if entry_value_float % 1 == 0:
+            b_valid = True
+        else:
+            b_valid = False
+    except ValueError:
+        b_valid = False
+    return b_valid
+
+
+def validate_float(entry_value):
+    """
+    validate float entry
+    :param entry_value:
+    :return:
+    """
+    b_valid = True
+    try:
+        entry_value_int = float(entry_value)
+    except ValueError:
+        b_valid = False
+    return b_valid
+
+
+def update_all_entries(b_popup=True):
+    global b_ok_to_add
+    for i in range(len(lst_lbls_block)):
+        update_entry(
+            s_entry=lst_lbls_block[i],
+            s_entry_type=lst_types_block[i],
+            b_popup=False,
+            )
+    if b_popup:
+        tkinter.messagebox.showinfo(message="All entries were updated")
+        if b_ok_to_add:
+            pass
+        else:
+            messagebox.showwarning(
+                title="Warning",
+                message="Invalid Entry Found"
+            )
+
+
+def update_entry(s_entry, s_entry_type, b_popup=True):
+    s_entry_value = dct_etr_blocks[s_entry].get()
+    if len(s_entry_value) == 0:
+        # change color
+        dct_lbls_blocks[s_entry].config(foreground="red")
+        # change status
+        dct_status[s_entry] = False
+        # message
+        if b_popup:
+            messagebox.showerror(
+                title="Error", message="{}: empty entry".format(s_entry)
+            )
+    else:
+        # get valid boolean
+        b_valid = True
+        if s_entry_type == "Int":
+            b_valid = validate_int(entry_value=s_entry_value)
+        elif s_entry_type == "Real":
+            b_valid = validate_float(entry_value=s_entry_value)
+        else:
+            b_valid = True
+        # action
+        if b_valid:
+            # reset color
+            dct_lbls_blocks[s_entry].config(foreground=color_fg)
+            # change status
+            dct_status[s_entry] = True
+            # message
+            if b_popup:
+                tkinter.messagebox.showinfo(message="{}: updated".format(s_entry))
+        else:
+            # change color
+            dct_lbls_blocks[s_entry].config(foreground="red")
+            # change status
+            dct_status[s_entry] = False
+            # message
+            if b_popup:
+                tkinter.messagebox.showerror(
+                    title="Error", message="{}: invalid format".format(s_entry)
+                )
+    authorize_add()
+
+
+def authorize_add():
+    """
+    evaluate if is ok to run -- all metadata must be OK
+    :return:
+    """
+    global b_ok_to_add
+    b_ok_to_add = True
+    for k in dct_status:
+        b_ok_to_add = b_ok_to_add * dct_status[k]
+    if b_ok_to_add:
+        button_add_block.config(state=NORMAL)
+    else:
+        button_add_block.config(state=DISABLED)
+
+
+def reset_status():
+    """
+    reset run status
+    :return:
+    """
+    global dct_status
+    # status setup
+    dct_status = dict()
+    for k in lst_lbls_block:
+        dct_status[k] = False
+
 
 # >>> change current dir to here
 s_current_dir = os.path.dirname(os.path.abspath(__file__))  # get file directory
@@ -120,6 +300,14 @@ lst_lbls_block = [
     "Place Name",
     "Place Alias",
     "Place Color"
+]
+lst_types_block = [
+    'Int',
+    'Real',
+    'Real',
+    'Text',
+    'Text',
+    'Text',
 ]
 lst_lbls_block_aux = [
     "format: positive integer number",
@@ -154,7 +342,7 @@ elif platform.system().lower() == "windows":
     n_frame_pady = 2
     n_widg_padx = 4
     n_widg_pady = 2
-    n_width_board_button = 80
+    n_width_board_button = 100
     n_width_options_labels = 20
     n_width_options_check = 2
 elif platform.system().lower() == "darwin":
@@ -394,7 +582,7 @@ for i in range(len(lst_lbls_block)):
 # update button
 button_update_entries = tkinter.Button(
     frame_board_block,
-    text="Update",
+    text="Update Block",
     image=img_update,
     compound=LEFT,
     width=n_width_board_button,
@@ -409,13 +597,13 @@ button_update_entries.config(
     highlightbackground=color_bg,
     bd=0,
 )
-button_update_entries.config(command=command_demo)
+button_update_entries.config(command=lambda : update_all_entries(b_popup=True))
 button_update_entries.pack(side=LEFT, padx=n_widg_padx, pady=n_widg_pady)
 
 # add button
 button_add_block = tkinter.Button(
     frame_board_block,
-    text="Add",
+    text="Add Block",
     image=img_terminal,
     compound=LEFT,
     width=n_width_board_button,
@@ -431,13 +619,13 @@ button_add_block.config(
     bd=0,
 )
 button_add_block.config(command=add_block)
-#button_add_block.config(state=DISABLED)
+button_add_block.config(state=DISABLED)
 button_add_block.pack(side=LEFT, padx=n_widg_padx, pady=n_widg_pady)
 
 # new block
 button_new_block = tkinter.Button(
     frame_board_block,
-    text="New",
+    text="New Block",
     image=img_file,
     compound=LEFT,
     width=n_width_board_button,
@@ -452,13 +640,13 @@ button_new_block.config(
     highlightbackground=color_bg,
     bd=0,
 )
-button_new_block.config(command=command_demo)
+button_new_block.config(command=new_block)
 button_new_block.pack(side=LEFT, padx=n_widg_padx, pady=n_widg_pady)
 
 # remove block
 button_remove_block = tkinter.Button(
     frame_board_block,
-    text="Remove",
+    text="Remove Block",
     image=img_terminal,
     compound=LEFT,
     width=n_width_board_button,
@@ -487,8 +675,6 @@ scrollbar_log_x = tkinter.Scrollbar(
     bd=0,
     activebackground=color_actbg,
 )
-s_blocks_header = ' {:8} {:8} {:8}'.format('Size', 'Trait', 'D')
-
 listbox_blocks = tkinter.Listbox(
     frame_list,
     height=12,
@@ -496,6 +682,7 @@ listbox_blocks = tkinter.Listbox(
     borderwidth=0,
     bd=0,
     bg="grey",
+    font="TkFixedFont",
     foreground=color_fg,
     highlightbackground=color_bg,
     selectbackground=color_actbg,
@@ -508,30 +695,46 @@ scrollbar_log_x.config(command=listbox_blocks.xview)
 listbox_blocks.grid(row=1, column=0)
 scrollbar_log_y.grid(row=1, column=1, sticky="NS")
 scrollbar_log_x.grid(row=2, column=0, sticky="WE")
-#listbox_log.config(state=DISABLED)
+
 
 # >>> Commands
 dct_btn_upd_blocks[lst_lbls_block[0]].config(
-    command=lambda : command_demo()
+    command=lambda : update_entry(s_entry=lst_lbls_block[0],
+                                  s_entry_type=lst_types_block[0])
 )
 dct_btn_upd_blocks[lst_lbls_block[1]].config(
-    command=lambda : command_demo()
+    command=lambda : update_entry(s_entry=lst_lbls_block[1],
+                                  s_entry_type=lst_types_block[1])
 )
 dct_btn_upd_blocks[lst_lbls_block[2]].config(
-    command=lambda : command_demo()
+    command=lambda : update_entry(s_entry=lst_lbls_block[2],
+                                  s_entry_type=lst_types_block[2])
 )
 dct_btn_upd_blocks[lst_lbls_block[3]].config(
-    command=lambda : command_demo()
+    command=lambda : update_entry(s_entry=lst_lbls_block[3],
+                                  s_entry_type=lst_types_block[3])
 )
 dct_btn_upd_blocks[lst_lbls_block[4]].config(
-    command=lambda : command_demo()
+    command=lambda : update_entry(s_entry=lst_lbls_block[4],
+                                  s_entry_type=lst_types_block[4])
 )
 dct_btn_upd_blocks[lst_lbls_block[5]].config(
-    command=lambda : command_demo()
+    command=lambda : update_entry(s_entry=lst_lbls_block[5],
+                                  s_entry_type=lst_types_block[5])
 )
 
-s_blocks_header = ' {:8} {:8} {:8}'.format('Size', 'Trait', 'D')
+
+# >>>>> final setup
+
+lst_head = [
+    'Size',  'Trait', 'D', 'Name', 'Alias', 'Color'
+]
+s_blocks_header = format_string(lst_block=lst_head)
 listbox_blocks.insert(END, s_blocks_header)
-listbox_blocks.insert(END, '-' * 100)
+listbox_blocks.insert(END, '-' * 70)
+
+# reset status
+reset_status()
+
 # run root window
 root.mainloop()
