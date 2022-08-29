@@ -53,6 +53,7 @@ import pandas as pd
 import numpy as np
 import backend, inp, tools
 
+
 def quit():
     """
     smart exit function
@@ -62,54 +63,149 @@ def quit():
     if b_ans:
         root.destroy()
 
+
+def save_as():
+    """
+    save as routine
+    :return: string filepath
+    """
+    s_ans = fd.asksaveasfilename(
+        title="Save As",
+        filetypes=(("Text File", "*.txt"), ("All Files", "*.*")),
+    )
+    if str(s_ans) == "()" or s_ans == "":
+        return 'abort'
+    else:
+        # handle naming extension problem
+        if s_ans[-4:] == '.txt':
+            pass
+        else:
+            s_ans = s_ans + '.txt'
+        return s_ans
+
+
+def save_file():
+    """
+    save file routine
+    :return: none
+    """
+    global b_ok_to_save
+    authorize_save()
+    if b_ok_to_save:
+        s_filepath = save_as()
+        if s_filepath == 'abort':
+            pass
+        else:
+            # get list
+            lst_listbox_blocks = listbox_blocks.get(0, END)
+            lst_id = list()
+            lst_x = list()
+            lst_trait = list()
+            lst_d = list()
+            lst_name = list()
+            lst_alias = list()
+            lst_color = list()
+            lst_sizes = list()
+            # get sizes
+            n_counter = 0
+            for i in range(1, len(lst_listbox_blocks)):
+                lst_local = lst_listbox_blocks[i].split(';')
+                lst_local_values = list()
+                # handle local values
+                for j in range(len(lst_local)):
+                    lst_local_values.append(lst_local[j].strip())
+                # append to lists
+                for j in range(int(lst_local_values[0])):
+                    lst_id.append(n_counter + 1)
+                    lst_x.append(n_counter)
+                    lst_trait.append((lst_local_values[1]))
+                    lst_d.append(lst_local_values[2])
+                    lst_name.append(lst_local_values[3])
+                    lst_alias.append(lst_local_values[4])
+                    lst_color.append(lst_local_values[5])
+                    # update counter
+                    n_counter = n_counter + 1
+            df_out = pd.DataFrame(
+                {
+                    'Id': lst_id,
+                    'x': lst_x,
+                    'Trait': lst_trait,
+                    'D': lst_d,
+                    'Name': lst_name,
+                    'Alias': lst_alias,
+                    'Color': lst_color,
+                }
+            )
+            if bool(b_randomize):
+                df_out = df_out.sample(frac=1).reset_index(drop=True)
+                df_out['Id'] = np.arange(0, len(df_out)) + 1
+                df_out['x'] = np.arange(0, len(df_out))
+            df_out.to_csv(s_filepath, sep=';', index=False)
+            tkinter.messagebox.showinfo(message="File Saved")
+    else:
+        messagebox.showwarning(
+            title="Warning",
+            message="Zero Blocks Found"
+        )
+
+
 def new_session():
     """
     start new session
-    :return:
+    :return: none
     """
     b_ans = messagebox.askokcancel(title="New Session", message="Confirm new?")
     if b_ans:
-        s1 = '{:<15}'.format('ok')
-        s2 = '{:<15}'.format('OKOK')
-        print(s1 + s2)
-        """clear_metadata()
-        # fix colors
-        for k in dct_lbls_wplc:
-            dct_lbls_wplc[k].config(foreground=color_fg)
-        for k in dct_lbls_inp:
-            dct_lbls_inp[k].config(foreground=color_fg)
-        for k in dct_lbls_params:
-            dct_lbls_params[k].config(foreground=color_fg)
-        # disable save
-        menu_file.entryconfig(2, state=DISABLED)
-        reset_status()
-        get_entry_metadata()
-        authorize()"""
+        clear_entries()
+        authorize_add()
+        listbox_blocks.delete(0, END)
+        append_header()
+        authorize_save()
+        # options
+        b_randomize.set(False)
+
+
 
 # todo replace this
 def command_demo():
     print("Hey")
 
 
-def format_string(lst_block):
-    s_aux = ' {:<6s} {:<6s} {:<6s} {:<12s} {:<8s} {:<8s}'.format(
+def format_string(lst_block, s_sep=' '):
+    """
+    convenient routine for string formatting
+    :param lst_block: list of fields
+    :param s_sep: string separator
+    :return: string formatted
+    """
+    s_aux = ' {:>6s}{}{:>6s}{}{:>6s}{}{:>12s}{}{:>8s}{}{:>8s}'.format(
         lst_block[0].strip(),
+        s_sep,
         lst_block[1].strip(),
+        s_sep,
         lst_block[2].strip(),
+        s_sep,
         lst_block[3].strip(),
+        s_sep,
         lst_block[4].strip(),
+        s_sep,
         lst_block[5].strip(),
     )
     return s_aux
 
 
 def add_block():
+    """
+    add block to listbox
+    :return: none
+    """
     global b_ok_to_add
     update_all_entries(b_popup=False)
     if b_ok_to_add:
         lst_entries = get_entries_list()
-        s_entries = format_string(lst_block=lst_entries)
+        s_entries = format_string(lst_block=lst_entries, s_sep=';')
         listbox_blocks.insert(END, s_entries)
+        authorize_save()
     else:
         messagebox.showwarning(
             title="Warning",
@@ -118,6 +214,10 @@ def add_block():
 
 
 def remove_block():
+    """
+    remove block from listbox
+    :return: none
+    """
     n_current = listbox_blocks.curselection()
     if len(n_current) > 0:
         s_item = listbox_blocks.get(n_current)
@@ -141,13 +241,24 @@ def remove_block():
 
 
 def new_block():
-    b_ans = messagebox.askokcancel(title="New Block", message="Confirm new block?")
+    """
+    refresh block forms
+    :return: none
+    """
+    b_ans = messagebox.askokcancel(
+        title="New Block",
+        message="Confirm new block?"
+    )
     if b_ans:
         clear_entries()
     authorize_add()
 
 
 def get_entries_list():
+    """
+    load entries to list
+    :return:
+    """
     lst_etr_values = list()
     for k in dct_lbls_blocks:
         lst_etr_values.append(dct_etr_blocks[k].get())
@@ -155,6 +266,11 @@ def get_entries_list():
 
 
 def clear_entries():
+    """
+    clean up entries
+    :return:
+    """
+    # labels
     for k in dct_lbls_blocks:
         dct_etr_blocks[k].delete(0, END)
         dct_lbls_blocks[k].config(foreground=color_fg)
@@ -195,6 +311,11 @@ def validate_float(entry_value):
 
 
 def update_all_entries(b_popup=True):
+    """
+    Batch update routine
+    :param b_popup: boolean for popup messages
+    :return: none
+    """
     global b_ok_to_add
     for i in range(len(lst_lbls_block)):
         update_entry(
@@ -214,6 +335,13 @@ def update_all_entries(b_popup=True):
 
 
 def update_entry(s_entry, s_entry_type, b_popup=True):
+    """
+    update string entry
+    :param s_entry: string entry label
+    :param s_entry_type: string entry type (Int, Real, Text, ...)
+    :param b_popup: boolean for popup msg
+    :return: none
+    """
     s_entry_value = dct_etr_blocks[s_entry].get()
     if len(s_entry_value) == 0:
         # change color
@@ -271,6 +399,21 @@ def authorize_add():
         button_add_block.config(state=DISABLED)
 
 
+def authorize_save():
+    """
+    evaluate if it is ok to save file
+    :return:
+    """
+    global b_ok_to_save
+    lst_listbox_blocks = listbox_blocks.get(0, END)
+    if len(lst_listbox_blocks) > 2:
+        b_ok_to_save = True
+        button_export.config(state=NORMAL)
+    else:
+        b_ok_to_save = False
+        button_export.config(state=DISABLED)
+
+
 def reset_status():
     """
     reset run status
@@ -281,6 +424,19 @@ def reset_status():
     dct_status = dict()
     for k in lst_lbls_block:
         dct_status[k] = False
+
+
+def append_header():
+    """
+    append header to listbox
+    :return:
+    """
+    lst_head = [
+        'Size', 'Trait', 'D', 'Name', 'Alias', 'Color'
+    ]
+    s_blocks_header = format_string(lst_block=lst_head, s_sep=';')
+    listbox_blocks.insert(END, s_blocks_header)
+    #listbox_blocks.insert(END, '-' * len(s_blocks_header))
 
 
 # >>> change current dir to here
@@ -334,10 +490,10 @@ if platform.system().lower() == "linux":
     n_width_options_check = 2
 elif platform.system().lower() == "windows":
     root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
-    n_height = 580
+    n_height = 610
     n_width = 610
-    n_entry_label_width = 10
-    n_entry_width = 30
+    n_entry_label_width = 15
+    n_entry_width = 20
     n_frame_padx = 5
     n_frame_pady = 2
     n_widg_padx = 4
@@ -398,7 +554,7 @@ img_chat = tkinter.PhotoImage(file="gui/chat.png")
 img_terminal = tkinter.PhotoImage(file="gui/terminal.png")
 
 # files setup
-s_title = "Places Dataset Tool"
+s_title = "Places File Tool"
 root.title(s_title)
 
 # >> set menus
@@ -483,6 +639,9 @@ frame_board_block = tkinter.LabelFrame(
 frame_list = tkinter.LabelFrame(
     root, text="Blocks Preview", width=n_width, bg=color_bg, foreground=color_fg
 )
+frame_board_params = tkinter.LabelFrame(
+    root, text="File Parameters", width=n_width, bg=color_bg, foreground=color_fg
+)
 frame_board_export = tkinter.LabelFrame(
     root, text="Export File", width=n_width, bg=color_bg, foreground=color_fg
 )
@@ -492,7 +651,9 @@ frame_logo.pack(fill="x", padx=n_frame_padx, side=RIGHT)
 frame_info.pack(fill="y", padx=n_frame_padx, side=RIGHT)
 frame_blocksets.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 frame_board_block.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
-frame_list.pack(padx=n_frame_padx, pady=n_frame_pady)
+frame_list.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
+frame_board_params.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
+frame_board_export.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 
 
 
@@ -578,7 +739,35 @@ for i in range(len(lst_lbls_block)):
     )
     dct_lbls_blocks_aux[s_lcl_key].grid(row=i, column=3, pady=n_widg_pady, padx=n_widg_padx)
 
-# >> Main Board
+# >>> Commands
+dct_btn_upd_blocks[lst_lbls_block[0]].config(
+    command=lambda : update_entry(s_entry=lst_lbls_block[0],
+                                  s_entry_type=lst_types_block[0])
+)
+dct_btn_upd_blocks[lst_lbls_block[1]].config(
+    command=lambda : update_entry(s_entry=lst_lbls_block[1],
+                                  s_entry_type=lst_types_block[1])
+)
+dct_btn_upd_blocks[lst_lbls_block[2]].config(
+    command=lambda : update_entry(s_entry=lst_lbls_block[2],
+                                  s_entry_type=lst_types_block[2])
+)
+dct_btn_upd_blocks[lst_lbls_block[3]].config(
+    command=lambda : update_entry(s_entry=lst_lbls_block[3],
+                                  s_entry_type=lst_types_block[3])
+)
+dct_btn_upd_blocks[lst_lbls_block[4]].config(
+    command=lambda : update_entry(s_entry=lst_lbls_block[4],
+                                  s_entry_type=lst_types_block[4])
+)
+dct_btn_upd_blocks[lst_lbls_block[5]].config(
+    command=lambda : update_entry(s_entry=lst_lbls_block[5],
+                                  s_entry_type=lst_types_block[5])
+)
+
+
+# >> block Board
+
 # update button
 button_update_entries = tkinter.Button(
     frame_board_block,
@@ -664,7 +853,10 @@ button_remove_block.config(
 button_remove_block.config(command=remove_block)
 button_remove_block.pack(side=LEFT, padx=n_widg_padx, pady=n_widg_pady)
 
+
 # >> List frame widgets Layout
+
+
 scrollbar_log_y = tkinter.Scrollbar(
     frame_list, bg=color_bg_alt, bd=0, activebackground=color_actbg
 )
@@ -677,8 +869,8 @@ scrollbar_log_x = tkinter.Scrollbar(
 )
 listbox_blocks = tkinter.Listbox(
     frame_list,
-    height=12,
-    width=94,
+    height=7,
+    width=70,
     borderwidth=0,
     bd=0,
     bg="grey",
@@ -697,44 +889,64 @@ scrollbar_log_y.grid(row=1, column=1, sticky="NS")
 scrollbar_log_x.grid(row=2, column=0, sticky="WE")
 
 
-# >>> Commands
-dct_btn_upd_blocks[lst_lbls_block[0]].config(
-    command=lambda : update_entry(s_entry=lst_lbls_block[0],
-                                  s_entry_type=lst_types_block[0])
+# >> Parameters Board
+
+b_randomize = BooleanVar()
+label_randomize = tkinter.Label(
+    frame_board_params,
+    text='Randomize Blocks',
+    width=n_width_options_labels,
+    anchor="e",
+    bg=color_bg,
+    activebackground=color_actbg,
+    foreground=color_fg,
+    activeforeground=color_fg,
 )
-dct_btn_upd_blocks[lst_lbls_block[1]].config(
-    command=lambda : update_entry(s_entry=lst_lbls_block[1],
-                                  s_entry_type=lst_types_block[1])
+check_randomize = tkinter.Checkbutton(
+    frame_board_params,
+    variable=b_randomize,
+    width=n_width_options_check,
+    bg=color_bg,
+    activebackground=color_actbg,
+    highlightbackground=color_bg,
+    bd=0,
 )
-dct_btn_upd_blocks[lst_lbls_block[2]].config(
-    command=lambda : update_entry(s_entry=lst_lbls_block[2],
-                                  s_entry_type=lst_types_block[2])
-)
-dct_btn_upd_blocks[lst_lbls_block[3]].config(
-    command=lambda : update_entry(s_entry=lst_lbls_block[3],
-                                  s_entry_type=lst_types_block[3])
-)
-dct_btn_upd_blocks[lst_lbls_block[4]].config(
-    command=lambda : update_entry(s_entry=lst_lbls_block[4],
-                                  s_entry_type=lst_types_block[4])
-)
-dct_btn_upd_blocks[lst_lbls_block[5]].config(
-    command=lambda : update_entry(s_entry=lst_lbls_block[5],
-                                  s_entry_type=lst_types_block[5])
-)
+label_randomize.pack(side=LEFT)
+check_randomize.pack(side=LEFT)
 
 
-# >>>>> final setup
 
-lst_head = [
-    'Size',  'Trait', 'D', 'Name', 'Alias', 'Color'
-]
-s_blocks_header = format_string(lst_block=lst_head)
-listbox_blocks.insert(END, s_blocks_header)
-listbox_blocks.insert(END, '-' * 70)
+# >> Export Board
+
+# export button
+button_export = tkinter.Button(
+    frame_board_export,
+    text="Save File",
+    image=img_save,
+    compound=LEFT,
+    width=n_width_board_button,
+    height=30,
+)
+button_export.config(
+    bg=color_bg_alt,
+    activebackground=color_actbg,
+    disabledforeground="grey",
+    foreground=color_fg,
+    activeforeground=color_fg,
+    highlightbackground=color_bg,
+    bd=0,
+)
+button_export.config(command=lambda : save_file())
+button_export.pack(side=LEFT, padx=n_widg_padx, pady=n_widg_pady)
+
+
+# append header
+append_header()
 
 # reset status
 reset_status()
+
+authorize_save()
 
 # run root window
 root.mainloop()

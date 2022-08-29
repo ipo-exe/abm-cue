@@ -55,7 +55,11 @@ import backend, inp, tools
 
 def callsub():
     import subprocess
+    subprocess.run(["python", "app_data_places.py"])
 
+
+def call_place_tool():
+    import subprocess
     subprocess.run(["python", "app_data_places.py"])
 
 # todo replace this
@@ -843,6 +847,7 @@ root.config(bg=color_bg)
 
 
 # icons setup
+img_tool = tkinter.PhotoImage(file="gui/tool.png")
 img_logo = tkinter.PhotoImage(file="gui/logo.png")
 img_open = tkinter.PhotoImage(file="gui/open.png")
 img_about = tkinter.PhotoImage(file="gui/info.png")
@@ -939,16 +944,16 @@ menu_data.add_command(
     compound=LEFT,
     foreground=color_fg,
     activeforeground=color_fg,
-    command=callsub,
+    command=command_demo,
 )
 # add menu items to the Settings menu
 menu_data.add_command(
-    label="Set Places File",
-    image=img_file,
+    label="Places File Tool",
+    image=img_tool,
     compound=LEFT,
     foreground=color_fg,
     activeforeground=color_fg,
-    command=callsub,
+    command=call_place_tool,
 )
 # add the File menu to the menubar
 menubar.add_cascade(
