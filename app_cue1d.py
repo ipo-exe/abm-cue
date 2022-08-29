@@ -934,20 +934,20 @@ menubar.add_cascade(
 )
 
 # >> create the Tool Menu
-menu_data = tkinter.Menu(
+menu_tools = tkinter.Menu(
     menubar, tearoff=0, bg=color_bg_alt, activebackground=color_actbg
 )
 # add menu items to the Settings menu
-menu_data.add_command(
-    label="Set Agents File",
-    image=img_file,
+menu_tools.add_command(
+    label="Agents File Tool",
+    image=img_tool,
     compound=LEFT,
     foreground=color_fg,
     activeforeground=color_fg,
     command=command_demo,
 )
 # add menu items to the Settings menu
-menu_data.add_command(
+menu_tools.add_command(
     label="Places File Tool",
     image=img_tool,
     compound=LEFT,
@@ -957,8 +957,8 @@ menu_data.add_command(
 )
 # add the File menu to the menubar
 menubar.add_cascade(
-    label="Data",
-    menu=menu_data,
+    label="Tools",
+    menu=menu_tools,
     activeforeground=color_fg,
     activebackground=color_actbg,
 )
