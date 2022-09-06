@@ -541,6 +541,7 @@ root.config(bg=color_bg)
 
 
 # icons setup
+# todo board buttons icon
 img_logo = tkinter.PhotoImage(file="gui/logo.png")
 img_open = tkinter.PhotoImage(file="gui/open.png")
 img_about = tkinter.PhotoImage(file="gui/info.png")
