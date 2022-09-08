@@ -63,13 +63,18 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
     n_agents = len(df_agents)
     n_places = len(df_places)
 
-    # get unique beta values
+    # scanning window parameters set up
+    #
+    # get unique beta (radius size) values
     lst_unique_beta = list(df_agents["Beta"].unique())
     dct_window = dict()
     for n_beta in lst_unique_beta:
         # get scanning window parameters
         vct_window_rows, vct_window_cols = backend.get_window_ids(
-            n_rows=n_places, n_cols=n_places, n_rsize=n_beta, b_flat=False
+            n_rows=n_places,
+            n_cols=n_places,
+            n_rsize=n_beta,
+            b_flat=False
         )
         if b_return:
             lst_aux = list(vct_window_cols[0])
@@ -97,12 +102,18 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
             }
         )
         # append to dict
-        dct_window[str(n_beta)] = {"ids": vct_rows_base_ids, "df": df_window}
+        dct_window[str(n_beta)] = {
+            "ids": vct_rows_base_ids,
+            "df": df_window
+        }
 
     # define random seeds prior to simulation loop
     np.random.seed(backend.get_seed())
     grd_seeds = np.random.randint(
-        low=100, high=999, size=(n_steps, n_agents), dtype="uint16"
+        low=100,
+        high=999,
+        size=(n_steps, n_agents),
+        dtype="uint16"
     )
 
     # tracing variables
@@ -114,6 +125,7 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
         grd_traced_agents_traits[0] = df_agents["Trait"].values
         grd_traced_agents_x[0] = df_agents["x"].values
 
+    # return variables
     if b_return:
         df_agents_copy = df_agents.copy()
         vct_agents_origin_x = df_agents_copy["x"].values
@@ -158,9 +170,8 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
 
             # compute probabilistic weights
             if df_window["Interac_score"].sum() == 0:
-                df_window["Interac_prob"] = 1 / len(
-                    df_window
-                )  # uniform distribution when all scores == 0
+                # uniform distribution when all scores == 0:
+                df_window["Interac_prob"] = 1 / len(df_window)
             else:
                 df_window["Interac_prob"] = (
                     df_window["Interac_score"] / df_window["Interac_score"].sum()
@@ -170,8 +181,10 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
             np.random.seed(grd_seeds[t, a])  # restart random state
             # weighted random sampling
             n_next_index = np.random.choice(
-                a=df_window.index, size=1, p=df_window["Interac_prob"].values
-            )[0]
+                a=df_window.index,
+                size=1,
+                p=df_window["Interac_prob"].values
+            )[0] # get the first
 
             # update agent position
             df_agents["x"].values[a] = df_window["x"].values[n_next_index]

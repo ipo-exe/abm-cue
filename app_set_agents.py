@@ -1,6 +1,6 @@
 """
 
-CUE Data Manager source code
+CUE Data Manager for Agents source code
 
 Copyright (C) 2022 Iporã Brito Possantti
 
@@ -46,12 +46,13 @@ import os
 import tkinter
 from tkinter import filedialog as fd
 from tkinter import messagebox
-from tkinter import font
-from tkinter import END, RIGHT, LEFT, BooleanVar, DISABLED, NORMAL, ANCHOR
+from tkinter import BooleanVar, IntVar
+from tkinter import END, RIGHT, LEFT, DISABLED, NORMAL, ANCHOR
+import webbrowser
 import platform
 import pandas as pd
 import numpy as np
-import backend, inp, tools
+import inp
 
 
 def quit():
@@ -62,6 +63,87 @@ def quit():
     b_ans = messagebox.askyesno(title="Exit", message="Confirm exit?")
     if b_ans:
         root.destroy()
+
+def open_about_input(n_entry=0):
+    """
+    open doc link of input file
+    :param n_entry:
+    :return:
+    """
+    webbrowser.open(url=lst_urls_inp[n_entry])
+
+
+def update_file(s_entry, b_popup=True):
+    """
+    update file entries
+    :param s_entry: string entry name
+    :param b_popup: boolean to popup messages
+    :param b_report_error: boolean to report error messages
+    :param b_report_update: boolean to report update message
+    :return:
+    """
+    global dct_etr_inp, b_file_ok
+    s_lcl_key = s_entry
+    s_path = dct_etr_inp[s_lcl_key].get()
+    if len(s_path) == 0:
+        # change color
+        dct_lbls_inp[s_lcl_key].config(foreground="red")
+        # change status
+        b_file_ok = False
+        # message
+        if b_popup:
+            messagebox.showerror(
+                title="Error", message="{}: empty entry".format(s_lcl_key)
+            )
+    else:
+        if os.path.isfile(s_path):
+            # reset color
+            dct_lbls_inp[s_lcl_key].config(foreground=color_fg)
+            # change status
+            b_file_ok = True
+            # message
+            if b_popup:
+                tkinter.messagebox.showinfo(message="{}: updated".format(s_lcl_key))
+        else:
+            # change color
+            dct_lbls_inp[s_lcl_key].config(foreground="red")
+            # change status
+            b_file_ok = False
+            # message
+            if b_popup:
+                tkinter.messagebox.showerror(
+                    title="Error",
+                    message="{}: not found".format(s_lcl_key)
+                )
+    # authorize saving
+    authorize_save()
+
+
+def pick_file(s_entry, tpl_file_type, s_initialdir):
+    """
+    pick file helper
+    :param tpl_file_type: tuple of file type
+    :param s_initialdir: string path to initial dir
+    :param n_entry:
+    :return:
+    """
+    while True:
+        tpl_filetypes = (tpl_file_type, ("All files", "*.*"))
+        s_filepath = fd.askopenfilename(
+            title="Select a file",
+            initialdir=s_initialdir,
+            filetypes=tpl_filetypes
+        )
+        if len(s_filepath) == 0:
+            break
+        # confirm exit
+        b_ans = messagebox.askokcancel(title="Confirm file", message=s_filepath)
+        if b_ans:
+            # change entry
+            dct_etr_inp[s_entry].delete(0, END)  # clear
+            dct_etr_inp[s_entry].insert(0, s_filepath)  # insert
+            update_file(s_entry=s_entry)
+            break
 
 
 def save_as():
@@ -90,62 +172,146 @@ def save_file():
     :return: none
     """
     global b_ok_to_save
+    update_file(s_entry=lst_lbls_inp[0], b_popup=False)
     authorize_save()
     if b_ok_to_save:
         s_filepath = save_as()
         if s_filepath == 'abort':
             pass
         else:
-            # get list
-            lst_listbox_blocks = listbox_blocks.get(0, END)
-            lst_id = list()
-            lst_x = list()
-            lst_trait = list()
-            lst_d = list()
-            lst_name = list()
-            lst_alias = list()
-            lst_color = list()
-            lst_sizes = list()
-            # get sizes
-            n_counter = 0
-            for i in range(1, len(lst_listbox_blocks)):
-                lst_local = lst_listbox_blocks[i].split(';')
-                lst_local_values = list()
-                # handle local values
-                for j in range(len(lst_local)):
-                    lst_local_values.append(lst_local[j].strip())
-                # append to lists
-                for j in range(int(lst_local_values[0])):
-                    lst_id.append(n_counter + 1)
-                    lst_x.append(n_counter)
-                    lst_trait.append((lst_local_values[1]))
-                    lst_d.append(lst_local_values[2])
-                    lst_name.append(lst_local_values[3])
-                    lst_alias.append(lst_local_values[4])
-                    lst_color.append(lst_local_values[5])
-                    # update counter
-                    n_counter = n_counter + 1
-            df_out = pd.DataFrame(
-                {
-                    'Id': lst_id,
-                    'x': lst_x,
-                    'Trait': lst_trait,
-                    'D': lst_d,
-                    'Name': lst_name,
-                    'Alias': lst_alias,
-                    'Color': lst_color,
-                }
+            # load places dataframe
+            dct_open = inp.import_data_table(
+                s_table_name='param_places',
+                s_filepath=dct_etr_inp[lst_lbls_inp[0]].get(),
             )
-            if bool(b_randomize):
-                df_out = df_out.sample(frac=1).reset_index(drop=True)
-                df_out['Id'] = np.arange(0, len(df_out)) + 1
-                df_out['x'] = np.arange(0, len(df_out))
-            df_out.to_csv(s_filepath, sep=';', index=False)
-            tkinter.messagebox.showinfo(message="File Saved")
+            if dct_open['OK Flag']:
+                # get dataframe len
+                n_places = len(dct_open["df"])
+                #
+                # get list
+                lst_listbox_blocks = listbox_blocks.get(0, END)
+                lst_id = list()
+                lst_x = list()
+                lst_trait = list()
+                lst_alpha = list()
+                lst_beta = list()
+                lst_c = list()
+                lst_name = list()
+                lst_alias = list()
+                lst_color = list()
+                lst_sizes = list()
+                # get sizes
+                for i in range(1, len(lst_listbox_blocks)):
+                    lst_local = lst_listbox_blocks[i].split(';')
+                    lst_local_values = list()
+                    # handle local values
+                    for j in range(len(lst_local)):
+                        lst_local_values.append(lst_local[j].strip())
+                    # get local block size
+                    n_block_size = int(lst_local_values[0])
+                    lst_sizes.append(n_block_size)
+                    # append to lists
+                    n_counter = 0
+                    for j in range(n_block_size):
+                        lst_id.append(n_counter + 1)
+                        lst_x.append(0) # append only zero
+                        lst_trait.append((lst_local_values[1]))
+                        lst_alpha.append((lst_local_values[2]))
+                        lst_beta.append((lst_local_values[3]))
+                        lst_c.append(lst_local_values[4])
+                        lst_name.append(lst_local_values[5])
+                        lst_alias.append(lst_local_values[6])
+                        lst_color.append(lst_local_values[7])
+                        # update counter
+                        n_counter = n_counter + 1
+                # deploy output dataframe
+                df_out = pd.DataFrame(
+                    {
+                        'Id': lst_id,
+                        'x': lst_x,
+                        'Trait': lst_trait,
+                        'Alpha': lst_alpha,
+                        'Beta': lst_beta,
+                        'C': lst_c,
+                        'Name': lst_name,
+                        'Alias': lst_alias,
+                        'Color': lst_color,
+                    }
+                )
+                # get number of agents
+                n_agents = len(df_out)
+                # get number of blocks
+                n_blocks = len(lst_sizes)
+                if int(n_option.get()) == 1:
+                    print('Even')
+                    if n_places >= n_blocks:
+                        # fixed step
+                        n_step = int(n_places / n_blocks)
+                        lst_x = list()
+                        for i in range(len(lst_sizes)):
+                            n_low_bound = i * n_step
+                            n_hi_bound = (i + 1) * n_step
+                            n_sub_step = int(lst_sizes[i] / n_step)
+                            for j in range(lst_sizes[i]):
+                                # uniform random distribution
+                                n_lcl_x = np.random.randint(
+                                    low=n_low_bound,
+                                    high=n_hi_bound,
+                                )
+                                lst_x.append(n_lcl_x)
+                        # set x
+                        df_out["x"] = lst_x
+                    else:
+                        # uniform random distribution
+                        df_out['x'] = np.random.randint(low=0, high=n_places, size=n_agents)
+                elif int(n_option.get()) == 2:
+                    print('Proport')
+                    if n_places >= n_blocks:
+                        # vectorize sizes
+                        vct_sizes = np.array(lst_sizes)
+                        # get normalized steps
+                        vct_steps = n_places * vct_sizes / np.sum(vct_sizes)
+                        lst_x = list()
+                        n_acc = 0
+                        for i in range(len(lst_sizes)):
+                            n_step = int(vct_steps[i])
+                            n_low_bound = n_acc
+                            n_hi_bound = n_acc + n_step
+                            n_sub_step = int(lst_sizes[i] / n_step)
+                            for j in range(lst_sizes[i]):
+                                # uniform random distribution
+                                n_lcl_x = np.random.randint(
+                                    low=n_low_bound,
+                                    high=n_hi_bound,
+                                )
+                                lst_x.append(n_lcl_x)
+                            n_acc = n_acc + n_step
+                        # set x
+                        df_out["x"] = lst_x
+                    else:
+                        # uniform random distribution
+                        df_out['x'] = np.random.randint(low=0, high=n_places, size=n_agents)
+                elif int(n_option.get()) == 3:
+                    # uniform random distribution
+                    df_out['x'] = np.random.randint(low=0, high=n_places, size=n_agents)
+                else:
+                    # uniform random distribution
+                    df_out['x'] = np.random.randint(low=0, high=n_places, size=n_agents)
+                # exporto to file
+                df_out.to_csv(s_filepath, sep=';', index=False)
+                # todo export view
+                tkinter.messagebox.showinfo(message="File Saved")
+            else:
+                tkinter.messagebox.showerror(
+                    title='Error',
+                    message='Error in Places File: {}'.format(
+                        dct_open['Error Report']
+                    )
+                )
     else:
         messagebox.showwarning(
             title="Warning",
-            message="Zero Blocks Found"
+            message="Unable to save"
         )
 
 
@@ -162,8 +328,7 @@ def new_session():
         append_header()
         authorize_save()
         # options
-        b_randomize.set(False)
-
+        n_option.set(1)
 
 
 # todo replace this
@@ -178,7 +343,7 @@ def format_string(lst_block, s_sep=' '):
     :param s_sep: string separator
     :return: string formatted
     """
-    s_aux = ' {:>6s}{}{:>6s}{}{:>6s}{}{:>12s}{}{:>8s}{}{:>8s}'.format(
+    s_aux = ' {:>6s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>12s}{}{:>8s}{}{:>8s}'.format(
         lst_block[0].strip(),
         s_sep,
         lst_block[1].strip(),
@@ -190,6 +355,10 @@ def format_string(lst_block, s_sep=' '):
         lst_block[4].strip(),
         s_sep,
         lst_block[5].strip(),
+        s_sep,
+        lst_block[6].strip(),
+        s_sep,
+        lst_block[7].strip(),
     )
     return s_aux
 
@@ -201,6 +370,7 @@ def add_block():
     """
     global b_ok_to_add
     update_all_entries(b_popup=False)
+    update_file(s_entry=lst_lbls_inp[0], b_popup=False)
     if b_ok_to_add:
         lst_entries = get_entries_list()
         s_entries = format_string(lst_block=lst_entries, s_sep=';')
@@ -404,9 +574,9 @@ def authorize_save():
     evaluate if it is ok to save file
     :return:
     """
-    global b_ok_to_save
+    global b_ok_to_save, b_file_ok
     lst_listbox_blocks = listbox_blocks.get(0, END)
-    if len(lst_listbox_blocks) > 2:
+    if len(lst_listbox_blocks) > 1 and b_file_ok:
         b_ok_to_save = True
         button_export.config(state=NORMAL)
     else:
@@ -432,7 +602,14 @@ def append_header():
     :return:
     """
     lst_head = [
-        'Size', 'Trait', 'D', 'Name', 'Alias', 'Color'
+        'Size',
+        'Trait',
+        'Alpha',
+        'Beta',
+        'C',
+        'Name',
+        'Alias',
+        'Color'
     ]
     s_blocks_header = format_string(lst_block=lst_head, s_sep=';')
     listbox_blocks.insert(END, s_blocks_header)
@@ -448,18 +625,26 @@ root = tkinter.Tk()
 
 # >>> TOOL SETUP
 
+lst_lbls_inp = ["Places File"]
+lst_urls_inp = ["https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_placestxt"]
+lst_types_inp = [("Text File", "*.txt")]
+
 # block settings
 lst_lbls_block = [
     "Block Size",
-    "Place Trait ",
-    "Place D",
-    "Place Name",
-    "Place Alias",
-    "Place Color"
+    "Agent Trait ",
+    "Agent Alpha",
+    "Agent Beta",
+    "Agent C",
+    "Agent Name",
+    "Agent Alias",
+    "Agent Color"
 ]
 lst_types_block = [
     'Int',
     'Real',
+    'Real',
+    'Int',
     'Real',
     'Text',
     'Text',
@@ -469,30 +654,41 @@ lst_lbls_block_aux = [
     "format: positive integer number",
     "format: positive real number ",
     "format: positive real number",
+    "format: positive integer number",
+    "format: positive real number ",
     "format: text",
     "format: text",
     "format: text"
 ]
 
-# geometry setup
-if platform.system().lower() == "linux":
-    root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
-    n_height = 630
-    n_width = 800
-    n_entry_label_width = 11
-    n_entry_width = 55
-    n_frame_padx = 5
-    n_frame_pady = 2
-    n_widg_padx = 2
-    n_widg_pady = 2
-    n_width_board_button = 70
-    n_width_options_labels = 20
-    n_width_options_check = 2
-elif platform.system().lower() == "windows":
-    root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
+# ----- geometry setup
+
+# get platform name
+s_platform = platform.system().lower()
+# load setup dataframe
+df_setup = pd.read_csv('./gui/setup.txt', sep=';', skipinitialspace=True)
+# try to set
+try:
+    n_height = df_setup.loc[df_setup["Name"] == 'height', s_platform].values[0]
+    n_width = df_setup.loc[df_setup["Name"] == 'width', s_platform].values[0]
+    n_entry_label_width = df_setup.loc[df_setup["Name"] == 'entry label width', s_platform].values[0]
+    n_entry_width_file = df_setup.loc[df_setup["Name"] == 'entry width file', s_platform].values[0]
+    n_entry_width = df_setup.loc[df_setup["Name"] == 'entry width', s_platform].values[0]
+    n_frame_padx = df_setup.loc[df_setup["Name"] == 'frame padx', s_platform].values[0]
+    n_frame_pady = df_setup.loc[df_setup["Name"] == 'frame pady', s_platform].values[0]
+    n_widg_padx = df_setup.loc[df_setup["Name"] == 'widget padx', s_platform].values[0]
+    n_widg_pady = df_setup.loc[df_setup["Name"] == 'widget pady', s_platform].values[0]
+    n_width_board_button = df_setup.loc[df_setup["Name"] == 'button board width', s_platform].values[0]
+    n_width_options_labels = df_setup.loc[df_setup["Name"] == 'option label width', s_platform].values[0]
+    n_width_options_check = df_setup.loc[df_setup["Name"] == 'option check width', s_platform].values[0]
+    n_listbox_height = df_setup.loc[df_setup["Name"] == 'listbox height', s_platform].values[0]
+    n_listbox_width = df_setup.loc[df_setup["Name"] == 'listbox width', s_platform].values[0]
+except KeyError:
+    # standard setup
     n_height = 610
     n_width = 610
     n_entry_label_width = 15
+    n_entry_width_file = 52
     n_entry_width = 20
     n_frame_padx = 5
     n_frame_pady = 2
@@ -501,33 +697,29 @@ elif platform.system().lower() == "windows":
     n_width_board_button = 100
     n_width_options_labels = 20
     n_width_options_check = 2
-elif platform.system().lower() == "darwin":
-    n_height = 690
-    n_width = 800
+    n_listbox_height = 7
+    n_listbox_width = 72
+except IndexError:
+    # standard setup
+    n_height = 610
+    n_width = 610
     n_entry_label_width = 15
-    n_entry_width = 52
+    n_entry_width_file = 52
+    n_entry_width = 20
     n_frame_padx = 5
     n_frame_pady = 2
-    n_widg_padx = 1
-    n_widg_pady = 1
+    n_widg_padx = 4
+    n_widg_pady = 2
     n_width_board_button = 70
     n_width_options_labels = 20
     n_width_options_check = 2
-else:
-    n_height = 690
-    n_width = 800
-    n_entry_label_width = 15
-    n_entry_width = 52
-    n_frame_padx = 5
-    n_frame_pady = 2
-    n_widg_padx = 1
-    n_widg_pady = 1
-    n_width_board_button = 70
-    n_width_options_labels = 20
-    n_width_options_check = 2
+    n_listbox_height = 7
+    n_listbox_width = 72
 
+# app customization
+n_height = int(1.2 * n_height)
 
-
+# set
 root.geometry("{}x{}".format(int(n_width), int(n_height)))
 root.resizable(0, 0)
 
@@ -536,12 +728,12 @@ color_bg = "#343434"
 color_bg_alt = "#484848"
 color_actbg = "#df4a16"
 color_fg = "white"
-
 root.config(bg=color_bg)
-
 
 # icons setup
 # todo board buttons icon
+img_add = tkinter.PhotoImage(file="gui/add.png")
+img_remove = tkinter.PhotoImage(file="gui/remove.png")
 img_logo = tkinter.PhotoImage(file="gui/logo.png")
 img_open = tkinter.PhotoImage(file="gui/open.png")
 img_about = tkinter.PhotoImage(file="gui/info.png")
@@ -554,8 +746,11 @@ img_brush = tkinter.PhotoImage(file="gui/brush.png")
 img_chat = tkinter.PhotoImage(file="gui/chat.png")
 img_terminal = tkinter.PhotoImage(file="gui/terminal.png")
 
+# set icon
+root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
+
 # files setup
-s_title = "Places File Tool"
+s_title = "Agents File Tool"
 root.title(s_title)
 
 # >> set menus
@@ -631,6 +826,9 @@ menubar.add_cascade(
 frame_header = tkinter.Frame(root, width=n_width, bg=color_bg)
 frame_info = tkinter.Frame(frame_header, bg=color_bg)
 frame_logo = tkinter.Frame(frame_header, bg=color_bg)
+frame_inputfiles = tkinter.LabelFrame(
+    root, text="Places Reference File", width=n_width, bg=color_bg, foreground=color_fg
+)
 frame_blocksets = tkinter.LabelFrame(
     root, text="Block Settings", width=n_width, bg=color_bg, foreground=color_fg
 )
@@ -641,7 +839,7 @@ frame_list = tkinter.LabelFrame(
     root, text="Blocks Preview", width=n_width, bg=color_bg, foreground=color_fg
 )
 frame_board_params = tkinter.LabelFrame(
-    root, text="File Parameters", width=n_width, bg=color_bg, foreground=color_fg
+    root, text="Block Separation Options", width=n_width, bg=color_bg, foreground=color_fg
 )
 frame_board_export = tkinter.LabelFrame(
     root, text="Export File", width=n_width, bg=color_bg, foreground=color_fg
@@ -650,12 +848,12 @@ frame_board_export = tkinter.LabelFrame(
 frame_header.pack(fill="x", padx=n_frame_padx)
 frame_logo.pack(fill="x", padx=n_frame_padx, side=RIGHT)
 frame_info.pack(fill="y", padx=n_frame_padx, side=RIGHT)
+frame_inputfiles.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 frame_blocksets.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 frame_board_block.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 frame_list.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 frame_board_params.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 frame_board_export.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
-
 
 
 # >> Header layout
@@ -669,7 +867,7 @@ label_logo = tkinter.Label(
     activeforeground=color_fg,
 )
 label_logo.pack(side=RIGHT)
-s_head_msg = "CUE1d Data Management Tool - Places"
+s_head_msg = "CUE1d Data Management Tool - Agents"
 label_infos = tkinter.Label(
     frame_info,
     text=s_head_msg,
@@ -681,6 +879,102 @@ label_infos = tkinter.Label(
     activeforeground=color_fg,
 )
 label_infos.pack()
+
+
+# >> Place File Frame layout
+
+# place widgets in dicts
+dct_lbls_inp = dict()
+dct_etr_inp = dict()
+dct_btn_upd_inp = dict()
+dct_btn_search_inp = dict()
+dct_btn_about_inp = dict()
+for i in range(len(lst_lbls_inp)):
+    s_lcl_key = lst_lbls_inp[i]
+    # label
+    dct_lbls_inp[s_lcl_key] = tkinter.Label(
+        frame_inputfiles,
+        text=s_lcl_key,
+        width=n_entry_label_width,
+        anchor="e",
+        bg=color_bg,
+        activebackground=color_actbg,
+        foreground=color_fg,
+        activeforeground=color_fg,
+    )
+    dct_lbls_inp[s_lcl_key].grid(row=i, column=0, pady=n_widg_pady, padx=n_widg_padx)
+    # entry
+    dct_etr_inp[s_lcl_key] = tkinter.Entry(
+        frame_inputfiles,
+        width=n_entry_width_file,
+        bg=color_bg_alt,
+        foreground=color_fg,
+        selectbackground=color_actbg,
+        selectforeground=color_fg,
+        highlightbackground=color_bg_alt,
+        bd=1,
+    )
+    dct_etr_inp[s_lcl_key].grid(row=i, column=1, pady=n_widg_pady, padx=n_widg_padx)
+    # update button
+    dct_btn_upd_inp[s_lcl_key] = tkinter.Button(
+        frame_inputfiles,
+        image=img_update,
+        bg=color_bg,
+        activebackground=color_actbg,
+        foreground=color_fg,
+        activeforeground=color_fg,
+        highlightbackground=color_bg,
+        bd=0,
+    )
+    dct_btn_upd_inp[s_lcl_key].grid(row=i, column=2, pady=n_widg_pady, padx=n_widg_padx)
+    # search button
+    dct_btn_search_inp[s_lcl_key] = tkinter.Button(
+        frame_inputfiles,
+        text="Search",
+        image=img_open,
+        compound=LEFT,
+        bg=color_bg_alt,
+        activebackground=color_actbg,
+        foreground=color_fg,
+        activeforeground=color_fg,
+        highlightbackground=color_bg_alt,
+        bd=0,
+    )
+    dct_btn_search_inp[s_lcl_key].grid(
+        row=i, column=3, pady=n_widg_pady, padx=n_widg_padx
+    )
+    # about button
+    dct_btn_about_inp[s_lcl_key] = tkinter.Button(
+        frame_inputfiles,
+        text="About",
+        image=img_about,
+        compound=LEFT,
+        bg=color_bg_alt,
+        activebackground=color_actbg,
+        foreground=color_fg,
+        activeforeground=color_fg,
+        highlightbackground=color_bg_alt,
+        bd=0,
+    )
+    dct_btn_about_inp[s_lcl_key].grid(
+        row=i, column=4, pady=n_widg_pady, padx=n_widg_padx
+    )
+# config input update buttons commmands
+dct_btn_upd_inp[lst_lbls_inp[0]].config(
+    command=lambda: update_file(s_entry=lst_lbls_inp[0])
+)
+
+# config input search buttons commmands
+dct_btn_search_inp[lst_lbls_inp[0]].config(
+    command=lambda: pick_file(
+        s_entry=lst_lbls_inp[0],
+        tpl_file_type=lst_types_inp[0],
+        s_initialdir='./',
+    )
+)
+# config input about buttons commands
+dct_btn_about_inp[lst_lbls_inp[0]].config(command=lambda: open_about_input(n_entry=0))
+
 
 
 # >> Block Settings Frame layout
@@ -765,7 +1059,14 @@ dct_btn_upd_blocks[lst_lbls_block[5]].config(
     command=lambda : update_entry(s_entry=lst_lbls_block[5],
                                   s_entry_type=lst_types_block[5])
 )
-
+dct_btn_upd_blocks[lst_lbls_block[6]].config(
+    command=lambda : update_entry(s_entry=lst_lbls_block[6],
+                                  s_entry_type=lst_types_block[6])
+)
+dct_btn_upd_blocks[lst_lbls_block[7]].config(
+    command=lambda : update_entry(s_entry=lst_lbls_block[7],
+                                  s_entry_type=lst_types_block[7])
+)
 
 # >> block Board
 
@@ -794,7 +1095,7 @@ button_update_entries.pack(side=LEFT, padx=n_widg_padx, pady=n_widg_pady)
 button_add_block = tkinter.Button(
     frame_board_block,
     text="Add Block",
-    image=img_terminal,
+    image=img_add,
     compound=LEFT,
     width=n_width_board_button,
     height=30,
@@ -837,7 +1138,7 @@ button_new_block.pack(side=LEFT, padx=n_widg_padx, pady=n_widg_pady)
 button_remove_block = tkinter.Button(
     frame_board_block,
     text="Remove Block",
-    image=img_terminal,
+    image=img_remove,
     compound=LEFT,
     width=n_width_board_button,
     height=30,
@@ -870,8 +1171,8 @@ scrollbar_log_x = tkinter.Scrollbar(
 )
 listbox_blocks = tkinter.Listbox(
     frame_list,
-    height=7,
-    width=70,
+    height=n_listbox_height,
+    width=n_listbox_width,
     borderwidth=0,
     bd=0,
     bg="grey",
@@ -892,7 +1193,57 @@ scrollbar_log_x.grid(row=2, column=0, sticky="WE")
 
 # >> Parameters Board
 
-b_randomize = BooleanVar()
+n_option = IntVar(root, 1)
+
+# separate evenly
+label_sepeven = tkinter.Label(
+    frame_board_params,
+    text='Separate Evenly',
+    width=n_width_options_labels,
+    anchor="e",
+    bg=color_bg,
+    activebackground=color_actbg,
+    foreground=color_fg,
+    activeforeground=color_fg,
+)
+radio_sepeven = tkinter.Radiobutton(
+    frame_board_params,
+    variable=n_option,
+    value=1,
+    width=n_width_options_check,
+    bg=color_bg,
+    activebackground=color_actbg,
+    highlightbackground=color_bg,
+    bd=0,
+)
+label_sepeven.pack(side=LEFT)
+radio_sepeven.pack(side=LEFT)
+
+# separate proportionally
+label_sepprop = tkinter.Label(
+    frame_board_params,
+    text='Separate Proportionally',
+    width=n_width_options_labels,
+    anchor="e",
+    bg=color_bg,
+    activebackground=color_actbg,
+    foreground=color_fg,
+    activeforeground=color_fg,
+)
+radio_sepprop = tkinter.Radiobutton(
+    frame_board_params,
+    variable=n_option,
+    value=2,
+    width=n_width_options_check,
+    bg=color_bg,
+    activebackground=color_actbg,
+    highlightbackground=color_bg,
+    bd=0,
+)
+label_sepprop.pack(side=LEFT)
+radio_sepprop.pack(side=LEFT)
+
+# randomize
 label_randomize = tkinter.Label(
     frame_board_params,
     text='Randomize Blocks',
@@ -903,9 +1254,10 @@ label_randomize = tkinter.Label(
     foreground=color_fg,
     activeforeground=color_fg,
 )
-check_randomize = tkinter.Checkbutton(
+radio_randomize = tkinter.Radiobutton(
     frame_board_params,
-    variable=b_randomize,
+    variable=n_option,
+    value=3,
     width=n_width_options_check,
     bg=color_bg,
     activebackground=color_actbg,
@@ -913,8 +1265,7 @@ check_randomize = tkinter.Checkbutton(
     bd=0,
 )
 label_randomize.pack(side=LEFT)
-check_randomize.pack(side=LEFT)
-
+radio_randomize.pack(side=LEFT)
 
 
 # >> Export Board

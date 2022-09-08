@@ -55,12 +55,12 @@ import backend, inp, tools
 
 def callsub():
     import subprocess
-    subprocess.run(["python", "app_data_places.py"])
+    subprocess.run(["python", "app_set_places.py"])
 
 
 def call_place_tool():
     import subprocess
-    subprocess.run(["python", "app_data_places.py"])
+    subprocess.run(["python", "app_set_places.py"])
 
 # todo replace this
 def command_demo():
@@ -646,11 +646,12 @@ def pick_file(s_entry, tpl_file_type, s_initialdir):
     :param n_entry:
     :return:
     """
-    global lst_lbls_inp
     while True:
         tpl_filetypes = (tpl_file_type, ("All files", "*.*"))
         s_filepath = fd.askopenfilename(
-            title="Select a file", initialdir=s_initialdir, filetypes=tpl_filetypes
+            title="Select a file",
+            initialdir=s_initialdir,
+            filetypes=tpl_filetypes
         )
 
         if len(s_filepath) == 0:
@@ -755,45 +756,51 @@ lst_lbls_opts = ["Return Agents", "Trace Back", "Plot Steps"]
 # reset status
 reset_status()
 
-# geometry setup
+# ----- geometry setup
 
-# define for different platforms
-
-dct_geometry = {
-    'linux': {
-        'height' : 630,
-        'width': 800,
-        'entry label width': 11,
-        'entry width': 55,
-        'frame padx': 5,
-        'frame pady': 2,
-        'widget padx': 2,
-        'widget pady': 2,
-        'board button width': 70,
-        # todo better geometry handler
-    },
-
-}
-
-if platform.system().lower() == "linux":
-    root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
-    n_height = 630
-    n_width = 800
-    n_entry_label_width = 11
-    n_entry_width = 55
+# get platform name
+s_platform = platform.system().lower()
+# load setup dataframe
+df_setup = pd.read_csv('./gui/setup.txt', sep=';', skipinitialspace=True)
+# try to set
+try:
+    n_height = df_setup.loc[df_setup["Name"] == 'height', s_platform].values[0]
+    n_width = df_setup.loc[df_setup["Name"] == 'width', s_platform].values[0]
+    n_entry_label_width = df_setup.loc[df_setup["Name"] == 'entry label width', s_platform].values[0]
+    n_entry_width_file = df_setup.loc[df_setup["Name"] == 'entry width file', s_platform].values[0]
+    n_entry_width = df_setup.loc[df_setup["Name"] == 'entry width', s_platform].values[0]
+    n_frame_padx = df_setup.loc[df_setup["Name"] == 'frame padx', s_platform].values[0]
+    n_frame_pady = df_setup.loc[df_setup["Name"] == 'frame pady', s_platform].values[0]
+    n_widg_padx = df_setup.loc[df_setup["Name"] == 'widget padx', s_platform].values[0]
+    n_widg_pady = df_setup.loc[df_setup["Name"] == 'widget pady', s_platform].values[0]
+    n_width_board_button = df_setup.loc[df_setup["Name"] == 'button board width', s_platform].values[0]
+    n_width_options_labels = df_setup.loc[df_setup["Name"] == 'option label width', s_platform].values[0]
+    n_width_options_check = df_setup.loc[df_setup["Name"] == 'option check width', s_platform].values[0]
+    n_listbox_height = df_setup.loc[df_setup["Name"] == 'listbox height', s_platform].values[0]
+    n_listbox_width = df_setup.loc[df_setup["Name"] == 'listbox width', s_platform].values[0]
+except KeyError:
+    # standard setup
+    n_height = 610
+    n_width = 610
+    n_entry_label_width = 15
+    n_entry_width_file = 52
+    n_entry_width = 20
     n_frame_padx = 5
     n_frame_pady = 2
-    n_widg_padx = 2
+    n_widg_padx = 4
     n_widg_pady = 2
-    n_width_board_button = 70
+    n_width_board_button = 100
     n_width_options_labels = 20
     n_width_options_check = 2
-elif platform.system().lower() == "windows":
-    root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
-    n_height = 580
+    n_listbox_height = 7
+    n_listbox_width = 72
+except IndexError:
+    # standard setup
+    n_height = 610
     n_width = 610
-    n_entry_label_width = 10
-    n_entry_width = 52
+    n_entry_label_width = 15
+    n_entry_width_file = 52
+    n_entry_width = 20
     n_frame_padx = 5
     n_frame_pady = 2
     n_widg_padx = 4
@@ -801,32 +808,10 @@ elif platform.system().lower() == "windows":
     n_width_board_button = 70
     n_width_options_labels = 20
     n_width_options_check = 2
-elif platform.system().lower() == "darwin":
-    n_height = 690
-    n_width = 800
-    n_entry_label_width = 15
-    n_entry_width = 52
-    n_frame_padx = 5
-    n_frame_pady = 2
-    n_widg_padx = 1
-    n_widg_pady = 1
-    n_width_board_button = 70
-    n_width_options_labels = 20
-    n_width_options_check = 2
-else:
-    n_height = 690
-    n_width = 800
-    n_entry_label_width = 15
-    n_entry_width = 52
-    n_frame_padx = 5
-    n_frame_pady = 2
-    n_widg_padx = 1
-    n_widg_pady = 1
-    n_width_board_button = 70
-    n_width_options_labels = 20
-    n_width_options_check = 2
+    n_listbox_height = 7
+    n_listbox_width = 72
 
-
+# set
 root.geometry("{}x{}".format(int(n_width), int(n_height)))
 root.resizable(0, 0)
 
@@ -845,7 +830,6 @@ color_fg = 'black'
 """
 root.config(bg=color_bg)
 
-
 # icons setup
 img_tool = tkinter.PhotoImage(file="gui/tool.png")
 img_logo = tkinter.PhotoImage(file="gui/logo.png")
@@ -859,6 +843,9 @@ img_update = tkinter.PhotoImage(file="gui/update.png")
 img_brush = tkinter.PhotoImage(file="gui/brush.png")
 img_chat = tkinter.PhotoImage(file="gui/chat.png")
 img_terminal = tkinter.PhotoImage(file="gui/terminal.png")
+
+# set icon
+root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
 
 # files setup
 s_title = "CUE1d Tool"
@@ -1076,7 +1063,7 @@ for i in range(len(lst_lbls_wplc)):
     # entries
     dct_etr_wplc[s_lcl_key] = tkinter.Entry(
         frame_workplace,
-        width=n_entry_width,
+        width=n_entry_width_file,
         bg=color_bg_alt,
         foreground=color_fg,
         selectbackground=color_actbg,
@@ -1141,7 +1128,7 @@ for i in range(len(lst_lbls_inp)):
     # entry
     dct_etr_inp[s_lcl_key] = tkinter.Entry(
         frame_inputfiles,
-        width=n_entry_width,
+        width=n_entry_width_file,
         bg=color_bg_alt,
         foreground=color_fg,
         selectbackground=color_actbg,
@@ -1326,8 +1313,8 @@ scrollbar_log_x = tkinter.Scrollbar(
 )
 listbox_log = tkinter.Listbox(
     frame_reports,
-    height=12,
-    width=94,
+    height=int(1.8 * n_listbox_height),
+    width=int(1.3 * n_listbox_width),
     borderwidth=0,
     bd=0,
     bg="black",
