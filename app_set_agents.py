@@ -242,8 +242,8 @@ def save_file():
                 n_agents = len(df_out)
                 # get number of blocks
                 n_blocks = len(lst_sizes)
+                # evenly distributed
                 if int(n_option.get()) == 1:
-                    print('Even')
                     if n_places >= n_blocks:
                         # fixed step
                         n_step = int(n_places / n_blocks)
@@ -264,6 +264,7 @@ def save_file():
                     else:
                         # uniform random distribution
                         df_out['x'] = np.random.randint(low=0, high=n_places, size=n_agents)
+                # proportionally distributed
                 elif int(n_option.get()) == 2:
                     print('Proport')
                     if n_places >= n_blocks:
@@ -291,6 +292,7 @@ def save_file():
                     else:
                         # uniform random distribution
                         df_out['x'] = np.random.randint(low=0, high=n_places, size=n_agents)
+                # randomize
                 elif int(n_option.get()) == 3:
                     # uniform random distribution
                     df_out['x'] = np.random.randint(low=0, high=n_places, size=n_agents)

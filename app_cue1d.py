@@ -62,6 +62,11 @@ def call_place_tool():
     import subprocess
     subprocess.run(["python", "app_set_places.py"])
 
+
+def call_agents_tool():
+    import subprocess
+    subprocess.run(["python", "app_set_agents.py"])
+
 # todo replace this
 def command_demo():
     print("Hey")
@@ -926,21 +931,21 @@ menu_tools = tkinter.Menu(
 )
 # add menu items to the Settings menu
 menu_tools.add_command(
-    label="Agents File Tool",
-    image=img_tool,
-    compound=LEFT,
-    foreground=color_fg,
-    activeforeground=color_fg,
-    command=command_demo,
-)
-# add menu items to the Settings menu
-menu_tools.add_command(
     label="Places File Tool",
     image=img_tool,
     compound=LEFT,
     foreground=color_fg,
     activeforeground=color_fg,
     command=call_place_tool,
+)
+# add menu items to the Settings menu
+menu_tools.add_command(
+    label="Agents File Tool",
+    image=img_tool,
+    compound=LEFT,
+    foreground=color_fg,
+    activeforeground=color_fg,
+    command=call_agents_tool,
 )
 # add the File menu to the menubar
 menubar.add_cascade(
@@ -958,14 +963,6 @@ menu_help = tkinter.Menu(
 menu_help.add_command(
     label="About",
     image=img_about,
-    compound=LEFT,
-    foreground=color_fg,
-    activeforeground=color_fg,
-    command=command_demo,
-)
-menu_help.add_command(
-    label="Language",
-    image=img_chat,
     compound=LEFT,
     foreground=color_fg,
     activeforeground=color_fg,

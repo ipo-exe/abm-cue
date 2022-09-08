@@ -135,7 +135,7 @@ def save_file():
                     'Color': lst_color,
                 }
             )
-            if bool(b_randomize):
+            if bool(b_randomize.get()):
                 # sample the dataframe with frac = 1 (100%)
                 df_out = df_out.sample(frac=1).reset_index(drop=True)
                 # reset fields
