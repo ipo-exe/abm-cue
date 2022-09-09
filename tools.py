@@ -244,8 +244,8 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
 
         # loop to append fields to dataframe
         for i in range(n_agents):
-            s_lcl_agent_x = "A_{}_x".format(df_agents["Id"].values[i])
-            s_lcl_agent_trait = "A_{}_Trait".format(df_agents["Id"].values[i])
+            s_lcl_agent_x = "{}_{}_x".format(df_agents["Alias"].values[i], df_agents["Id"].values[i])
+            s_lcl_agent_trait = "{}_{}_Trait".format(df_agents["Alias"].values[i], df_agents["Id"].values[i])
             df_traced_agents_x[s_lcl_agent_x] = grd_traced_agents_x_t[i]
             df_traced_agents_traits[s_lcl_agent_trait] = grd_traced_agents_traits_t[i]
 
@@ -254,7 +254,7 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
 
         # loop to append fields to dataframe
         for i in range(n_places):
-            s_lcl_place_trait = "P_{}_Trait".format(df_places["Id"].values[i])
+            s_lcl_place_trait = "{}_{}_Trait".format(df_places["Alias"].values[i], df_places["Id"].values[i])
             df_traced_places_traits[s_lcl_place_trait] = grd_traced_places_traits_t[i]
         #
         # ------------------------------
@@ -303,7 +303,7 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
             b_show=False,
         )
         plot_traced_positions(
-            df_data=df_traced_agents_traits,
+            df_data=df_traced_agents_x,
             df_params=df_agents,
             n_positions=len(df_places),
             s_dir_out=s_dir_out,

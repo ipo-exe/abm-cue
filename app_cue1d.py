@@ -92,6 +92,12 @@ def save():
     # export to file
     df_meta.to_csv(s_metadata_filepath, sep=";", index=False)
     print_report_msg(s_msg="Save : Saved to {}".format(s_metadata_filepath))
+    messagebox.showinfo(
+        title='Save File',
+        message='File saved to {}'.format(
+            s_metadata_filepath
+        )
+    )
 
 
 def save_as():
@@ -108,7 +114,10 @@ def save_as():
     if str(s_ans) == "()" or s_ans == "":
         pass
     else:
-        s_metadata_filepath = s_ans
+        if '.txt' in s_ans[-4:]:
+            s_metadata_filepath = s_ans
+        else:
+            s_metadata_filepath = s_ans + '.txt'
         save()
         # enable save
         menu_file.entryconfig(2, state=NORMAL)
@@ -748,9 +757,11 @@ root = tkinter.Tk()
 # workplace
 lst_lbls_wplc = ["Input Folder", "Run Folder"]
 # input files
-lst_lbls_inp = ["Agents File", "Places File"]
-lst_urls_inp = ["https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agentstxt",
-                "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_placestxt"]
+lst_lbls_inp = ["Places File", "Agents File"]
+lst_urls_inp = [
+    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_placestxt",
+    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agentstxt"
+]
 lst_types_inp = [("Text File", "*.txt"), ("Text File", "*.txt")]
 # parameters
 lst_lbls_params = ["Steps"]
@@ -1100,6 +1111,20 @@ for i in range(len(lst_lbls_wplc)):
         row=i, column=3, pady=n_widg_pady, padx=n_widg_padx
     )
 
+# config workplace search buttons commmands
+dct_btn_search_wplc[lst_lbls_wplc[0]].config(
+    command=lambda: pick_folder(s_entry=lst_lbls_wplc[0])
+)
+dct_btn_search_wplc[lst_lbls_wplc[1]].config(
+    command=lambda: pick_folder(s_entry=lst_lbls_wplc[1])
+)
+dct_btn_update_wplc[lst_lbls_wplc[0]].config(
+    command=lambda: update_folder(s_entry=lst_lbls_wplc[0])
+)
+dct_btn_update_wplc[lst_lbls_wplc[1]].config(
+    command=lambda: update_folder(s_entry=lst_lbls_wplc[1])
+)
+
 # >> Input files layout
 
 # place widgets in dicts
@@ -1108,6 +1133,7 @@ dct_etr_inp = dict()
 dct_btn_upd_inp = dict()
 dct_btn_search_inp = dict()
 dct_btn_about_inp = dict()
+dct_btn_tool_inp = dict()
 for i in range(len(lst_lbls_inp)):
     s_lcl_key = lst_lbls_inp[i]
     # label
@@ -1178,7 +1204,56 @@ for i in range(len(lst_lbls_inp)):
     dct_btn_about_inp[s_lcl_key].grid(
         row=i, column=4, pady=n_widg_pady, padx=n_widg_padx
     )
+    # tool button
+    dct_btn_tool_inp[s_lcl_key] = tkinter.Button(
+        frame_inputfiles,
+        image=img_tool,
+        bg=color_bg,
+        activebackground=color_actbg,
+        foreground=color_fg,
+        activeforeground=color_fg,
+        highlightbackground=color_bg,
+        bd=0,
+    )
+    dct_btn_tool_inp[s_lcl_key].grid(row=i, column=5, pady=n_widg_pady, padx=n_widg_padx)
 
+
+# config input update buttons commmands
+dct_btn_upd_inp[lst_lbls_inp[0]].config(
+    command=lambda: update_file(s_entry=lst_lbls_inp[0])
+)
+dct_btn_upd_inp[lst_lbls_inp[1]].config(
+    command=lambda: update_file(s_entry=lst_lbls_inp[1])
+)
+# config input search buttons commmands
+dct_btn_search_inp[lst_lbls_inp[0]].config(
+    command=lambda: pick_file(
+        s_entry=lst_lbls_inp[0],
+        tpl_file_type=lst_types_inp[0],
+        s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
+    )
+)
+dct_btn_search_inp[lst_lbls_inp[1]].config(
+    command=lambda: pick_file(
+        s_entry=lst_lbls_inp[1],
+        tpl_file_type=lst_types_inp[1],
+        s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
+    )
+)
+# config input about buttons commands
+dct_btn_about_inp[lst_lbls_inp[0]].config(
+    command=lambda: open_about_input(n_entry=0)
+)
+dct_btn_about_inp[lst_lbls_inp[1]].config(
+    command=lambda: open_about_input(n_entry=1)
+)
+# config input tool buttons commmands
+dct_btn_tool_inp[lst_lbls_inp[0]].config(
+    command=call_place_tool
+)
+dct_btn_tool_inp[lst_lbls_inp[1]].config(
+    command=call_agents_tool
+)
 
 # >> Parameters
 dct_lbls_params = dict()
@@ -1223,6 +1298,14 @@ for i in range(len(lst_lbls_params)):
         bd=0,
     )
     dct_btn_upd_params[s_lcl_key].pack(side=LEFT)
+
+# config param update buttons
+dct_btn_upd_params[lst_lbls_params[0]].config(
+    command=lambda: update_parameter(
+        s_entry=lst_lbls_params[0], s_entry_type=lst_widget_params[0]
+    )
+)
+
 
 # >> Tool Options
 # place options checkbuttons
@@ -1328,56 +1411,6 @@ scrollbar_log_x.grid(row=1, column=0, sticky="WE")
 listbox_log.config(state=DISABLED)
 print_report_header()
 
-# >>> Commands
-
-# config workplace search buttons commmands
-dct_btn_search_wplc[lst_lbls_wplc[0]].config(
-    command=lambda: pick_folder(s_entry=lst_lbls_wplc[0])
-)
-dct_btn_search_wplc[lst_lbls_wplc[1]].config(
-    command=lambda: pick_folder(s_entry=lst_lbls_wplc[1])
-)
-dct_btn_update_wplc[lst_lbls_wplc[0]].config(
-    command=lambda: update_folder(s_entry=lst_lbls_wplc[0])
-)
-dct_btn_update_wplc[lst_lbls_wplc[1]].config(
-    command=lambda: update_folder(s_entry=lst_lbls_wplc[1])
-)
-
-# config input update buttons commmands
-dct_btn_upd_inp[lst_lbls_inp[0]].config(
-    command=lambda: update_file(s_entry=lst_lbls_inp[0])
-)
-dct_btn_upd_inp[lst_lbls_inp[1]].config(
-    command=lambda: update_file(s_entry=lst_lbls_inp[1])
-)
-
-# config input search buttons commmands
-dct_btn_search_inp[lst_lbls_inp[0]].config(
-    command=lambda: pick_file(
-        s_entry=lst_lbls_inp[0],
-        tpl_file_type=lst_types_inp[0],
-        s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
-    )
-)
-dct_btn_search_inp[lst_lbls_inp[1]].config(
-    command=lambda: pick_file(
-        s_entry=lst_lbls_inp[1],
-        tpl_file_type=lst_types_inp[1],
-        s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
-    )
-)
-# config input about buttons commands
-dct_btn_about_inp[lst_lbls_inp[0]].config(command=lambda: open_about_input(n_entry=0))
-dct_btn_about_inp[lst_lbls_inp[1]].config(command=lambda: open_about_input(n_entry=1))
-
-
-# config param update buttons
-dct_btn_upd_params[lst_lbls_params[0]].config(
-    command=lambda: update_parameter(
-        s_entry=lst_lbls_params[0], s_entry_type=lst_widget_params[0]
-    )
-)
 
 get_entry_metadata()
 

@@ -40,12 +40,8 @@ Id;  x; Trait; Alpha; Beta;    C;    Name; Alias ;  Color
 |` Trait ` | positive real number | Trait orientation value | trait units|
 |` Alpha ` | positive real number | Trait orientation threshold for agent-place interaction | -|
 |` Beta ` | positive integer number | Distance threshold for agent movement. | cell units|
-|` C` | positive real number | Place-to-agent degree of interaction influence (agents openness to change) | -|
- - **Optional Fields**:
-
-|Field Name | Data Type | Description | Units|
-|:--- | :--- | :--- | :---|
-|`Name ` | text | Category name | -|
+|` C ` | positive real number | Place-to-agent degree of interaction influence (agents openness to change) | -|
+|` Name ` | text | Category name | -|
 |` Alias ` | text | Category alias (one-word only) | -|
 |` Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | -|
  - **Data view**:
@@ -111,12 +107,8 @@ Id;  x; Trait;   D;    Name; Alias; Color
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` D` | positive real number | Agent-to-place degree of interaction influence (places openness to change) | -|
- - **Optional Fields**:
-
-|Field Name | Data Type | Description | Units|
-|:--- | :--- | :--- | :---|
-|`Name ` | text | Category name | -|
+|` D ` | positive real number | Agent-to-place degree of interaction influence (places openness to change) | -|
+|` Name ` | text | Category name | -|
 |` Alias ` | text | Category alias (one-word only) | -|
 |` Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | -|
  - **Data view**:

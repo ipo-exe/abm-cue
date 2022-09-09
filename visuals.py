@@ -85,6 +85,7 @@ def plot_sigle_frame(
             filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
         plt.savefig(filepath, dpi=n_dpi)
         plt.close(fig)
+        del fig
         return filepath
 
 
@@ -165,29 +166,26 @@ def plot_traced_traits(
         plt.style.use("dark_background")
     fig = plt.figure(figsize=(8, 4))  # Width, Height
     plt.title(s_ttl)
-    # get colors
-    b_colors = False
-    try:
-        # check if color field is provided
-        colors = df_params["Color"].values
-        b_colors = True
-    except KeyError:
-        s_lcl_color = "tab:grey"
-        b_colors = False
+    s_old_alias = ''
     for i in range(len(df_data.columns)):
         s_lcl_col = df_data.columns[i]
         if 'Trait' in s_lcl_col:
-            if b_colors:
-                # get id
-                s_lcl_id = s_lcl_col.split("_")[1]
-                # get color
-                s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[0]
-                try:
-                    plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
-                except ValueError:
-                    plt.plot(df_data["Step"], df_data[s_lcl_col], c='tab:grey')
+            # get alias
+            s_lcl_alias = s_lcl_col.split("_")[0]
+            if s_lcl_alias != s_old_alias:
+                b_label = True
+            else:
+                b_label = False
+            s_old_alias = s_lcl_alias
+            # get id
+            s_lcl_id = s_lcl_col.split("_")[1]
+            # get color
+            s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[0]
+            if b_label:
+                plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color, label=s_lcl_alias)
             else:
                 plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
+            plt.legend()
             plt.ylabel("Traits")
             plt.xlabel("Steps")
             plt.xlim(0, df_data["Step"].max() + 1)
@@ -195,6 +193,7 @@ def plot_traced_traits(
     if b_show:
         plt.show()
         plt.close(fig)
+        del fig
     else:
         # export file
         if s_suff == "":
@@ -203,6 +202,7 @@ def plot_traced_traits(
             filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
         plt.savefig(filepath, dpi=n_dpi)
         plt.close(fig)
+        del fig
         return filepath
 
 
@@ -236,33 +236,31 @@ def plot_traced_positions(
         plt.style.use("dark_background")
     fig = plt.figure(figsize=(8, 4))  # Width, Height
     plt.title(s_ttl)
-    # get colors
-    b_colors = False
-    try:
-        # check if color field is provided
-        colors = df_params["Color"].values
-        b_colors = True
-    except KeyError:
-        s_lcl_color = "tab:grey"
-        b_colors = False
+    s_old_alias = ''
     for i in range(len(df_data.columns)):
         s_lcl_col = df_data.columns[i]
-        if 'Trait' in s_lcl_col:
-            if b_colors:
-                # get id
-                s_lcl_id = s_lcl_col.split("_")[1]
-                # get color
-                s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[0]
-                try:
-                    plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
-                except ValueError:
-                    plt.plot(df_data["Step"], df_data[s_lcl_col], c='tab:grey')
+        if 'x' in s_lcl_col:
+            # get alias
+            s_lcl_alias = s_lcl_col.split("_")[0]
+            if s_lcl_alias != s_old_alias:
+                b_label = True
+            else:
+                b_label = False
+            s_old_alias = s_lcl_alias
+            # get id
+            s_lcl_id = s_lcl_col.split("_")[1]
+            # get color
+            s_lcl_color = df_params.query("Id == {}".format(s_lcl_id))["Color"].values[0]
+            if b_label:
+                plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color, label=s_lcl_alias)
             else:
                 plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
+            plt.legend()
             plt.ylabel("x")
             plt.xlabel("Steps")
             plt.xlim(0, df_data["Step"].max() + 1)
             plt.ylim(0, n_positions + 1)
+
     if b_show:
         plt.show()
         plt.close(fig)
@@ -454,6 +452,7 @@ def plot_cue_1d_pannel(
     if b_show:
         plt.show()
         plt.close(fig)
+        del fig
     else:
         # export file
         if s_suff == "":
@@ -462,4 +461,5 @@ def plot_cue_1d_pannel(
             filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
         plt.savefig(filepath, dpi=n_dpi)
         plt.close(fig)
+        del fig
         return filepath

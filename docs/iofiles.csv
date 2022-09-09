@@ -1,6 +1,6 @@
 Name;Extension;Source;Format;Description;Dtype;Units;Scale;NoData value;Mandatory Fields;Optional Fields;Special
-param_agents;txt;imported by user;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & Trait & Alpha & Beta & C;Name & Alias & Color;none
-param_places;txt;imported by user;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & x & Trait & D;Name & Alias & Color;none
+param_agents;txt;imported by user;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & Trait & Alpha & Beta & C & Name & Alias & Color;none;none
+param_places;txt;imported by user;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & x & Trait & D & Name & Alias & Color;none;none
 param_simulation;txt;imported by user;Data Table;Table of simulation parameters;none;none;none;none;Metadata & Value;none;none
 param_agents_start;txt;process output;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & Trait & Alpha & Beta & C;none;none
 param_agents_end;txt;process output;Data Table;Table of agents parameters and final conditions;none;none;none;none;Id & x & Trait & Alpha & Beta & C;none;none
