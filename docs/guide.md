@@ -436,3 +436,39 @@ Then they change so much that they are released from the attractor region.
 ![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench10b.png "bench10b")
 
 
+#### Benchmark 11: exploring density effects
+
+Agents can be grouped into blocks of categories so density effects can be simulated. 
+This is done simply by adding identical Agents (same Name, Alias and Color) like this:
+
+Agents Parameters:
+```
+Id;  x; Trait; Alpha; Beta;   C;    Name; Alias; Color
+ 1;  8;    10;     7;    6; 0.01; Agent 1;    a1;   red
+ 2;  7;    10;     7;    6; 0.01; Agent 1;    a1;   red
+ 3;  6;    10;     7;    6; 0.01; Agent 1;    a1;   red
+ 4;  8;    10;     7;    6; 0.01; Agent 1;    a1;   red
+ 5; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
+ 6; 14;     5;     6;    4;  0.0; Agent 2;    a2;  blue
+ 7; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
+ 8; 16;     5;     6;    4;  0.0; Agent 2;    a2;  blue
+ 9; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
+10; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
+11; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
+12; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
+13; 22;    12;     9;    6; 0.01; Agent 3;    a3; green
+14; 23;    12;     9;    6; 0.01; Agent 3;    a3; green
+15; 22;    12;     9;    6; 0.01; Agent 3;    a3; green
+```
+
+This is the same settings for the attractor-release scenario. 
+However, note that there are several clones of Agent 1, 2 and 3. 
+They can start in any position `x`. 
+
+
+Plot for agents' positions. Note that Agent 2 is the cause of the attractor effect. 
+Clearly, the higher density of Agents accelerated the attraction since the environment
+changed much faster.
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench11a.png "bench11a")
+
