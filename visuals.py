@@ -121,7 +121,10 @@ def plot_traced_h(
     plt.ylabel("H")
     plt.xlabel("Steps")
     plt.xlim(0, df_data["Step"].max() + 1)
-    plt.ylim(0, 1.1 * df_data[s_field].max())
+    if 1.1 * df_data[s_field].max() == 0:
+        pass
+    else:
+        plt.ylim(0, 1.1 * df_data[s_field].max())
     if b_show:
         plt.show()
         plt.close(fig)
@@ -374,9 +377,9 @@ def plot_cue_1d_pannel(
         vct_lcl_ticks = np.arange(0, n_places + 1, 5)
         vct_lcl_labels = vct_lcl_ticks + (n_step - n_places)
 
-    fig = plt.figure(figsize=(10, 5))  # Width, Height
+    fig = plt.figure(figsize=(6, 4))  # Width, Height
     gs = mpl.gridspec.GridSpec(
-        2, 4, wspace=0.0, hspace=0.5, left=0.05, bottom=0.1, top=0.9, right=0.95
+        2, 4, wspace=0.0, hspace=0.8, left=0.1, bottom=0.2, top=0.8, right=0.9
     )  # nrows, ncols
     plt.suptitle(s_ttl)
     #
@@ -388,7 +391,6 @@ def plot_cue_1d_pannel(
     plt.xticks(ticks=vct_lcl_ticks, labels=vct_lcl_labels)
     plt.ylabel("position")
     plt.xlabel("time step")
-
     for a in range(len(grd_agents_x_t)):
         if n_step < n_places:
             vct_lcl_agents_i = grd_agents_x_t[a][: n_step + 1]
@@ -399,7 +401,6 @@ def plot_cue_1d_pannel(
                 n_step - n_places : n_step + 1
             ]
         plt.plot(vct_lcl_agents_i, "white", zorder=1)
-
     for a in range(len(grd_agents_x_t)):
         if n_step < n_places:
             vct_lcl_agents_i = grd_agents_x_t[a][: n_step + 1]

@@ -149,7 +149,7 @@ So:
 
 Agents walk randomly but biased towards places like them. 
 
-For example, let `Alpha = 1` so agents can interact with any place. 
+For example, let `Alpha = 100` (very large) so agents can interact with any place. 
 Now consider an agent with orientation trait `Agent_trait = 10` surrounded by places of the following
 traits: `[1, 20, 11, 8]`. Which place it will move in the next step?
 
@@ -158,14 +158,14 @@ However, the likelihood of moving towards the place of trait `Place_trait = 11` 
 than of moving towards the place of trait `Place_trait = 20`. 
 In fact, in this example, the probabilities of moving to each place is `[0.09, 0.05, 0.45, 0.41]`.
 
-Now, let `Alpha < 1` in a way that the interaction threshold excludes 
+Now, let `Alpha < 10` in a way that the interaction threshold excludes 
 `Place_trait = 1` and `Place_trait = 20` from the possibility of interaction.
 In such condition, the probabilities of moving to each place is `[0.0, 0.0, 0.53, 0.47]`.
 
 Finally, in the situation when all places around are beyond the interaction threshold, there is no bias in
 the random walk, and the probabilities of moving to each place is `[0.25, 0.25, 0.25, 0.25]` (just an uniform random walk).
 
-### Benchmark runs
+### Basic Benchmark runs
 
 Some bench tests of the model in very restricted conditions were performed in order to get useful insights.
 
@@ -176,7 +176,6 @@ Here a single agent that never interacts walks in a constant world.
 Parameters:
 * `N_Agents`: 1
 * `N_Places`: 40
-* `N_Types`: 20
 * `Alpha`: 0 (no interaction)
 * `Beta`: 3
 * `C`: 0 (agent never change)
@@ -199,7 +198,6 @@ Here a single agent that never change (closed agent) walks in a constant (but op
 Parameters:
 * `N_Agents`: 1
 * `N_Places`: 40
-* `N_Types`: 20
 * `Alpha`: 20 (full interaction)
 * `Beta`: 3
 * `C`: 0 (agent never change)
@@ -222,7 +220,6 @@ Here a single agent that is open to change walks in a world that never change (c
 Parameters:
 * `N_Agents`: 1
 * `N_Places`: 40
-* `N_Types`: 20
 * `Alpha`: 20 (full interaction)
 * `Beta`: 3
 * `C`: 0.01 (agent change 1% at each interaction)
@@ -246,7 +243,6 @@ Here a single agent that is open to change walks in a world that is also open to
 Parameters:
 * `N_Agents`: 1
 * `N_Places`: 40
-* `N_Types`: 20
 * `Alpha`: 20 (full interaction)
 * `Beta`: 3
 * `C`: 0.01 (agent change 1% at each interaction)
@@ -270,7 +266,6 @@ Here benchmark 3 is revisited with an agent with a larger window of sight (`Beta
 Parameters:
 * `N_Agents`: 1
 * `N_Places`: 40
-* `N_Types`: 20
 * `Alpha`: 20 (full interaction)
 * `Beta`: 6 (larger)
 * `C`: 0.01 (agent change 1% at each interaction)
@@ -293,7 +288,6 @@ Here the agent interacts only with places within the `Alpha` threshold.
 Parameters:
 * `N_Agents`: 1
 * `N_Places`: 40
-* `N_Types`: 20
 * `Alpha`: 10
 * `Beta`: 3
 * `C`: 0.01 (agent change 1% at each interaction)
@@ -334,4 +328,111 @@ Initial conditions:
 Output:
 
 ![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench6.gif "bench6")
+
+### Multi-parameter simulations
+
+The 1D world can be populated with places with different combinations of parameters. For instance, agents can have
+different interaction thresholds (`Alpha` parameter). Or different distance thresholds (`Beta` parameter), and so on.
+
+#### Benchmark 7: multi-alpha simulation of closed agents in an open world
+
+Here we have 3 closed agents with same `Beta = 2` but different `Alpha` so only two of them interact with places.
+The environment in which they walk is a constant world of `Trait = 1`. 
+Agents are set to return to they initial place each time step.
+
+Agents Parameters:
+```
+Id;  x; Trait; Alpha; Beta;   C;    Name; Alias; Color
+ 1;  5;    12;    20;    2; 0.0; Agent 1;    a1;   red
+ 2; 15;     8;     5;    2; 0.0; Agent 2;    a2;  blue
+ 3; 24;     4;     5;    2; 0.0; Agent 3;    a3; green
+```
+
+Despite having a high-value trait, Agent 1 has also a large interaction threshold 
+(`Alpha = 20`) so it expected to interact with places.
+
+Output:
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench7.gif "bench7")
+
+
+#### Benchmark 8: "attractor" effect with multi-alpha and multi-beta combinations
+
+As already stated, agents walk randomly but biased towards places like them. This allows to scenarios where
+the effect of one agent in the environment attracts others by changing the environment to a sufficient trait level.
+
+Agents Parameters:
+```
+Id;  x; Trait; Alpha; Beta;   C;    Name; Alias; Color
+ 1;  5;    10;     7;    2; 0.0; Agent 1;    a1;   red
+ 2; 15;     5;     6;    2; 0.0; Agent 2;    a2;  blue
+ 3; 25;    12;     9;    2; 0.0; Agent 3;    a3; green
+```
+
+Output:
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench8.gif "bench8")
+
+
+Plot for agents's positions. Note that Agent 2 is the cause of the attractor effect.
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench8a.png "bench8a")
+
+
+#### Benchmark 9: "preference" effect with multi-alpha and multi-beta combinations
+
+If agents are set to return to their respective initial place every time step, the attractor effect only happens
+if there are superpositions on the distance thresholds. In this sense, it might be described more like a 
+"preference effect" -- a more interesting neighborhood for some agents.
+
+Agents Parameters:
+```
+Id;  x; Trait; Alpha; Beta;   C;    Name; Alias; Color
+ 1;  5;    10;     7;    6; 0.0; Agent 1;    a1;   red
+ 2; 15;     5;     6;    8; 0.0; Agent 2;    a2;  blue
+ 3; 25;    12;     9;    6; 0.0; Agent 3;    a3; green
+```
+
+Output:
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench9.gif "bench9")
+
+
+Plot for agents's positions. Note that Agent 2 is the cause of the attractor effect.
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench9a.png "bench9a")
+
+
+#### Benchmark 10: "attract-release" or "contamination" effect with open agents
+
+So far agents were completely closed for change (`C = 0`). However, if some agents are even slightly open for 
+change (`C > 0`) then the attracting effect ends up with a rebound, releasing the agents to interact with
+places that earlier were uninteresting. They end up being "contaminated" after enough interactions.
+
+Agents Parameters:
+```
+Id;  x; Trait; Alpha; Beta;   C;    Name; Alias; Color
+ 1;  8;    10;     7;    6; 0.01; Agent 1;    a1;   red
+ 2; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
+ 3; 22;    12;     9;    6; 0.01; Agent 3;    a3; green
+```
+
+Output:
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench10.gif "bench10")
+
+
+Plot for agents' positions. Note that Agent 2 is the cause of the attractor effect. 
+Initially, Agents 1 and 3 walk randomly without interactions until they got attracted by
+the region of influence of Agent 2. Then, after changing enough, Agents 1 and 3 start
+to interact with their respective region of influence. 
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench10a.png "bench10a")
+
+Plot for agents' traits. Note that Agent 2 is closed and is (`C = 0`) the cause of the attractor effect. 
+Agents 1 and 3 are open (`C > 0`) and start interacting in the attractor region of influence after some random walk.
+Then they change so much that they are released from the attractor region. 
+
+![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench10b.png "bench10b")
+
 

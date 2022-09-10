@@ -201,6 +201,7 @@ def save_file():
                 lst_color = list()
                 lst_sizes = list()
                 # get sizes
+                n_counter = 0
                 for i in range(1, len(lst_listbox_blocks)):
                     lst_local = lst_listbox_blocks[i].split(';')
                     lst_local_values = list()
@@ -211,7 +212,6 @@ def save_file():
                     n_block_size = int(lst_local_values[0])
                     lst_sizes.append(n_block_size)
                     # append to lists
-                    n_counter = 0
                     for j in range(n_block_size):
                         lst_id.append(n_counter + 1)
                         lst_x.append(0) # append only zero

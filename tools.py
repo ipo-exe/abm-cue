@@ -39,6 +39,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
+import os.path
+
 import pandas as pd
 import numpy as np
 import cue1d
@@ -81,7 +83,6 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         .values[0]
         .strip()
     )
-
     # get agents file
     f_agents = (
         df_param_sim.loc[df_param_sim["Metadata"] == "Agents File", "Value"]
@@ -121,7 +122,6 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     # import places file
     dct_places = inp.import_data_table(s_table_name="param_places", s_filepath=f_places)
     df_places = dct_places["df"]
-
     df_places["Trait"] = df_places["Trait"].astype("float64")
 
     # import agents file
@@ -341,38 +341,120 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         )
         # plot animation frames
         if b_plot:
-            dir_frames = "{}/frames".format(s_dir_out)
-            os.mkdir(path=dir_frames)
-            status("plotting frames", process=True)
-            s_cmap = "viridis"  # 'tab20c'
-            for t in range(n_steps):
-                status(
-                    "CUE1d :: plotting step {} [{:.2f}%]".format(
-                        t, 100 * (t + 1) / n_steps
-                    )
-                )
-                plot_cue_1d_pannel(
-                    n_step=t,
-                    n_traits=n_traits,
-                    n_places=n_places,
-                    n_agents=n_agents,
-                    grd_places_traits_t=grd_traced_places_traits_t,
-                    grd_agents_traits_t=grd_traced_agents_traits_t,
-                    grd_agents_x_t=grd_traced_agents_x_t,
-                    s_ttl="Step = {}".format(t),
-                    s_dir_out=dir_frames,
-                    s_file_name="frame_{}".format(str(t).zfill(n_fill)),
-                    b_show=False,
-                    b_dark=False,
-                )
-            # export animation
-            status("generating gif animation", process=True)
-            export_gif(
-                dir_output=s_dir_out,
-                dir_images=dir_frames,
-                nm_gif="animation",
-                kind="png",
-                suf="",
+            s_dir_frames = "{}/frames".format(s_dir_out)
+            os.mkdir(path=s_dir_frames)
+            # call sub routine
+            animate_frames(
+                s_param_agents="C:/bin/attractor2/param_agents_start.txt",
+                s_param_places="C:/bin/attractor2/param_places_start.txt",
+                s_traced_agents_x="C:/bin/attractor2/traced_agents_x.txt",
+                s_traced_agents_traits="C:/bin/attractor2/traced_agents_traits.txt",
+                s_traced_places_traits="C:/bin/attractor2/traced_places_traits.txt",
+                s_dir_frames="C:/bin/attractor2/frames",
+                s_dir_out="C:/bin/attractor2"
             )
     return {"Output folder": s_dir_out, "Error Status": "OK"}
 
+
+def animate_frames(
+        s_param_agents,
+        s_param_places,
+        s_traced_agents_x,
+        s_traced_agents_traits,
+        s_traced_places_traits,
+        s_dir_frames,
+        s_dir_out='C:/'
+):
+    """
+    tool for a posteriori plotting of the CUE1d model
+    :param s_param_agents: string filepath
+    :param s_param_places: string filepath
+    :param s_traced_agents_x: string filepath
+    :param s_traced_agents_traits: string filepath
+    :param s_traced_places_traits: string filepath
+    :param s_dir_frames: string folder path (where frames are going to be saved)
+    :param s_dir_out: string folder path
+    :return:
+    """
+    from visuals import plot_cue_1d_pannel
+    from out import export_gif
+
+    # import places file
+    dct_places = inp.import_data_table(s_table_name="param_places", s_filepath=s_param_places)
+    df_places = dct_places["df"]
+    df_places["Trait"] = df_places["Trait"].astype("float64")
+    # import agents file
+    dct_agents = inp.import_data_table(s_table_name="param_agents", s_filepath=s_param_agents)
+    df_agents = dct_agents["df"]
+    df_agents["Trait"] = df_agents["Trait"].astype("float64")
+
+    # get params
+    n_agents = len(df_agents)
+    n_places = len(df_places)
+    n_traits = int(max([df_agents["Trait"].max(), df_places["Trait"].max()]))
+
+    status("exporting traced results datasets")
+
+    df_traced_agents_x = pd.read_csv(s_traced_agents_x, sep=';', index_col='Step')
+    df_traced_agents_traits = pd.read_csv(s_traced_agents_traits, sep=';', index_col='Step')
+    df_traced_places_traits = pd.read_csv(s_traced_places_traits, sep=';', index_col='Step')
+
+    # transpose grids
+    grd_traced_places_traits_t = df_traced_places_traits.values.transpose()
+    grd_traced_agents_x_t = df_traced_agents_x.values.transpose()
+    grd_traced_agents_traits_t = df_traced_agents_traits.values.transpose()
+
+    n_steps = len(df_traced_agents_traits)
+    # get fill size
+    n_fill = int(np.log10(n_steps)) + 1
+
+    # check dir
+    if os.path.isdir(s_dir_frames):
+        pass
+    else:
+        os.mkdir(s_dir_frames)
+
+    # plot animation frames
+    status("plotting frames", process=True)
+    s_cmap = "viridis"  # 'tab20c'
+    for t in range(n_steps):
+        status(
+            "CUE1d :: plotting step {} [{:.2f}%]".format(
+                t, 100 * (t + 1) / n_steps
+            )
+        )
+        plot_cue_1d_pannel(
+            n_step=t,
+            n_traits=n_traits,
+            n_places=n_places,
+            n_agents=n_agents,
+            grd_places_traits_t=grd_traced_places_traits_t,
+            grd_agents_traits_t=grd_traced_agents_traits_t,
+            grd_agents_x_t=grd_traced_agents_x_t,
+            s_ttl="Step = {}".format(t),
+            s_dir_out=s_dir_frames,
+            s_file_name="frame_{}".format(str(t).zfill(n_fill)),
+            b_show=False,
+            b_dark=False,
+        )
+    # export animation
+    status("generating gif animation", process=True)
+    export_gif(
+        dir_output=s_dir_out,
+        dir_images=s_dir_frames,
+        nm_gif="animation",
+        kind="png",
+        suf="",
+    )
+
+'''
+animate_frames(
+    s_param_agents="C:/bin/release/param_agents_start.txt",
+    s_param_places="C:/bin/release/param_places_start.txt",
+    s_traced_agents_x="C:/bin/release/traced_agents_x.txt",
+    s_traced_agents_traits="C:/bin/release/traced_agents_traits.txt",
+    s_traced_places_traits="C:/bin/release/traced_places_traits.txt",
+    s_dir_frames="C:/bin/release/frames",
+    s_dir_out="C:/bin/release"
+)
+'''
