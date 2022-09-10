@@ -444,7 +444,7 @@ def animate_frames(
         dir_images=s_dir_frames,
         nm_gif="animation",
         kind="png",
-        suf="",
+        suf="", #
     )
 
 '''
