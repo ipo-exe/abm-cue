@@ -345,13 +345,13 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
             os.mkdir(path=s_dir_frames)
             # call sub routine
             animate_frames(
-                s_param_agents="C:/bin/attractor2/param_agents_start.txt",
-                s_param_places="C:/bin/attractor2/param_places_start.txt",
-                s_traced_agents_x="C:/bin/attractor2/traced_agents_x.txt",
-                s_traced_agents_traits="C:/bin/attractor2/traced_agents_traits.txt",
-                s_traced_places_traits="C:/bin/attractor2/traced_places_traits.txt",
-                s_dir_frames="C:/bin/attractor2/frames",
-                s_dir_out="C:/bin/attractor2"
+                s_param_agents=f_agents,
+                s_param_places=f_places,
+                s_traced_agents_x="{}/traced_agents_x.txt".format(s_dir_out),
+                s_traced_agents_traits="{}/traced_agents_traits.txt".format(s_dir_out),
+                s_traced_places_traits="{}/traced_places_traits.txt".format(s_dir_out),
+                s_dir_frames=s_dir_frames,
+                s_dir_out=s_dir_out
             )
     return {"Output folder": s_dir_out, "Error Status": "OK"}
 
