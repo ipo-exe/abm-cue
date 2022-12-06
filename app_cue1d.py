@@ -59,11 +59,21 @@ def callsub():
 
 
 def call_place_tool():
+    """
+    call the place tool
+    :return: None
+    :rtype: None
+    """
     import subprocess
     subprocess.run(["python", "app_set_places.py"])
 
 
 def call_agents_tool():
+    """
+    call the agent tool
+    :return:
+    :rtype:
+    """
     import subprocess
     subprocess.run(["python", "app_set_agents.py"])
 
@@ -979,7 +989,7 @@ menu_help.add_command(
     activeforeground=color_fg,
     command=command_demo,
 )
-# add the File menu to the menubar
+# add the Help menu to the menubar
 menubar.add_cascade(
     label="Help",
     menu=menu_help,

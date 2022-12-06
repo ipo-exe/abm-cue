@@ -75,18 +75,23 @@ def get_window_ids(n_rows, n_cols, n_rsize=1, b_flat=True):
     n_radius = n_rsize
     # get distance vector
     vct_distance = np.arange(start=-n_radius, stop=n_radius + 1)
+
     # get the base window vector
-    vct_window_base = vct_distance % n_cols
+    vct_window_base_rows = vct_distance % n_rows
+    vct_window_base_cols = vct_distance % n_cols
+
     # generate grid for rows
     lst_aux = list()
-    for r in range(len(vct_window_base)):
-        lst_aux.append(vct_window_base[r] * np.ones(shape=np.shape(vct_window_base)))
+    for r in range(len(vct_window_base_rows)):
+        lst_aux.append(vct_window_base_rows[r] * np.ones(shape=np.shape(vct_window_base_rows)))
     grd_window_rows = np.array(lst_aux, dtype="uint16")
+
     # generate grid for cols
     lst_aux = list()
-    for r in range(len(vct_window_base)):
-        lst_aux.append(vct_window_base)
+    for r in range(len(vct_window_base_cols)):
+        lst_aux.append(vct_window_base_cols)
     grd_window_cols = np.array(lst_aux, dtype="uint16")
+
     if b_flat:
         vct_window_rows = grd_window_rows.flatten()
         vct_window_cols = grd_window_cols.flatten()
@@ -160,3 +165,28 @@ def status(msg="Status message", process=True):
         print("\t>>> {:60}...".format(msg))
     else:
         print("\n\t>>> {:60}\n".format(msg))
+
+
+if __name__ == "__main__":
+    import pandas as pd
+    rows, cols = get_window_ids(
+        n_rows=50,
+        n_cols=100,
+        n_rsize=1,
+        b_flat=True
+    )
+    df = pd.DataFrame(
+        {
+            "Rows": rows,
+            "Cols": cols
+        }
+    )
+    print(df.to_string())
+
+
+    grd_y = (4 + rows) % 50
+    print(grd_y)
+    grd_x = (2 + cols) % 100
+    print(grd_x)
+
+

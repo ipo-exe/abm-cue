@@ -91,24 +91,30 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     )
 
     # get simulation parameters
+    #
+    # number of steps
     n_steps = int(
         df_param_sim.loc[df_param_sim["Metadata"] == "Steps", "Value"].values[0].strip()
     )
+    # string boolean return agents to original position
     s_return = (
         df_param_sim.loc[df_param_sim["Metadata"] == "Return Agents", "Value"]
         .values[0]
         .strip()
     )
+    # string boolean trace back simulation
     s_trace = (
         df_param_sim.loc[df_param_sim["Metadata"] == "Trace Back", "Value"]
         .values[0]
         .strip()
     )
+    # string boolean plot simulation
     s_plot = (
         df_param_sim.loc[df_param_sim["Metadata"] == "Plot Steps", "Value"]
         .values[0]
         .strip()
     )
+    # convert to boolean
     b_return = False
     b_trace = False
     b_plot = False

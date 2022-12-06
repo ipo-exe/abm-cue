@@ -76,6 +76,7 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
             n_rsize=n_beta,
             b_flat=False
         )
+        # use columns only (1D simulation)
         if b_return:
             lst_aux = list(vct_window_cols[0])
         else:
@@ -152,7 +153,7 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
             df_window = dct_window[str(n_crt_agent_beta)]["df"]
 
             # update window dataframe
-            df_window["x"] = (n_crt_agent_x + vct_rows_base_ids) % n_places
+            df_window["x"] = (n_crt_agent_x + vct_rows_base_ids) % n_places # here the magic happens
             df_window["Trait"] = df_places["Trait"].values[df_window["x"].values]
             df_window["D"] = df_places["D"].values[df_window["x"].values]
             df_window["Discrepancy"] = np.abs(
@@ -162,12 +163,12 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
             # compute selection Interac_score
             df_window["Interac_score"] = (
                 df_window["Discrepancy"].max() - df_window["Discrepancy"] + 1
-            )  # normalize
+            )
+            # normalize
             # set score = zero where place is beyond alpha threshold
             df_window["Interac_score"] = df_window["Interac_score"].values * (
                 df_window["Discrepancy"].values <= n_crt_alpha
             )
-
             # compute probabilistic weights
             if df_window["Interac_score"].sum() == 0:
                 # uniform distribution when all scores == 0:
@@ -197,13 +198,9 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
                 n_crt_place_d = df_window["D"].values[n_next_index]
 
                 # compute means
-                r_mean_agent = (
-                    n_crt_agent_trait + (n_crt_agent_c * n_crt_place_trait)
-                ) / (1 + n_crt_agent_c)
+                r_mean_agent = (n_crt_agent_trait + (n_crt_agent_c * n_crt_place_trait)) / (1 + n_crt_agent_c)
+                r_mean_place = (n_crt_place_trait + (n_crt_place_d * n_crt_agent_trait)) / (1 + n_crt_place_d)
 
-                r_mean_place = (
-                    n_crt_place_trait + (n_crt_place_d * n_crt_agent_trait)
-                ) / (1 + n_crt_place_d)
                 # replace in simulation dataframes
                 df_agents["Trait"].values[a] = r_mean_agent
                 df_places["Trait"].values[n_crt_place_x] = r_mean_place

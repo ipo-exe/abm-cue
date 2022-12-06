@@ -61,23 +61,8 @@ def shannon_entropy(grd):
     # compute shannon entropy
     n_shannon = 0.0
     for i in range(len(vct_unique)):
-        #print('{:.2f} * {:.2f} = {:.2f}'.format(vct_prob[i], np.log2(vct_prob[i]), vct_prob[i] * np.log2(vct_prob[i])))
         n_shannon = n_shannon + (vct_prob[i] * np.log2(vct_prob[i]))
     return - n_shannon
-
-'''
-a = np.array([1, 1, 1, 2, 1])
-b = np.array([1, 2, 5, 4, 2])
-c = np.random.randint(low=10, high=20, size=10)
-
-se_a = shannon_entropy(grd=a)
-print(se_a)
-se_b = shannon_entropy(grd=b)
-print(se_b)
-se_c = shannon_entropy(grd=c)
-print(se_c)
-'''
-
 
 
 
