@@ -50,22 +50,41 @@ import inp
 from time import sleep
 
 
-def map_places_traits(grd_ids, df_places):
+def map_traits(grd_ids, df_places):
     grd_traits = np.zeros(shape=np.shape(grd_ids), dtype="float32")
     for i in range(len(df_places)):
         grd_traits = grd_traits + (df_places["Place_Trait"].values[i] * (grd_ids == df_places["Id"].values[i]))
     return grd_traits
 
 
-def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_return=False, b_trace=True):
+def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_return=False):
+    """
+    Simulation of CUE 2D
 
+    :param df_agents: agents dataframe
+    :type df_agents: pandas.DataFrame
+    :param df_places: places dataframe
+    :type df_places: pandas.DataFrame
+    :param grd_ids: places ids map
+    :type grd_ids: numpy.ndarray
+    :param n_steps: number of simulation steps
+    :type n_steps: int
+    :param b_tui: boolean to terminal display
+    :type b_tui: bool
+    :param b_trace: boolean to traceback simulation
+    :type b_trace: bool
+    :return: simulation object
+    :rtype: dict
+    """
+    # ------------------------------------------------------------------------------------------
+    # df_places setup
     # first get unique places found in the ids map
     df_places_grd = pd.DataFrame(
         {
             "Id": np.unique(grd_ids)
         }
     )
-    # merge places dataframes
+    # then merge places dataframes
     df_places = pd.merge(
         how='left',
         left=df_places_grd,
@@ -74,6 +93,7 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_return=False, b_
         right_on="Id"
     )
 
+    # ------------------------------------------------------------------------------------------
     # start up
     s_dtype = "float32"
     n_agents = len(df_agents)
@@ -81,12 +101,14 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_return=False, b_
     n_rows = np.shape(grd_ids)[0]
     n_cols = np.shape(grd_ids)[1]
 
+    # ------------------------------------------------------------------------------------------
     # scanning window parameters set up
-    #
-    # get unique beta (radius size) values
-    lst_unique_beta = list(df_agents["Beta"].unique())
+    lst_unique_beta = list(df_agents["Beta"].unique())  # get unique beta (radius size) values
     dct_window = dict()
+    # construction loop
     for n_beta in lst_unique_beta:
+
+        # --------------------------------------------------------------------------------------
         # get scanning window parameters
         vct_window_rows, vct_window_cols = backend.get_window_ids(
             n_rows=n_rows,
@@ -95,6 +117,7 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_return=False, b_
             b_flat=True
         )
 
+        # --------------------------------------------------------------------------------------
         # remove the origin from window
         lst_aux_rows = list()
         lst_aux_cols = list()
@@ -105,10 +128,12 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_return=False, b_
                 lst_aux_rows.append(vct_window_rows[i])
                 lst_aux_cols.append(vct_window_cols[i])
 
+        # --------------------------------------------------------------------------------------
         # get window base ids
         vct_rows_base_ids = np.array(lst_aux_rows, dtype="uint16")
         vct_cols_base_ids = np.array(lst_aux_cols, dtype="uint16")
 
+        # --------------------------------------------------------------------------------------
         # deploy recyclable window dataframe
         n_window_size = len(vct_rows_base_ids)
         df_window = pd.DataFrame(
@@ -118,16 +143,15 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_return=False, b_
                 "x": np.zeros(n_window_size, dtype="uint16"),
                 "y": np.zeros(n_window_size, dtype="uint16"),
                 "Id": np.zeros(n_window_size, dtype="int16"),
-                "Discrepancy": np.zeros(n_window_size, dtype=s_dtype),
-                "Interac_score": np.zeros(n_window_size, dtype=s_dtype),
-                "Interac_prob": np.zeros(n_window_size, dtype=s_dtype),
             }
         )
+        # --------------------------------------------------------------------------------------
         # append to dict
         dct_window[str(n_beta)] = {
             "df": df_window
         }
 
+    # ------------------------------------------------------------------------------------------
     # define random seeds prior to simulation loop
     np.random.seed(backend.get_seed())
     grd_seeds = np.random.randint(
@@ -137,15 +161,37 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_return=False, b_
         dtype="uint16"
     )
 
-    plt.imshow(grd_ids, origin='lower', cmap='jet')
-    plt.scatter(df_agents['x'], df_agents['y'], c=df_agents["Trait"], vmin=0, vmax=10, edgecolors='white')
-    plt.show()
+    # ------------------------------------------------------------------------------------------
+    # tracing variables
+    if b_trace:
+        grd_traced_agents_x = np.zeros(shape=(n_steps, n_agents), dtype=s_dtype)
+        grd_traced_agents_y = np.zeros(shape=(n_steps, n_agents), dtype=s_dtype)
+        grd_traced_agents_traits = np.zeros(shape=(n_steps, n_agents), dtype=s_dtype)
+        grd_traced_places_traits = np.zeros(shape=(n_steps, n_places), dtype=s_dtype)
+        grd_traced_places_traits[0] = df_places["Trait"].values
+        grd_traced_agents_traits[0] = df_agents["Trait"].values
+        grd_traced_agents_x[0] = df_agents["x"].values
+        grd_traced_agents_y[0] = df_agents["y"].values
 
-    # main loop:
+    # ------------------------------------------------------------------------------------------
+    # return variables
+    if b_return:
+        vct_agents_origin_x = df_agents.copy()["x"].values
+        vct_agents_origin_y = df_agents.copy()["y"].values
+
+    # ------------------------------------------------------------------------------------------
+    # main simulation loop:
     for t in range(n_steps):
-        print("\n\n:::::: Step {} ::::::\n".format(t + 1))
-        sleep(1)
+        if b_tui:
+            backend.status(
+                "CUE2d :: simulation step {} [{:.2f}%]".format(t + 1, 100 * (t + 1) / n_steps)
+            )
+
+        # --------------------------------------------------------------------------------------
+        # agents loop
         for a in range(len(df_agents)):
+
+            # ----------------------------------------------------------------------------------
             # get agents attributes
             a_id = df_agents["Id"].values[a]
             a_x = df_agents["x"].values[a]
@@ -155,88 +201,169 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_return=False, b_
             a_beta = df_agents["Beta"].values[a]
             a_c = df_agents["C"].values[a]
 
-            print("\n\n\t:::::: Agent {} ::::::\n".format(a_id))
-            sleep(1)
-            print("agent location x={} y={}".format(a_x, a_y))
-            print("agent id = {}".format(a_id))
-            print("agent trait = {}".format(a_trait))
-            print("agent alpha = {}".format(a_alpha))
-            print("agent beta = {}".format(a_beta))
-            print("agent c = {}".format(a_c))
-
-
-            # get window dataframe
+            # ----------------------------------------------------------------------------------
+            # access window dataframe using
             df_window = dct_window[str(a_beta)]["df"]
-            # update window
+            # update window x and y
             df_window["x"] = (a_x + df_window["cols"].values) % n_cols
             df_window["y"] = (a_y + df_window["rows"].values) % n_rows
-            # get ids
+            # find cells ids
             for i in range(len(df_window)):
                 lcl_x = df_window["x"].values[i]
                 lcl_y = df_window["y"].values[i]
                 df_window["Id"].values[i] = grd_ids[lcl_y][lcl_x]
 
-            # todo move this to conditonal to get move efficient
-
-            df_window = pd.merge(
-                how='left',
-                left=df_window,
-                right=df_places,
-                left_on="Id",
-                right_on="Id"
-            )
-            df_window["Discrepancy"] = np.abs(
-                a_trait - df_window["Trait"].values
-            )
-
-            # compute selection Interac_score
-            df_window["Interac_score"] = (
-                    df_window["Discrepancy"].max() - df_window["Discrepancy"] + 1
-            )
-            # normalize
-            # set score = zero where place is beyond alpha threshold
-            df_window["Interac_score"] = df_window["Interac_score"].values * (
-                    df_window["Discrepancy"].values <= a_alpha
-            )
-            # compute probabilistic weights
-            if df_window["Interac_score"].sum() == 0:
-                # uniform distribution when all scores == 0:
-                df_window["Interac_prob"] = 1 / len(df_window)
-            else:
-                df_window["Interac_prob"] = (
-                        df_window["Interac_score"] / df_window["Interac_score"].sum()
-                )
-
-
-            print(df_window.to_string())
-
+            # ----------------------------------------------------------------------------------
             # get agent's place id based on its location
             p_id = grd_ids[a_y][a_x]
-            if p_id == 0:
-                print('\t\t->> move to indoors randomly but weighted')
-                df_window_move = df_window.query("Id != 0")
-            else:
-                print('\t\t->> interact and move to outdoors randomly')
-                df_window_move = df_window.query("Id == 0")
-                if len(df_window_move) == 0:
-                    df_window_move = df_window.copy()
+
+            # ----------------------------------------------------------------------------------
+            # action conditional
+            np.random.seed(grd_seeds[t, a])  # restart random state
+            if p_id == 0:  # just move to indoors weighted
+
+                # ------------------------------------------------------------------------------
+                # filter window
+                df_wnd_move = df_window.query("Id != 0")
+
+                # ------------------------------------------------------------------------------
+                # movement conditional
+                if len(df_wnd_move) == 0:  # there is no indoor place to go
+                    df_wnd_move = df_window.copy()
+                    # then move randomly
+                    n_next_index = np.random.choice(
+                        a=np.arange(len(df_wnd_move)),
+                        size=1
+                    )[0]  # get the first
+                else:
+
+                    # --------------------------------------------------------------------------
+                    # append fields
+                    df_wnd_move = pd.merge(
+                        how='left',
+                        left=df_wnd_move,
+                        right=df_places,
+                        left_on="Id",
+                        right_on="Id"
+                    )
+
+                    # --------------------------------------------------------------------------
+                    # compute discrepancy
+                    df_wnd_move["Discrepancy"] = np.abs(
+                        a_trait - df_wnd_move["Trait"].values
+                    )
+
+                    # --------------------------------------------------------------------------
+                    # compute selection Interac_score
+                    df_wnd_move["Interac_score"] = (
+                            df_wnd_move["Discrepancy"].max() - df_wnd_move["Discrepancy"] + 1
+                    )
+
+                    # --------------------------------------------------------------------------
+                    # normalize
+                    # set score = zero where place is beyond alpha threshold
+                    df_wnd_move["Interac_score"] = df_wnd_move["Interac_score"].values * (
+                            df_wnd_move["Discrepancy"].values <= a_alpha
+                    )
+
+                    # --------------------------------------------------------------------------
+                    # compute probabilistic weights
+                    if df_wnd_move["Interac_score"].sum() == 0:
+                        # uniform distribution when all scores == 0:
+                        df_wnd_move["Interac_prob"] = 1 / len(df_wnd_move)
+                    else:
+                        df_wnd_move["Interac_prob"] = (
+                                df_wnd_move["Interac_score"] / df_wnd_move["Interac_score"].sum()
+                        )
+
+                    # --------------------------------------------------------------------------
+                    # weighted random sampling
+                    n_next_index = np.random.choice(
+                        a=np.arange(len(df_wnd_move)),
+                        size=1,
+                        p=df_wnd_move["Interac_prob"].values
+                    )[0]  # get the first
+            else:  # interact and move to outdoors randomly
+
+                # ------------------------------------------------------------------------------
+                # interact
+
+                # get place dataframe index
+                p_index = df_places.query("Id == {}".format(p_id)).index[0]
                 # get place trait
-                p_trait = df_places.query("Id == {}".format(p_id))["Trait"].values[0]
+                p_trait = df_places["Trait"].values[p_index]
                 # get place d
-                p_d = df_places.query("Id == {}".format(p_id))["D"].values[0]
+                p_d = df_places["D"].values[p_index]
 
-                print("place id = {}".format(p_id))
-                print("place trait = {}".format(p_trait))
-                print("place D = {}".format(p_d))
-            print('\n')
-            print(df_window_move.to_string())
+                # ------------------------------------------------------------------------------
+                # apply interaction criteria
+                n_discrepancy = np.abs(a_trait - p_trait)
+                if n_discrepancy <= a_alpha:
+                    # compute means
+                    a_mean = (a_trait + (a_c * p_trait)) / (1 + a_c)
+                    p_mean = (p_trait + (p_d * a_trait)) / (1 + p_d)
 
+                    # replace in simulation dataframes
+                    df_agents["Trait"].values[a] = a_mean
+                    df_places["Trait"].values[p_index] = p_mean
+
+                # ------------------------------------------------------------------------------
+                # move to outdoors
+                # filter window
+                df_wnd_move = df_window.query("Id == 0")
+                #
+                if len(df_wnd_move) == 0:  # there is no outdoor place to go
+                    df_wnd_move = df_window.copy()
+                # then move randomly indoors
+                n_next_index = np.random.choice(
+                    a=np.arange(len(df_wnd_move)),
+                    size=1
+                )[0]  # get the first
+
+            # ----------------------------------------------------------------------------------
+            # update agent position
+            df_agents["x"].values[a] = df_wnd_move["x"].values[n_next_index]
+            df_agents["y"].values[a] = df_wnd_move["y"].values[n_next_index]
+
+        # --------------------------------------------------------------------------------------
+        # trace variables
+        if b_trace:
+            grd_traced_places_traits[t] = df_places["Trait"].values
+            grd_traced_agents_traits[t] = df_agents["Trait"].values
+            grd_traced_agents_x[t] = df_agents["x"].values
+            grd_traced_agents_y[t] = df_agents["y"].values
+
+        # --------------------------------------------------------------------------------------
+        # reset position values
+        if b_return:
+            # reset x
+            df_agents["x"] = vct_agents_origin_x
+            # reset y
+            df_agents["y"] = vct_agents_origin_y
+
+    # ------------------------------------------------------------------------------------------
+    # prepare output dict
+    dct_output = {"Agents": df_agents, "Places": df_places}
+
+    # ------------------------------------------------------------------------------------------
+    # append extra content
+    if b_trace:
+        dct_output["Simulation"] = {
+            "Places_traits": grd_traced_places_traits,
+            "Agents_traits": grd_traced_agents_traits,
+            "Agents_x": grd_traced_agents_x,
+            "Agents_y": grd_traced_agents_y,
+        }
+    return dct_output
 
 
 
 if __name__ == "__main__":
-    print('ok')
-    n_steps = 3
+    import matplotlib.pyplot as plt
+    import random
+
+
+    n_steps = 50
     n_agents = 3
 
     # create agents dataframe (read from table)
@@ -245,31 +372,50 @@ if __name__ == "__main__":
             "Id": np.arange(1, n_agents + 1),
             "x": [12, 12, 12],
             "y": [5, 10, 15],
-            "Trait": [5, 5, 5],
+            "Trait": [5.0, 5.0, 5.0],
             "Alpha": [3, 3, 3],
-            "Beta": [1, 2, 3],
-            "C": [0.01, 0.02, 0.0]
+            "Beta": [1, 5, 3],
+            "C": [0.1, 0.2, 0.0]
         }
     )
 
     # read places parameters table
     df_places_input = pd.read_csv("C:/gis/bin/places_params.csv", sep=";")
+    df_places_input = df_places_input[["Id", "Trait"]]
     df_places_input["D"] = 0.1
-    print(df_places_input.head())
+    df_places_input["Name"] = "P"
+    for i in range(len(df_places_input)):
+        df_places_input["Name"].values[i] = "P" + str(df_places_input["Id"].values[i])
+    df_places_input["Alias"] = df_places_input["Name"]
+
+    number_of_colors = len(df_places_input)
+
+    color = ["#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+             for i in range(number_of_colors)]
+
+    df_places_input["color"] = color
+
+    df_places_input.to_csv("C:/gis/bin/places_param_2d.txt", sep=";", index=False)
 
     # read ID map
     meta, grd_ids = inp.asc_raster(file="C:/gis/bin/places_demo_5m.asc")
-    print(np.shape(grd_ids))
 
 
     #grd_traits = map_places_traits(grd_ids=grd_ids, df_places=df_places)
 
-
-
+    """
+    # ------------------------------------------------------------------------------------------
+    # remove this
+    plt.imshow(grd_ids, origin='lower', cmap='jet')
+    plt.scatter(df_agents['x'], df_agents['y'], c=df_agents["Trait"], vmin=0, vmax=10, edgecolors='white')
+    plt.show()
+    """
 
     play(
         df_agents=df_agents,
         df_places=df_places_input,
         grd_ids=grd_ids,
-        n_steps=n_steps
+        n_steps=n_steps,
+        b_trace=True,
+        b_tui=False
     )

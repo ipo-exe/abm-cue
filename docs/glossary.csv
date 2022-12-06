@@ -9,6 +9,7 @@ Beta;positive integer number;Distance threshold for agent movement.;cell units;p
 C;positive real number;Place-to-agent degree of interaction influence (agents openness to change);-;parameter
 D;positive real number;Agent-to-place degree of interaction influence (places openness to change);-;parameter
 x;positive integer number;Position coordinate in the x axis;cell units;variable
+y;positive integer number;Position coordinate in the y axis;cell units;variable
 Trait;positive real number;Trait orientation value;trait units;variable
 Metadata;text;Name of metadata;-;field
 Value;miscellaneus;Value of data;-;field
@@ -28,6 +29,7 @@ p95;positive real number;Keyword for `95% percentile`;-;keyword
 SD;positive real number;Keyword for `Standard Deviation`;-;keyword
 Count;positive integer number;Keyword for `Counting`;-;keyword
 A_Id_x;positive integer number;Position coordinate in the x axis of Agent A_Id (ex: A_12_x);cell units;variable
+A_Id_y;positive integer number;Position coordinate in the y axis of Agent A_Id (ex: A_12_y);cell units;variable
 P_Id_x;positive integer number;Position coordinate in the x axis of Place P_Id (ex: P_10_x);cell units;variable
 A_Id_Trait;positive real number;Trait orientation of Agent A_Id (ex: A_12_Trait);trait units;variable
 P_Id_Trait;positive integer number;Trait orientation of Place P_Id (ex: P_10_Trait);trait units;variable

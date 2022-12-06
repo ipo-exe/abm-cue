@@ -362,6 +362,108 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     return {"Output folder": s_dir_out, "Error Status": "OK"}
 
 
+
+def run_cue2d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
+
+    # ------------------------------------------------------------------------------------------
+    # import param_simulation_2d.txt
+    dct_fsim = inp.import_data_table(s_table_name="param_simulation_2d", s_filepath=s_fsim)
+    df_param_sim = dct_fsim["df"]
+
+    # ------------------------------------------------------------------------------------------
+    # update timestamp value
+    df_param_sim.loc[
+        df_param_sim["Metadata"] == "Timestamp", "Value"
+    ] = backend.timestamp_log()
+
+    # ------------------------------------------------------------------------------------------
+    # get run folder
+    if b_wkplc:
+        s_workplace = (
+            df_param_sim.loc[df_param_sim["Metadata"] == "Run Folder", "Value"]
+                .values[0]
+                .strip()
+        )
+        s_dir_out = backend.create_rundir(label="CUE2d", wkplc=s_workplace)
+
+    # ------------------------------------------------------------------------------------------
+    # get places file
+    f_places = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Places File", "Value"]
+            .values[0]
+            .strip()
+    )
+
+    # ------------------------------------------------------------------------------------------
+    # get agents file
+    f_agents = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Agents File", "Value"]
+            .values[0]
+            .strip()
+    )
+
+    # ------------------------------------------------------------------------------------------
+    # get simulation parameters
+    #
+    # number of steps
+    n_steps = int(
+        df_param_sim.loc[df_param_sim["Metadata"] == "Steps", "Value"].values[0].strip()
+    )
+
+    # ------------------------------------------------------------------------------------------
+    # string boolean return agents to original position
+    s_return = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Return Agents", "Value"]
+            .values[0]
+            .strip()
+    )
+
+    # ------------------------------------------------------------------------------------------
+    # string boolean trace back simulation
+    s_trace = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Trace Back", "Value"]
+            .values[0]
+            .strip()
+    )
+
+    # ------------------------------------------------------------------------------------------
+    # string boolean plot simulation
+    s_plot = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Plot Steps", "Value"]
+            .values[0]
+            .strip()
+    )
+
+    # ------------------------------------------------------------------------------------------
+    # convert to boolean
+    b_return = False
+    b_trace = False
+    b_plot = False
+    if s_trace == "True":
+        b_trace = True
+    if s_return == "True":
+        b_return = True
+    if s_plot == "True":
+        b_plot = True
+
+    # ------------------------------------------------------------------------------------------
+    # import places file
+    dct_places = inp.import_data_table(s_table_name="param_places_2d", s_filepath=f_places)
+    df_places = dct_places["df"]
+    df_places["Trait"] = df_places["Trait"].astype("float64")
+
+    # ------------------------------------------------------------------------------------------
+    # import agents file
+    dct_agents = inp.import_data_table(s_table_name="param_agents_2d", s_filepath=f_agents)
+    df_agents = dct_agents["df"]
+    df_agents["Trait"] = df_agents["Trait"].astype("float64")
+
+    # extra params
+    n_agents = len(df_agents)
+    n_places = len(df_places)
+    n_traits = int(max([df_agents["Trait"].max(), df_places["Trait"].max()]))
+
+
 def animate_frames(
         s_param_agents,
         s_param_places,
@@ -453,14 +555,6 @@ def animate_frames(
         suf="", #
     )
 
-'''
-animate_frames(
-    s_param_agents="C:/bin/release/param_agents_start.txt",
-    s_param_places="C:/bin/release/param_places_start.txt",
-    s_traced_agents_x="C:/bin/release/traced_agents_x.txt",
-    s_traced_agents_traits="C:/bin/release/traced_agents_traits.txt",
-    s_traced_places_traits="C:/bin/release/traced_places_traits.txt",
-    s_dir_frames="C:/bin/release/frames",
-    s_dir_out="C:/bin/release"
-)
-'''
+
+if __name__ == "__main__":
+    run_cue2d(s_fsim="./samples/param_simulation_2d.txt")
