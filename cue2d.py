@@ -50,10 +50,10 @@ import inp
 from time import sleep
 
 
-def map_traits(grd_ids, df_places):
+def map_traits(grd_ids, vct_traits, vct_ids):
     grd_traits = np.zeros(shape=np.shape(grd_ids), dtype="float32")
-    for i in range(len(df_places)):
-        grd_traits = grd_traits + (df_places["Place_Trait"].values[i] * (grd_ids == df_places["Id"].values[i]))
+    for i in range(len(vct_traits)):
+        grd_traits = grd_traits + (vct_traits[i] * (grd_ids == vct_ids[i]))
     return grd_traits
 
 
@@ -84,11 +84,13 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
             "Id": np.unique(grd_ids)
         }
     )
+    # remove Id = 0
+    df_places_grd = df_places_grd.query("Id != 0")
     # then merge places dataframes
     df_places = pd.merge(
         how='left',
         left=df_places_grd,
-        right=df_places[["Id", "Trait", "D"]],
+        right=df_places[["Id", "Trait", "D", "Name", "Alias", "Color"]],
         left_on="Id",
         right_on="Id"
     )
@@ -180,6 +182,10 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
         vct_agents_origin_y = df_agents.copy()["y"].values
 
     # ------------------------------------------------------------------------------------------
+    # prepare output dict
+    dct_output = {"Agents_Start": df_agents.copy(), "Places_Start": df_places.copy()}
+
+    # ------------------------------------------------------------------------------------------
     # main simulation loop:
     for t in range(n_steps):
         if b_tui:
@@ -219,6 +225,9 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
 
             # ----------------------------------------------------------------------------------
             # action conditional
+
+            # todo problems with return feature
+
             np.random.seed(grd_seeds[t, a])  # restart random state
             if p_id == 0:  # just move to indoors weighted
 
@@ -343,7 +352,8 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
 
     # ------------------------------------------------------------------------------------------
     # prepare output dict
-    dct_output = {"Agents": df_agents, "Places": df_places}
+    dct_output["Agents_End"] = df_agents.copy()
+    dct_output["Places_End"] = df_places.copy()
 
     # ------------------------------------------------------------------------------------------
     # append extra content
@@ -402,14 +412,6 @@ if __name__ == "__main__":
 
 
     #grd_traits = map_places_traits(grd_ids=grd_ids, df_places=df_places)
-
-    """
-    # ------------------------------------------------------------------------------------------
-    # remove this
-    plt.imshow(grd_ids, origin='lower', cmap='jet')
-    plt.scatter(df_agents['x'], df_agents['y'], c=df_agents["Trait"], vmin=0, vmax=10, edgecolors='white')
-    plt.show()
-    """
 
     play(
         df_agents=df_agents,

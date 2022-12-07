@@ -217,12 +217,13 @@ def plot_traced_positions(
     s_file_name="frame",
     s_suff="",
     s_ttl="",
+    s_position="x",
     b_show=False,
     b_dark=False,
     n_dpi=100,
 ):
     """
-    plot time series of traits
+    plot time series of positions
     :param df_data: pandas dataframe of time series (Step field required)
     :param df_params: pandas dataframe of parameters (agents or places)
     :param n_positions: int max number of places
@@ -242,7 +243,7 @@ def plot_traced_positions(
     s_old_alias = ''
     for i in range(len(df_data.columns)):
         s_lcl_col = df_data.columns[i]
-        if 'x' in s_lcl_col:
+        if 'x' in s_lcl_col or 'y' in s_lcl_col:
             # get alias
             s_lcl_alias = s_lcl_col.split("_")[0]
             if s_lcl_alias != s_old_alias:
@@ -259,7 +260,7 @@ def plot_traced_positions(
             else:
                 plt.plot(df_data["Step"], df_data[s_lcl_col], c=s_lcl_color)
             plt.legend()
-            plt.ylabel("x")
+            plt.ylabel(s_position)
             plt.xlabel("Steps")
             plt.xlim(0, df_data["Step"].max() + 1)
             plt.ylim(0, n_positions + 1)
@@ -464,3 +465,115 @@ def plot_cue_1d_pannel(
         plt.close(fig)
         del fig
         return filepath
+
+
+def plot_cue_2d_pannel(
+    grd_traits,
+    n_step,
+    n_traits,
+    n_agents,
+    n_places,
+    vct_places_traits,
+    vct_agents_traits,
+    vct_agents_x,
+    vct_agents_y,
+    s_cmap="viridis",
+    s_dir_out="C:/bin",
+    s_file_name="frame",
+    s_suff="",
+    s_ttl="",
+    b_show=True,
+    b_dark=False,
+    n_dpi=100,
+):
+    """
+    pannel of 1d CUE model
+    :param n_step: int step
+    :param n_traits: int traits
+    :param n_places: int places
+    :param n_agents: int agents
+    :param grd_places_traits_t: 2d numpy array places traits transposed grid
+    :param grd_agents_traits_t: 2d numpy array agents traits transposed grid
+    :param grd_agents_x_t: 2d numpy array places position transposed grid
+    :param s_cmap: string cmap code
+    :param s_dir_out: string output folder
+    :param s_file_name: string file name
+    :param s_suff: string suffix
+    :param s_ttl: string title
+    :param b_show: boolean to show
+    :param b_dark: boolean to dark mode
+    :param n_dpi: int dpi resolution
+    :return: string file name
+    """
+    if b_dark:
+        plt.style.use("dark_background")
+
+    fig = plt.figure(figsize=(6, 4))  # Width, Height
+    gs = mpl.gridspec.GridSpec(
+        2, 4, wspace=0.0, hspace=0.8, left=0.1, bottom=0.2, top=0.8, right=0.9
+    )  # nrows, ncols
+    plt.suptitle(s_ttl)
+    #
+    # space map
+    ax = fig.add_subplot(gs[:, :2])
+    im = plt.imshow(grd_traits, cmap=s_cmap, vmin=0, vmax=n_traits, origin="lower")
+    plt.colorbar(im, shrink=0.4)
+    plt.title("places and agents")
+    plt.ylabel("y")
+    plt.xlabel("x")
+
+    plt.scatter(
+        vct_agents_x,
+        vct_agents_y,
+        c=vct_agents_traits,
+        edgecolors="white",
+        marker="o",
+        cmap=s_cmap,
+        vmin=0,
+        vmax=n_traits,
+        zorder=2,
+    )
+
+    #
+    # space hist
+    ax = fig.add_subplot(gs[0, 3])
+    plt.title("Places histogram")
+    plt.hist(
+        x=vct_places_traits,
+        bins=n_traits,
+        range=(0, n_traits),
+        color="tab:grey",
+    )
+    plt.ylim(0, n_places)
+    plt.xlim(0, n_traits)
+    plt.ylabel("count")
+    plt.xlabel("traits")
+    #
+    # agents hist
+    ax = fig.add_subplot(gs[1, 3])
+    plt.title("Agents histogram")
+    plt.hist(
+        x=vct_agents_traits,
+        bins=n_traits,
+        range=(0, n_traits),
+        color="tab:grey",
+    )
+    plt.ylim(0, n_agents)
+    plt.xlim(0, n_traits)
+    plt.ylabel("count")
+    plt.xlabel("traits")
+    if b_show:
+        plt.show()
+        plt.close(fig)
+        del fig
+    else:
+        # export file
+        if s_suff == "":
+            filepath = s_dir_out + "/" + s_file_name + ".png"
+        else:
+            filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
+        plt.savefig(filepath, dpi=n_dpi)
+        plt.close(fig)
+        del fig
+        return filepath
+

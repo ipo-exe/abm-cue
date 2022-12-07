@@ -9,7 +9,7 @@ These files must be prepared and sourced by the user. Samples are provided for p
 |File | Source | Format | Sample|
 |:--- | :--- | :--- | :---|
 |[param_agents.txt](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agentstxt) | imported by user | Data Table | [Sample file](https://github.com/ipo-exe/abm-cue/blob/main/samples/param_agents.txt)|
-|[param_agents_2d.txt](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agents_2dtxt) | imported by user | Data Table | missing|
+|[param_agents_2d.txt](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agents_2dtxt) | imported by user | Data Table | [Sample file](https://github.com/ipo-exe/abm-cue/blob/main/samples/param_agents_2d.txt)|
 |[param_places.txt](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_placestxt) | imported by user | Data Table | [Sample file](https://github.com/ipo-exe/abm-cue/blob/main/samples/param_places.txt)|
 |[param_places_2d.txt](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_places_2dtxt) | imported by user | Data Table | [Sample file](https://github.com/ipo-exe/abm-cue/blob/main/samples/param_places_2d.txt)|
 |[map_places_2d.asc](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#map_places_2dasc) | imported by user | Raster Map | [Sample file](https://github.com/ipo-exe/abm-cue/blob/main/samples/map_places_2d.asc)|
@@ -55,9 +55,15 @@ missing file
 ## `param_agents_2d.txt`
  - **Description**: Table of agents parameters and initial conditions;
  - **Source**: imported by user;
- - **File sample**: _missing_;
+ - **File sample**: [param_agents_2d.txt](https://github.com/ipo-exe/abm-cue/blob/main/samples/param_agents_2d.txt);
  - **Format**: Data Table;
  - **Formating example**:
+```
+Id;  x;  y; Trait; Alpha; Beta;   C;    Name; Alias ;  Color
+ 1; 12;  5;   5.0;     3;    1; 0.1; Agent A;    AgA;    red
+ 2; 12; 10;   5.0;     3;    5; 0.2; Agent B;    AgB;   blue
+ 3; 12; 15;   5.0;     3;    3; 0.0; Agent C;    AgC; orange
+```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
 	 - Decimal separator: period `.`;
@@ -604,17 +610,17 @@ missing file
  - **Format**: Data Table;
  - **Formating example**:
 ```
-     Metadata;                                                   Value
-    Timestamp;                                  2022/08/25 16:48:07.86
- Input Folder;                  C:/000_myFiles/myCodes/abm-cue/samples
-   Run Folder;                                                  C:/bin
-  Agents File; C:/000_myFiles/myCodes/abm-cue/samples/param_agents.txt
-  Places File; C:/000_myFiles/myCodes/abm-cue/samples/param_places.txt
-   Places Map;                           C:/gis/bin/places_demo_5m.asc
-        Steps;                                                     100
-Return Agents;                                                    True
-   Trace Back;                                                    True
-   Plot Steps;                                                   False
+     Metadata;                                                      Value
+    Timestamp;                                     2022/08/25 16:48:07.86
+ Input Folder;                     C:/000_myFiles/myCodes/abm-cue/samples
+   Run Folder;                                                     C:/bin
+  Agents File; C:/000_myFiles/myCodes/abm-cue/samples/param_agents_2d.txt
+  Places File; C:/000_myFiles/myCodes/abm-cue/samples/param_places_2d.txt
+   Places Map;   C:/000_myFiles/myCodes/abm-cue/samples/map_places_2d.asc
+        Steps;                                                        100
+Return Agents;                                                       True
+   Trace Back;                                                       True
+   Plot Steps;                                                      False
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
