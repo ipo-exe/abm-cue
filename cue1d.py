@@ -58,17 +58,21 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
     :param b_trace: boolean to trace back simulation
     :return: output dictionary
     """
+    # ------------------------------------------------------------------------------------------
     # start up
     s_dtype = "float32"
     n_agents = len(df_agents)
     n_places = len(df_places)
 
+    # ------------------------------------------------------------------------------------------
     # scanning window parameters set up
-    #
+
     # get unique beta (radius size) values
-    lst_unique_beta = list(df_agents["Beta"].unique())
+    lst_unique_beta = list(df_agents["R_c"].unique())
     dct_window = dict()
     for n_beta in lst_unique_beta:
+
+        # --------------------------------------------------------------------------------------
         # get scanning window parameters
         vct_window_rows, vct_window_cols = backend.get_window_ids(
             n_rows=n_places,
@@ -76,6 +80,8 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
             n_rsize=n_beta,
             b_flat=False
         )
+
+        # --------------------------------------------------------------------------------------
         # use columns only (1D simulation)
         if b_return:
             lst_aux = list(vct_window_cols[0])
@@ -87,27 +93,33 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
                     pass
                 else:
                     lst_aux.append(e)
+
+        # --------------------------------------------------------------------------------------
         # get window base ids
         vct_rows_base_ids = np.array(lst_aux, dtype="uint16")
 
+        # --------------------------------------------------------------------------------------
         # deploy recyclable window dataframe
         n_window_size = len(vct_rows_base_ids)
         df_window = pd.DataFrame(
             {
                 "x": np.zeros(n_window_size, dtype="uint16"),
                 "Trait": np.zeros(n_window_size, dtype=s_dtype),
-                "D": np.zeros(n_window_size, dtype=s_dtype),
+                "C_p": np.zeros(n_window_size, dtype=s_dtype),
                 "Discrepancy": np.zeros(n_window_size, dtype=s_dtype),
                 "Interac_score": np.zeros(n_window_size, dtype=s_dtype),
                 "Interac_prob": np.zeros(n_window_size, dtype=s_dtype),
             }
         )
+
+        # --------------------------------------------------------------------------------------
         # append to dict
         dct_window[str(n_beta)] = {
             "ids": vct_rows_base_ids,
             "df": df_window
         }
 
+    # ------------------------------------------------------------------------------------------
     # define random seeds prior to simulation loop
     np.random.seed(backend.get_seed())
     grd_seeds = np.random.randint(
@@ -117,6 +129,7 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
         dtype="uint16"
     )
 
+    # ------------------------------------------------------------------------------------------
     # tracing variables
     if b_trace:
         grd_traced_agents_x = np.zeros(shape=(n_steps, n_agents), dtype=s_dtype)
@@ -126,11 +139,13 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
         grd_traced_agents_traits[0] = df_agents["Trait"].values
         grd_traced_agents_x[0] = df_agents["x"].values
 
+    # ------------------------------------------------------------------------------------------
     # return variables
     if b_return:
         df_agents_copy = df_agents.copy()
         vct_agents_origin_x = df_agents_copy["x"].values
 
+    # ------------------------------------------------------------------------------------------
     # main simulation loop
     for t in range(1, n_steps):
         if b_tui:
@@ -214,8 +229,11 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
             # reset x
             df_agents["x"] = vct_agents_origin_x
 
+    # ------------------------------------------------------------------------------------------
     # prepare output dict
     dct_output = {"Agents": df_agents, "Places": df_places}
+
+    # ------------------------------------------------------------------------------------------
     # append extra content
     if b_trace:
         dct_output["Simulation"] = {

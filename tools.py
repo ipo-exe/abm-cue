@@ -57,15 +57,19 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     :return:
     """
     import cue1d
+
+    # ------------------------------------------------------------------------------------------
     # import param_simulation.txt
     dct_fsim = inp.import_data_table(s_table_name="param_simulation", s_filepath=s_fsim)
     df_param_sim = dct_fsim["df"]
 
+    # ------------------------------------------------------------------------------------------
     # update timestamp value
     df_param_sim.loc[
         df_param_sim["Metadata"] == "Timestamp", "Value"
     ] = backend.timestamp_log()
 
+    # ------------------------------------------------------------------------------------------
     # get run folder
     if b_wkplc:
         s_workplace = (
@@ -75,12 +79,15 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         )
         s_dir_out = backend.create_rundir(label="CUE1d", wkplc=s_workplace)
 
+    # ------------------------------------------------------------------------------------------
     # get places file
     f_places = (
         df_param_sim.loc[df_param_sim["Metadata"] == "Places File", "Value"]
         .values[0]
         .strip()
     )
+
+    # ------------------------------------------------------------------------------------------
     # get agents file
     f_agents = (
         df_param_sim.loc[df_param_sim["Metadata"] == "Agents File", "Value"]
@@ -88,6 +95,7 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         .strip()
     )
 
+    # ------------------------------------------------------------------------------------------
     # get simulation parameters
     #
     # number of steps
@@ -112,6 +120,8 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         .values[0]
         .strip()
     )
+
+    # ------------------------------------------------------------------------------------------
     # convert to boolean
     b_return = False
     b_trace = False
@@ -123,23 +133,25 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     if s_plot == "True":
         b_plot = True
 
+    # ------------------------------------------------------------------------------------------
     # import places file
     dct_places = inp.import_data_table(s_table_name="param_places", s_filepath=f_places)
     df_places = dct_places["df"]
     df_places["Trait"] = df_places["Trait"].astype("float64")
 
+    # ------------------------------------------------------------------------------------------
     # import agents file
     dct_agents = inp.import_data_table(s_table_name="param_agents", s_filepath=f_agents)
     df_agents = dct_agents["df"]
     df_agents["Trait"] = df_agents["Trait"].astype("float64")
 
+    # ------------------------------------------------------------------------------------------
     # extra params
     n_agents = len(df_agents)
     n_places = len(df_places)
     n_traits = int(max([df_agents["Trait"].max(), df_places["Trait"].max()]))
 
-    # ------------------------------
-    #
+    # ------------------------------------------------------------------------------------------
     # run model
     dct_out = cue1d.play(
         df_agents=df_agents.copy(),
@@ -150,14 +162,12 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         b_trace=b_trace,
     )
 
-    # ------------------------------
-    #
+    # ------------------------------------------------------------------------------------------
     # retrieve outputs
     df_agents_end = dct_out["Agents"]
     df_places_end = dct_out["Places"]
 
-    # ------------------------------
-    #
+    # ------------------------------------------------------------------------------------------
     # run analyst
     n_shannon_agents_start = shannon_entropy(grd=df_agents['Trait'].values)
     n_shannon_agents_end = shannon_entropy(grd=df_agents_end['Trait'].values)
@@ -170,8 +180,7 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     }
     df_analyst = pd.DataFrame(dct_analyst)
 
-    # ------------------------------
-    #
+    # ------------------------------------------------------------------------------------------
     # export results
     status("exporting start/end results datasets")
     df_agents.to_csv(
@@ -204,8 +213,8 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         "Places Histogram | Start",
         "Places Histogram | End",
     ]
-    # ------------------------------
-    #
+
+    # ------------------------------------------------------------------------------------------
     # VISUALS
     # export histograms
     from visuals import plot_trait_histogram
@@ -940,4 +949,11 @@ def animate_frames_2d(
 
 
 if __name__ == "__main__":
-    run_cue2d(s_fsim="./samples/param_simulation_2d.txt")
+
+    # --------------------------------------------------------------------------------------------
+    # run 1d
+    run_cue1d(s_fsim="./samples/param_simulation_1d.txt")
+
+    # --------------------------------------------------------------------------------------------
+    # run 2d
+    ### run_cue2d(s_fsim="./samples/param_simulation_2d.txt")

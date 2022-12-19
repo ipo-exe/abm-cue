@@ -1,4 +1,4 @@
-Id;x;Trait;D;Name;Alias
+Id;x;Trait;C_p;Name;Alias
 1;0;5.414165230996299;0.1;Place A;PA
 2;1;6.98635141334472;0.1;Place A;PA
 3;2;14.752933246345897;0.1;Place A;PA
