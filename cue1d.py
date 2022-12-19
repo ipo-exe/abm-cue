@@ -159,9 +159,9 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
             n_crt_agent_x = df_agents["x"].values[a]
 
             # get agent parameters
-            n_crt_alpha = df_agents["Alpha"].values[a]
-            n_crt_agent_beta = df_agents["Beta"].values[a]
-            n_crt_agent_c = df_agents["C"].values[a]
+            n_crt_alpha = df_agents["Delta_c"].values[a]
+            n_crt_agent_beta = df_agents["R_c"].values[a]
+            n_crt_agent_c = df_agents["C_a"].values[a]
 
             # get current window objects
             vct_rows_base_ids = dct_window[str(n_crt_agent_beta)]["ids"]
@@ -170,7 +170,7 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
             # update window dataframe
             df_window["x"] = (n_crt_agent_x + vct_rows_base_ids) % n_places # here the magic happens
             df_window["Trait"] = df_places["Trait"].values[df_window["x"].values]
-            df_window["D"] = df_places["D"].values[df_window["x"].values]
+            df_window["C_p"] = df_places["C_p"].values[df_window["x"].values]
             df_window["Discrepancy"] = np.abs(
                 n_crt_agent_trait - df_window["Trait"].values
             )
@@ -210,7 +210,7 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
                 # get space parameters from window dataframe
                 n_crt_place_trait = df_window["Trait"].values[n_next_index]
                 n_crt_place_x = df_window["x"].values[n_next_index]
-                n_crt_place_d = df_window["D"].values[n_next_index]
+                n_crt_place_d = df_window["C_p"].values[n_next_index]
 
                 # compute means
                 r_mean_agent = (n_crt_agent_trait + (n_crt_agent_c * n_crt_place_trait)) / (1 + n_crt_agent_c)

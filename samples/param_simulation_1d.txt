@@ -2,9 +2,9 @@ Metadata;Value
 Timestamp;2022/08/25 16:48:07.86
 Input Folder;C:/000_myFiles/myCodes/abm-cue/samples
 Run Folder;C:/bin
-Agents File;C:/000_myFiles/myCodes/abm-cue/samples/param_agents.txt
-Places File;C:/000_myFiles/myCodes/abm-cue/samples/param_places.txt
-Steps;100
-Return Agents;True
+Agents File;C:/000_myFiles/myCodes/abm-cue/samples/param_agents_1d.txt
+Places File;C:/000_myFiles/myCodes/abm-cue/samples/param_places_1d.txt
+Steps;50
+Return Agents;False
 Trace Back;True
-Plot Steps;False
+Plot Steps;True

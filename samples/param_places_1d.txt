@@ -1,6 +1,6 @@
 Id;x;Trait;C_p;Name;Alias;Color
 1;0;5;0.1;Place A;PA;blue
-2;1;5;0.1;Place A;PA;
+2;1;5;0.1;Place A;PA;blue
 3;2;5;0.1;Place A;PA;blue
 4;3;5;0.1;Place A;PA;blue
 5;4;5;0.1;Place A;PA;blue

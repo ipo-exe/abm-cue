@@ -7,7 +7,7 @@ Color;text;CSS color name available in [matplotlib](https://matplotlib.org/stabl
 Delta_c;positive real number;Critical Hamming Distance of trait orientation for agent-place interaction;-;parameter
 R_c;positive integer number;Critical radius distance for agent movement.;cell units;parameter
 C_a;positive real number;Agent openness to contamination, or place-to-agent degree of interaction influence;-;parameter
-C_p;positive real number;Place openness to change or agent-to-place degree of interaction influence;-;parameter
+C_p;positive real number;Place openness to contamination or agent-to-place degree of interaction influence;-;parameter
 x;positive integer number;Position coordinate in the x axis;cell units;variable
 y;positive integer number;Position coordinate in the y axis;cell units;variable
 Trait;positive real number;Trait orientation value;trait units;variable

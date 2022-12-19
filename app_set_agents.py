@@ -181,7 +181,7 @@ def save_file():
         else:
             # load places dataframe
             dct_open = inp.import_data_table(
-                s_table_name='param_places',
+                s_table_name='param_places_1d',
                 s_filepath=dct_etr_inp[lst_lbls_inp[0]].get(),
             )
             if dct_open['OK Flag']:
@@ -193,8 +193,8 @@ def save_file():
                 lst_id = list()
                 lst_x = list()
                 lst_trait = list()
-                lst_alpha = list()
-                lst_beta = list()
+                lst_delta_c = list()
+                lst_r_c = list()
                 lst_c = list()
                 lst_name = list()
                 lst_alias = list()
@@ -216,8 +216,8 @@ def save_file():
                         lst_id.append(n_counter + 1)
                         lst_x.append(0) # append only zero
                         lst_trait.append((lst_local_values[1]))
-                        lst_alpha.append((lst_local_values[2]))
-                        lst_beta.append((lst_local_values[3]))
+                        lst_delta_c.append((lst_local_values[2]))
+                        lst_r_c.append((lst_local_values[3]))
                         lst_c.append(lst_local_values[4])
                         lst_name.append(lst_local_values[5])
                         lst_alias.append(lst_local_values[6])
@@ -230,9 +230,9 @@ def save_file():
                         'Id': lst_id,
                         'x': lst_x,
                         'Trait': lst_trait,
-                        'Alpha': lst_alpha,
-                        'Beta': lst_beta,
-                        'C': lst_c,
+                        'Delta_c': lst_delta_c,
+                        'R_c': lst_r_c,
+                        'C_a': lst_c,
                         'Name': lst_name,
                         'Alias': lst_alias,
                         'Color': lst_color,
@@ -606,9 +606,9 @@ def append_header():
     lst_head = [
         'Size',
         'Trait',
-        'Alpha',
-        'Beta',
-        'C',
+        'Delta_c',
+        'R_c',
+        'C_a',
         'Name',
         'Alias',
         'Color'
@@ -635,9 +635,9 @@ lst_types_inp = [("Text File", "*.txt")]
 lst_lbls_block = [
     "Block Size",
     "Agent Trait ",
-    "Agent Alpha",
-    "Agent Beta",
-    "Agent C",
+    "Agent Delta_c",
+    "Agent R_c",
+    "Agent C_a",
     "Agent Name",
     "Agent Alias",
     "Agent Color"

@@ -60,7 +60,7 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
 
     # ------------------------------------------------------------------------------------------
     # import param_simulation.txt
-    dct_fsim = inp.import_data_table(s_table_name="param_simulation", s_filepath=s_fsim)
+    dct_fsim = inp.import_data_table(s_table_name="param_simulation_1d", s_filepath=s_fsim)
     df_param_sim = dct_fsim["df"]
 
     # ------------------------------------------------------------------------------------------
@@ -135,13 +135,13 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
 
     # ------------------------------------------------------------------------------------------
     # import places file
-    dct_places = inp.import_data_table(s_table_name="param_places", s_filepath=f_places)
+    dct_places = inp.import_data_table(s_table_name="param_places_1d", s_filepath=f_places)
     df_places = dct_places["df"]
     df_places["Trait"] = df_places["Trait"].astype("float64")
 
     # ------------------------------------------------------------------------------------------
     # import agents file
-    dct_agents = inp.import_data_table(s_table_name="param_agents", s_filepath=f_agents)
+    dct_agents = inp.import_data_table(s_table_name="param_agents_1d", s_filepath=f_agents)
     df_agents = dct_agents["df"]
     df_agents["Trait"] = df_agents["Trait"].astype("float64")
 
@@ -184,16 +184,16 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     # export results
     status("exporting start/end results datasets")
     df_agents.to_csv(
-        "{}/param_agents_start.txt".format(s_dir_out), sep=";", index=False
+        "{}/param_agents_1d_start.txt".format(s_dir_out), sep=";", index=False
     )
     df_agents_end.to_csv(
-        "{}/param_agents_end.txt".format(s_dir_out), sep=";", index=False
+        "{}/param_agents_1d_end.txt".format(s_dir_out), sep=";", index=False
     )
     df_places.to_csv(
-        "{}/param_places_start.txt".format(s_dir_out), sep=";", index=False
+        "{}/param_places_1d_start.txt".format(s_dir_out), sep=";", index=False
     )
     df_places_end.to_csv(
-        "{}/param_places_end.txt".format(s_dir_out), sep=";", index=False
+        "{}/param_places_1d_end.txt".format(s_dir_out), sep=";", index=False
     )
     status("exporting start/end analyst")
     df_analyst.to_csv(
@@ -761,11 +761,11 @@ def animate_frames_1d(
     from out import export_gif
 
     # import places file
-    dct_places = inp.import_data_table(s_table_name="param_places", s_filepath=s_param_places)
+    dct_places = inp.import_data_table(s_table_name="param_places_1d", s_filepath=s_param_places)
     df_places = dct_places["df"]
     df_places["Trait"] = df_places["Trait"].astype("float64")
     # import agents file
-    dct_agents = inp.import_data_table(s_table_name="param_agents", s_filepath=s_param_agents)
+    dct_agents = inp.import_data_table(s_table_name="param_agents_1d", s_filepath=s_param_agents)
     df_agents = dct_agents["df"]
     df_agents["Trait"] = df_agents["Trait"].astype("float64")
 
