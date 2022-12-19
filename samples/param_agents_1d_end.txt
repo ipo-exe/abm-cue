@@ -1,0 +1,8 @@
+Id;x;Trait;Delta_c;R_c;M;C_a;Name;Alias;Color
+1;8;20.0;20;5;1;0.0;Agent A;AgA;red
+2;2;20.0;20;5;1;0.0;Agent B;AgB;blue
+3;24;2.0169052053126433;20;5;1;0.01;Agent C;AgC;orange
+4;37;2.796720743555842;20;3;1;0.01;Agent C;AgC;orange
+5;35;2.398801065834344;20;3;1;0.01;Agent C;AgC;orange
+6;11;2.3202020984591623;20;3;1;0.01;Agent C;AgC;orange
+7;24;2.223469829024803;20;3;1;0.01;Agent C;AgC;orange
