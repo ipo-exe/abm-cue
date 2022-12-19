@@ -1,6 +1,6 @@
               Name;  linux;  windows;  darwin
             height;    650;      590;     610
-             width;    800;      610;     610
+             width;    800;      640;     610
  entry label width;     11;       15;      15
   entry width file;     52;       45;      52
        entry width;     20;       20;      20
@@ -12,4 +12,4 @@ button board width;     70;      100;      70
 option label width;     20;       20;      20
 option check width;      2;        2;       2
     listbox height;      7;        7;       7
-     listbox width;     70;       72;      72
+     listbox width;     70;       75;      72

@@ -195,6 +195,7 @@ def save_file():
                 lst_trait = list()
                 lst_delta_c = list()
                 lst_r_c = list()
+                lst_m = list()
                 lst_c = list()
                 lst_name = list()
                 lst_alias = list()
@@ -218,10 +219,11 @@ def save_file():
                         lst_trait.append((lst_local_values[1]))
                         lst_delta_c.append((lst_local_values[2]))
                         lst_r_c.append((lst_local_values[3]))
-                        lst_c.append(lst_local_values[4])
-                        lst_name.append(lst_local_values[5])
-                        lst_alias.append(lst_local_values[6])
-                        lst_color.append(lst_local_values[7])
+                        lst_m.append(lst_local_values[4])
+                        lst_c.append(lst_local_values[5])
+                        lst_name.append(lst_local_values[6])
+                        lst_alias.append(lst_local_values[7])
+                        lst_color.append(lst_local_values[8])
                         # update counter
                         n_counter = n_counter + 1
                 # deploy output dataframe
@@ -232,6 +234,7 @@ def save_file():
                         'Trait': lst_trait,
                         'Delta_c': lst_delta_c,
                         'R_c': lst_r_c,
+                        'M': lst_m,
                         'C_a': lst_c,
                         'Name': lst_name,
                         'Alias': lst_alias,
@@ -345,7 +348,7 @@ def format_string(lst_block, s_sep=' '):
     :param s_sep: string separator
     :return: string formatted
     """
-    s_aux = ' {:>6s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>12s}{}{:>8s}{}{:>8s}'.format(
+    s_aux = ' {:>6s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>12s}{}{:>8s}{}{:>8s}'.format(
         lst_block[0].strip(),
         s_sep,
         lst_block[1].strip(),
@@ -361,6 +364,8 @@ def format_string(lst_block, s_sep=' '):
         lst_block[6].strip(),
         s_sep,
         lst_block[7].strip(),
+        s_sep,
+        lst_block[8].strip(),
     )
     return s_aux
 
@@ -608,6 +613,7 @@ def append_header():
         'Trait',
         'Delta_c',
         'R_c',
+        'M',
         'C_a',
         'Name',
         'Alias',
@@ -637,6 +643,7 @@ lst_lbls_block = [
     "Agent Trait ",
     "Agent Delta_c",
     "Agent R_c",
+    "Agent M",
     "Agent C_a",
     "Agent Name",
     "Agent Alias",
@@ -647,6 +654,7 @@ lst_types_block = [
     'Real',
     'Real',
     'Int',
+    'Int',
     'Real',
     'Text',
     'Text',
@@ -656,6 +664,7 @@ lst_lbls_block_aux = [
     "format: positive integer number",
     "format: positive real number ",
     "format: positive real number",
+    "format: positive integer number",
     "format: positive integer number",
     "format: positive real number ",
     "format: text",
@@ -755,6 +764,7 @@ root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
 s_title = "Agents File Tool"
 root.title(s_title)
 
+# -------------------------------------------------------------------------------------------------------------
 # >> set menus
 
 # Add the menu
@@ -823,6 +833,7 @@ menubar.add_cascade(
     activebackground=color_actbg,
 )
 
+# -------------------------------------------------------------------------------------------------------------
 ## >>> Frames layout
 
 frame_header = tkinter.Frame(root, width=n_width, bg=color_bg)
@@ -882,7 +893,7 @@ label_infos = tkinter.Label(
 )
 label_infos.pack()
 
-
+# -------------------------------------------------------------------------------------------------------------
 # >> Place File Frame layout
 
 # place widgets in dicts
@@ -978,7 +989,7 @@ dct_btn_search_inp[lst_lbls_inp[0]].config(
 dct_btn_about_inp[lst_lbls_inp[0]].config(command=lambda: open_about_input(n_entry=0))
 
 
-
+# -------------------------------------------------------------------------------------------------------------
 # >> Block Settings Frame layout
 
 dct_lbls_blocks = dict()
@@ -1068,6 +1079,10 @@ dct_btn_upd_blocks[lst_lbls_block[6]].config(
 dct_btn_upd_blocks[lst_lbls_block[7]].config(
     command=lambda : update_entry(s_entry=lst_lbls_block[7],
                                   s_entry_type=lst_types_block[7])
+)
+dct_btn_upd_blocks[lst_lbls_block[8]].config(
+    command=lambda : update_entry(s_entry=lst_lbls_block[8],
+                                  s_entry_type=lst_types_block[8])
 )
 
 # >> block Board
