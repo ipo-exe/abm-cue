@@ -146,27 +146,42 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
         vct_agents_origin_x = df_agents_copy["x"].values
 
     # ------------------------------------------------------------------------------------------
+    # allocate memory variables
+    dct_memory = dict()
+    for a in range(n_agents):
+        n_memory = df_agents["M"].values[a]
+        n_trait = df_agents["Trait"].values[a]
+        dct_memory[str(df_agents["Id"].values[a])] = n_trait * np.ones(n_memory)
+
+    # ------------------------------------------------------------------------------------------
     # main simulation loop
     for t in range(1, n_steps):
         if b_tui:
             backend.status(
                 "CUE1d :: simulation step {} [{:.2f}%]".format(t, 100 * t / n_steps)
             )
+        # --------------------------------------------------------------------------------------
         # agents movements
         for a in range(n_agents):
+            # ----------------------------------------------------------------------------------
             # get agent variables
-            n_crt_agent_trait = df_agents["Trait"].values[a]
+            n_crt_agent_id = df_agents["Id"].values[a]
+            vct_crt_agent_memory = dct_memory[str(n_crt_agent_id)]  # get memory
+            n_crt_agent_trait = np.mean(vct_crt_agent_memory) # mean over memory
             n_crt_agent_x = df_agents["x"].values[a]
 
+            # ----------------------------------------------------------------------------------
             # get agent parameters
             n_crt_alpha = df_agents["Delta_c"].values[a]
             n_crt_agent_beta = df_agents["R_c"].values[a]
             n_crt_agent_c = df_agents["C_a"].values[a]
 
+            # ----------------------------------------------------------------------------------
             # get current window objects
             vct_rows_base_ids = dct_window[str(n_crt_agent_beta)]["ids"]
             df_window = dct_window[str(n_crt_agent_beta)]["df"]
 
+            # ----------------------------------------------------------------------------------
             # update window dataframe
             df_window["x"] = (n_crt_agent_x + vct_rows_base_ids) % n_places # here the magic happens
             df_window["Trait"] = df_places["Trait"].values[df_window["x"].values]
@@ -175,6 +190,7 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
                 n_crt_agent_trait - df_window["Trait"].values
             )
 
+            # ----------------------------------------------------------------------------------
             # compute selection Interac_score
             df_window["Interac_score"] = (
                 df_window["Discrepancy"].max() - df_window["Discrepancy"] + 1
@@ -193,6 +209,7 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
                     df_window["Interac_score"] / df_window["Interac_score"].sum()
                 )
 
+            # ----------------------------------------------------------------------------------
             # move agent
             np.random.seed(grd_seeds[t, a])  # restart random state
             # weighted random sampling
@@ -202,9 +219,11 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
                 p=df_window["Interac_prob"].values
             )[0] # get the first
 
+            # ----------------------------------------------------------------------------------
             # update agent position
             df_agents["x"].values[a] = df_window["x"].values[n_next_index]
 
+            # ----------------------------------------------------------------------------------
             # apply interaction criteria
             if df_window["Interac_score"].values[n_next_index] > 0:
                 # get space parameters from window dataframe
@@ -219,11 +238,21 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
                 # replace in simulation dataframes
                 df_agents["Trait"].values[a] = r_mean_agent
                 df_places["Trait"].values[n_crt_place_x] = r_mean_place
+
+                # update memory vector
+                for i in range(len(vct_crt_agent_memory) - 1, 0, -1):
+                    vct_crt_agent_memory[i] = vct_crt_agent_memory[i - 1]
+                vct_crt_agent_memory[0] = r_mean_agent
+                dct_memory[str(n_crt_agent_id)] = vct_crt_agent_memory
+
+        # ----------------------------------------------------------------------------------
         # trace
         if b_trace:
             grd_traced_places_traits[t] = df_places["Trait"].values
             grd_traced_agents_traits[t] = df_agents["Trait"].values
             grd_traced_agents_x[t] = df_agents["x"].values
+
+        # ----------------------------------------------------------------------------------
         # reset x values
         if b_return:
             # reset x
