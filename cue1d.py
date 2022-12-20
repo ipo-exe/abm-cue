@@ -47,7 +47,20 @@ import pandas as pd
 import backend
 
 
-def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=True):
+def linear_prob(x, x_max):
+    """
+    linear probability function
+    :param x: value
+    :type x: float or numpy array
+    :param x_max: x max value
+    :type x_max: float
+    :return: probability
+    :rtype:
+    """
+    return ((-2 / np.square(x_max)) * x) + (2/x_max)
+
+
+def play(df_agents, df_places, n_steps, s_weight='uniform', b_tui=False, b_return=False, b_trace=True):
     """
     Run the CUE 1d simulation
     :param df_agents: pandas dataframe of agents
@@ -68,16 +81,16 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
     # scanning window parameters set up
 
     # get unique beta (radius size) values
-    lst_unique_beta = list(df_agents["R_c"].unique())
+    lst_unique_rc = list(df_agents["R_c"].unique())
     dct_window = dict()
-    for n_beta in lst_unique_beta:
+    for n_rc in lst_unique_rc:
 
         # --------------------------------------------------------------------------------------
         # get scanning window parameters
         vct_window_rows, vct_window_cols = backend.get_window_ids(
             n_rows=n_places,
             n_cols=n_places,
-            n_rsize=n_beta,
+            n_rsize=n_rc,
             b_flat=False
         )
 
@@ -106,15 +119,14 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
                 "x": np.zeros(n_window_size, dtype="uint16"),
                 "Trait": np.zeros(n_window_size, dtype=s_dtype),
                 "C_p": np.zeros(n_window_size, dtype=s_dtype),
-                "Discrepancy": np.zeros(n_window_size, dtype=s_dtype),
-                "Interac_score": np.zeros(n_window_size, dtype=s_dtype),
-                "Interac_prob": np.zeros(n_window_size, dtype=s_dtype),
+                "Discr": np.zeros(n_window_size, dtype=s_dtype),
+                "Prob": np.zeros(n_window_size, dtype=s_dtype),
             }
         )
 
         # --------------------------------------------------------------------------------------
         # append to dict
-        dct_window[str(n_beta)] = {
+        dct_window[str(n_rc)] = {
             "ids": vct_rows_base_ids,
             "df": df_window
         }
@@ -165,49 +177,52 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
         for a in range(n_agents):
             # ----------------------------------------------------------------------------------
             # get agent variables
-            n_crt_agent_id = df_agents["Id"].values[a]
-            vct_crt_agent_memory = dct_memory[str(n_crt_agent_id)]  # get memory
-            n_crt_agent_trait = np.mean(vct_crt_agent_memory) # mean over memory
-            n_crt_agent_x = df_agents["x"].values[a]
+            n_agent_id = df_agents["Id"].values[a]
+            vct_crt_agent_memory = dct_memory[str(n_agent_id)]  # get memory
+            n_agent_trait = np.mean(vct_crt_agent_memory) # mean over memory
+            n_agent_x = df_agents["x"].values[a]
 
             # ----------------------------------------------------------------------------------
             # get agent parameters
-            n_crt_alpha = df_agents["Delta_c"].values[a]
-            n_crt_agent_beta = df_agents["R_c"].values[a]
-            n_crt_agent_c = df_agents["C_a"].values[a]
+            n_agent_deltac = df_agents["Delta_c"].values[a]
+            n_agent_rc = df_agents["R_c"].values[a]
+            n_agent_ca = df_agents["C_a"].values[a]
 
             # ----------------------------------------------------------------------------------
             # get current window objects
-            vct_rows_base_ids = dct_window[str(n_crt_agent_beta)]["ids"]
-            df_window = dct_window[str(n_crt_agent_beta)]["df"]
+            vct_rows_base_ids = dct_window[str(n_agent_rc)]["ids"]
+            df_window = dct_window[str(n_agent_rc)]["df"]
 
             # ----------------------------------------------------------------------------------
             # update window dataframe
-            df_window["x"] = (n_crt_agent_x + vct_rows_base_ids) % n_places # here the magic happens
+            df_window["x"] = (n_agent_x + vct_rows_base_ids) % n_places # here the magic happens
             df_window["Trait"] = df_places["Trait"].values[df_window["x"].values]
             df_window["C_p"] = df_places["C_p"].values[df_window["x"].values]
-            df_window["Discrepancy"] = np.abs(
-                n_crt_agent_trait - df_window["Trait"].values
-            )
+            df_window["Discr"] = np.abs(n_agent_trait - df_window["Trait"].values)
 
             # ----------------------------------------------------------------------------------
-            # compute selection Interac_score
-            df_window["Interac_score"] = (
-                df_window["Discrepancy"].max() - df_window["Discrepancy"] + 1
-            )
-            # normalize
-            # set score = zero where place is beyond alpha threshold
-            df_window["Interac_score"] = df_window["Interac_score"].values * (
-                df_window["Discrepancy"].values <= n_crt_alpha
-            )
-            # compute probabilistic weights
-            if df_window["Interac_score"].sum() == 0:
-                # uniform distribution when all scores == 0:
-                df_window["Interac_prob"] = 1 / len(df_window)
-            else:
-                df_window["Interac_prob"] = (
-                    df_window["Interac_score"] / df_window["Interac_score"].sum()
+            # get sampling probability
+            if s_weight.lower() == 'uniform':
+                # uniform interaction prob
+                df_window["Prob"] = 1 / n_agent_deltac
+            elif s_weight.lower() == 'linear':
+                # linear interaction score
+                df_window["Prob"] = linear_prob(
+                    x=df_window['Discr'].values,
+                    x_max=n_agent_deltac
                 )
+            else:
+                # uniform interaction prob
+                df_window["Prob"] = 1 / n_agent_deltac
+
+            # ----------------------------------------------------------------------------------
+            # apply cutoff criterion
+            df_window["Prob"] = df_window["Prob"].values * (df_window['Discr'].values <= n_agent_deltac)
+            if df_window["Prob"].sum() == 0:
+                # go uniform
+                df_window["Prob"] = 1 / len(df_window)
+            # normalize
+            df_window["Prob"] = df_window["Prob"].values / df_window["Prob"].sum()
 
             # ----------------------------------------------------------------------------------
             # move agent
@@ -216,7 +231,7 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
             n_next_index = np.random.choice(
                 a=df_window.index,
                 size=1,
-                p=df_window["Interac_prob"].values
+                p=df_window["Prob"].values
             )[0] # get the first
 
             # ----------------------------------------------------------------------------------
@@ -225,25 +240,29 @@ def play(df_agents, df_places, n_steps, b_tui=False, b_return=False, b_trace=Tru
 
             # ----------------------------------------------------------------------------------
             # apply interaction criteria
-            if df_window["Interac_score"].values[n_next_index] > 0:
+            if df_window["Prob"].values[n_next_index] > 0:
+                # ------------------------------------------------------------------------------
                 # get space parameters from window dataframe
                 n_crt_place_trait = df_window["Trait"].values[n_next_index]
                 n_crt_place_x = df_window["x"].values[n_next_index]
                 n_crt_place_d = df_window["C_p"].values[n_next_index]
 
+                # ------------------------------------------------------------------------------
                 # compute means
-                r_mean_agent = (n_crt_agent_trait + (n_crt_agent_c * n_crt_place_trait)) / (1 + n_crt_agent_c)
-                r_mean_place = (n_crt_place_trait + (n_crt_place_d * n_crt_agent_trait)) / (1 + n_crt_place_d)
+                r_mean_agent = (n_agent_trait + (n_agent_ca * n_crt_place_trait)) / (1 + n_agent_ca)
+                r_mean_place = (n_crt_place_trait + (n_crt_place_d * n_agent_trait)) / (1 + n_crt_place_d)
 
+                # ------------------------------------------------------------------------------
                 # replace in simulation dataframes
                 df_agents["Trait"].values[a] = r_mean_agent
                 df_places["Trait"].values[n_crt_place_x] = r_mean_place
 
+                # ------------------------------------------------------------------------------
                 # update memory vector
                 for i in range(len(vct_crt_agent_memory) - 1, 0, -1):
                     vct_crt_agent_memory[i] = vct_crt_agent_memory[i - 1]
                 vct_crt_agent_memory[0] = r_mean_agent
-                dct_memory[str(n_crt_agent_id)] = vct_crt_agent_memory
+                dct_memory[str(n_agent_id)] = vct_crt_agent_memory
 
         # ----------------------------------------------------------------------------------
         # trace

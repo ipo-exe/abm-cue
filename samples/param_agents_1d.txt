@@ -1,6 +1,6 @@
 Id;x;Trait;Delta_c;R_c;M;C_a;Name;Alias;Color
-1;5;20;20;5;1;0.0;Agent A;AgA;red
-2;10;20;20;5;1;0.0;Agent B;AgB;blue
+1;5;20;20;5;4;0.0;Agent A;AgA;red
+2;10;20;20;5;10;0.0;Agent B;AgB;blue
 3;15;1;20;5;1;0.01;Agent C;AgC;orange
 4;20;1;20;3;1;0.01;Agent C;AgC;orange
 5;25;1;20;3;1;0.01;Agent C;AgC;orange

@@ -5,6 +5,7 @@ Run Folder;C:/bin
 Agents File;C:/000_myFiles/myCodes/abm-cue/samples/param_agents_1d.txt
 Places File;C:/000_myFiles/myCodes/abm-cue/samples/param_places_1d.txt
 Steps;50
+Weighting;Uniform
 Return Agents;False
 Trace Back;True
 Plot Steps;True
