@@ -1,11 +1,11 @@
 Metadata;Value
-Timestamp;2022/08/25 16:48:07.86
+Timestamp;2022/12/21 19:34:46.27
 Input Folder;C:/000_myFiles/myCodes/abm-cue/samples
 Run Folder;C:/bin
-Agents File;C:/000_myFiles/myCodes/abm-cue/samples/param_agents_1d.txt
 Places File;C:/000_myFiles/myCodes/abm-cue/samples/param_places_1d.txt
-Steps;50
-Weighting;Uniform
+Agents File;C:/000_myFiles/myCodes/abm-cue/samples/param_agents_1d.txt
+Steps;30
+Weighting;Linear
 Return Agents;False
 Trace Back;True
 Plot Steps;True

@@ -102,6 +102,9 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     n_steps = int(
         df_param_sim.loc[df_param_sim["Metadata"] == "Steps", "Value"].values[0].strip()
     )
+    # string for weighting methods
+    s_weighting = df_param_sim.loc[df_param_sim["Metadata"] == "Weighting", "Value"].values[0].strip()
+
     # string boolean return agents to original position
     s_return = (
         df_param_sim.loc[df_param_sim["Metadata"] == "Return Agents", "Value"]
@@ -157,6 +160,7 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         df_agents=df_agents.copy(),
         df_places=df_places.copy(),
         n_steps=n_steps,
+        s_weight=s_weighting,
         b_tui=True,
         b_return=b_return,
         b_trace=b_trace,

@@ -343,8 +343,13 @@ def get_entry_metadata():
         lst_metadata.append(s_lcl_key)
         lst_values.append(dct_var_opts[s_lcl_key].get())
     # re-instantiate dataframe
-    df_meta = pd.DataFrame({"Metadata": lst_metadata, "Value": lst_values})
-    # print(df_meta.to_string())
+    df_meta = pd.DataFrame(
+        {
+            "Metadata": lst_metadata,
+            "Value": lst_values
+        }
+    )
+
 
 
 def authorize():
@@ -755,15 +760,17 @@ def print_report_header():
     print_report_msg(s_msg="Initiate session")
 
 
+# --------------------------------------------------------------------------------------------------
 # >>> change current dir to here
 s_current_dir = os.path.dirname(os.path.abspath(__file__))  # get file directory
 os.chdir(path=s_current_dir)  # change dir
 
+# --------------------------------------------------------------------------------------------------
 # >>> define window
 root = tkinter.Tk()
 
+# --------------------------------------------------------------------------------------------------
 # >>> TOOL SETUP
-
 # workplace
 lst_lbls_wplc = ["Input Folder", "Run Folder"]
 # input files
@@ -774,15 +781,17 @@ lst_urls_inp = [
 ]
 lst_types_inp = [("Text File", "*.txt"), ("Text File", "*.txt")]
 # parameters
-lst_lbls_params = ["Steps"]
-lst_widget_params = ["Int"]
+lst_lbls_params = ["Steps", "Weighting"]
+lst_widget_params = ["Int", "Str"]
+lst_size_entry_params = [6, 12]
 # boolean options
 lst_lbls_opts = ["Return Agents", "Trace Back", "Plot Steps"]
 
 # reset status
 reset_status()
 
-# ----- geometry setup
+# --------------------------------------------------------------------------------------------------
+# geometry setup
 
 # get platform name
 s_platform = platform.system().lower()
@@ -841,6 +850,7 @@ except IndexError:
 root.geometry("{}x{}".format(int(n_width), int(n_height)))
 root.resizable(0, 0)
 
+# --------------------------------------------------------------------------------------------------
 # color setup
 color_bg = "#343434"
 color_bg_alt = "#484848"
@@ -856,6 +866,7 @@ color_fg = 'black'
 """
 root.config(bg=color_bg)
 
+# --------------------------------------------------------------------------------------------------
 # icons setup
 img_tool = tkinter.PhotoImage(file="gui/tool.png")
 img_logo = tkinter.PhotoImage(file="gui/logo.png")
@@ -873,10 +884,12 @@ img_terminal = tkinter.PhotoImage(file="gui/terminal.png")
 # set icon
 root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
 
+# --------------------------------------------------------------------------------------------------
 # files setup
 s_title = "CUE1d Tool"
 root.title(s_title)
 
+# --------------------------------------------------------------------------------------------------
 # >> set menus
 
 # Add the menu
@@ -997,6 +1010,7 @@ menubar.add_cascade(
     activebackground=color_actbg,
 )
 
+# --------------------------------------------------------------------------------------------------
 ## >>> Frames layout
 
 frame_header = tkinter.Frame(root, width=n_width, bg=color_bg)
@@ -1032,7 +1046,7 @@ frame_options.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 frame_board.pack(padx=n_frame_padx, pady=n_frame_pady)
 frame_reports.pack(padx=n_frame_padx, pady=n_frame_pady)
 
-
+# --------------------------------------------------------------------------------------------------
 # >> Header layout
 label_logo = tkinter.Label(
     frame_logo,
@@ -1057,6 +1071,7 @@ label_infos = tkinter.Label(
 )
 label_infos.pack()
 
+# --------------------------------------------------------------------------------------------------
 # >> Workplace Frame layout
 
 # place widgets
@@ -1135,6 +1150,7 @@ dct_btn_update_wplc[lst_lbls_wplc[1]].config(
     command=lambda: update_folder(s_entry=lst_lbls_wplc[1])
 )
 
+# --------------------------------------------------------------------------------------------------
 # >> Input files layout
 
 # place widgets in dicts
@@ -1227,7 +1243,6 @@ for i in range(len(lst_lbls_inp)):
     )
     dct_btn_tool_inp[s_lcl_key].grid(row=i, column=5, pady=n_widg_pady, padx=n_widg_padx)
 
-
 # config input update buttons commmands
 dct_btn_upd_inp[lst_lbls_inp[0]].config(
     command=lambda: update_file(s_entry=lst_lbls_inp[0])
@@ -1265,6 +1280,7 @@ dct_btn_tool_inp[lst_lbls_inp[1]].config(
     command=call_agents_tool
 )
 
+# --------------------------------------------------------------------------------------------------
 # >> Parameters
 dct_lbls_params = dict()
 dct_etr_params = dict()
@@ -1286,7 +1302,7 @@ for i in range(len(lst_lbls_params)):
     # entry
     dct_etr_params[s_lcl_key] = tkinter.Entry(
         frame_params,
-        width=6,
+        width=lst_size_entry_params[i],
         bg=color_bg_alt,
         foreground=color_fg,
         selectbackground=color_actbg,
@@ -1312,11 +1328,18 @@ for i in range(len(lst_lbls_params)):
 # config param update buttons
 dct_btn_upd_params[lst_lbls_params[0]].config(
     command=lambda: update_parameter(
-        s_entry=lst_lbls_params[0], s_entry_type=lst_widget_params[0]
+        s_entry=lst_lbls_params[0],
+        s_entry_type=lst_widget_params[0]
+    )
+)
+dct_btn_upd_params[lst_lbls_params[1]].config(
+    command=lambda: update_parameter(
+        s_entry=lst_lbls_params[1],
+        s_entry_type=lst_widget_params[1]
     )
 )
 
-
+# --------------------------------------------------------------------------------------------------
 # >> Tool Options
 # place options checkbuttons
 dct_lbls_opts = dict()
@@ -1347,7 +1370,7 @@ for i in range(len(lst_lbls_opts)):
     dct_lbls_opts[s_lcl_key].pack(side=LEFT)
     dct_checks_opts[s_lcl_key].pack(side=LEFT)
 
-
+# --------------------------------------------------------------------------------------------------
 # >> Main Board
 # run button
 button_run = tkinter.Button(
@@ -1389,7 +1412,7 @@ button_update_entries.config(
 button_update_entries.config(command=lambda: update_all_entries(b_popup=False))
 button_update_entries.pack(side=RIGHT, padx=2)
 
-
+# --------------------------------------------------------------------------------------------------
 # Report Log frame widgets
 scrollbar_log_y = tkinter.Scrollbar(
     frame_reports, bg=color_bg_alt, bd=0, activebackground=color_actbg
@@ -1421,8 +1444,9 @@ scrollbar_log_x.grid(row=1, column=0, sticky="WE")
 listbox_log.config(state=DISABLED)
 print_report_header()
 
-
+# --------------------------------------------------------------------------------------------------
 get_entry_metadata()
 
+# --------------------------------------------------------------------------------------------------
 # run root window
 root.mainloop()
