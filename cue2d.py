@@ -284,7 +284,6 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
                         left_on="Id",
                         right_on="Id"
                     )
-                    print(df_wnd_move.to_string())
 
                     # --------------------------------------------------------------------------
                     # compute discrepancy
@@ -319,7 +318,7 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
                     n_next_index = np.random.choice(
                         a=df_wnd_move.index,
                         size=1,
-                        p=df_window["Prob"].values
+                        p=df_wnd_move["Prob"].values
                     )[0]  # get the first
 
             else:  # interact and move to outdoors randomly
