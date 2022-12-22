@@ -72,7 +72,6 @@ def open_df(
         else:
             lst_fields = s_mandatory_fields.split(" & ")
             for f in lst_fields:
-
                 try:
                     df_aux = df_lcl[f]
                 except KeyError:

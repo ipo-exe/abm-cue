@@ -50,6 +50,19 @@ import inp
 from time import sleep
 
 
+def linear_prob(x, x_max):
+    """
+    linear probability function
+    :param x: value
+    :type x: float or numpy array
+    :param x_max: x max value
+    :type x_max: float
+    :return: probability
+    :rtype:
+    """
+    return ((-2 / np.square(x_max)) * x) + (2/x_max)
+
+
 def map_traits(grd_ids, vct_traits, vct_ids):
     grd_traits = np.zeros(shape=np.shape(grd_ids), dtype="float32")
     for i in range(len(vct_traits)):
@@ -57,7 +70,7 @@ def map_traits(grd_ids, vct_traits, vct_ids):
     return grd_traits
 
 
-def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_return=False):
+def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False, b_trace=True, b_return=False):
     """
     Simulation of CUE 2D
 
@@ -69,6 +82,8 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
     :type grd_ids: numpy.ndarray
     :param n_steps: number of simulation steps
     :type n_steps: int
+    :param s_weight: sampling method type. Options: 'uniform', 'linear'
+    :type s_weight: str
     :param b_tui: boolean to terminal display
     :type b_tui: bool
     :param b_trace: boolean to traceback simulation
@@ -90,7 +105,7 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
     df_places = pd.merge(
         how='left',
         left=df_places_grd,
-        right=df_places[["Id", "Trait", "D", "Name", "Alias", "Color"]],
+        right=df_places[["Id", "Trait", "C_p", "Name", "Alias", "Color"]],
         left_on="Id",
         right_on="Id"
     )
@@ -105,7 +120,7 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
 
     # ------------------------------------------------------------------------------------------
     # scanning window parameters set up
-    lst_unique_beta = list(df_agents["Beta"].unique())  # get unique beta (radius size) values
+    lst_unique_beta = list(df_agents["R_c"].unique())  # get unique beta (radius size) values
     dct_window = dict()
     # construction loop
     for n_beta in lst_unique_beta:
@@ -183,7 +198,18 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
 
     # ------------------------------------------------------------------------------------------
     # prepare output dict
-    dct_output = {"Agents_Start": df_agents.copy(), "Places_Start": df_places.copy()}
+    dct_output = {
+        "Agents_Start": df_agents.copy(),
+        "Places_Start": df_places.copy()
+    }
+
+    # ------------------------------------------------------------------------------------------
+    # allocate memory variables
+    dct_memory = dict()
+    for a in range(n_agents):
+        n_memory = df_agents["M"].values[a]
+        n_trait = df_agents["Trait"].values[a]
+        dct_memory[str(df_agents["Id"].values[a])] = n_trait * np.ones(n_memory)
 
     # ------------------------------------------------------------------------------------------
     # main simulation loop:
@@ -198,18 +224,22 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
         for a in range(len(df_agents)):
 
             # ----------------------------------------------------------------------------------
-            # get agents attributes
+            # get agents variables
             a_id = df_agents["Id"].values[a]
+            vct_a_memory = dct_memory[str(a_id)]  # get memory
+            a_trait = np.mean(vct_a_memory)  # mean over memory
             a_x = df_agents["x"].values[a]
             a_y = df_agents["y"].values[a]
-            a_trait = df_agents["Trait"].values[a]
-            a_alpha = df_agents["Alpha"].values[a]
-            a_beta = df_agents["Beta"].values[a]
-            a_c = df_agents["C"].values[a]
+
+            # ----------------------------------------------------------------------------------
+            # get agent parameters
+            a_deltac = df_agents["Delta_c"].values[a]
+            a_rc = df_agents["R_c"].values[a]
+            a_c_a = df_agents["C_a"].values[a]
 
             # ----------------------------------------------------------------------------------
             # access window dataframe using
-            df_window = dct_window[str(a_beta)]["df"]
+            df_window = dct_window[str(a_rc)]["df"]
             # update window x and y
             df_window["x"] = (a_x + df_window["cols"].values) % n_cols
             df_window["y"] = (a_y + df_window["rows"].values) % n_rows
@@ -229,7 +259,7 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
             # todo problems with return feature
 
             np.random.seed(grd_seeds[t, a])  # restart random state
-            if p_id == 0:  # just move to indoors weighted
+            if p_id == 0:  # just move to indoors
 
                 # ------------------------------------------------------------------------------
                 # filter window
@@ -239,15 +269,14 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
                 # movement conditional
                 if len(df_wnd_move) == 0:  # there is no indoor place to go
                     df_wnd_move = df_window.copy()
-                    # then move randomly
+                    # then just move randomly
                     n_next_index = np.random.choice(
                         a=np.arange(len(df_wnd_move)),
                         size=1
                     )[0]  # get the first
-                else:
-
+                else:  # there is indoor places to go
                     # --------------------------------------------------------------------------
-                    # append fields
+                    # append fields from places using ID
                     df_wnd_move = pd.merge(
                         how='left',
                         left=df_wnd_move,
@@ -255,43 +284,44 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
                         left_on="Id",
                         right_on="Id"
                     )
+                    print(df_wnd_move.to_string())
 
                     # --------------------------------------------------------------------------
                     # compute discrepancy
-                    df_wnd_move["Discrepancy"] = np.abs(
-                        a_trait - df_wnd_move["Trait"].values
-                    )
+                    df_wnd_move["Discr"] = np.abs(a_trait - df_wnd_move["Trait"].values)
 
-                    # --------------------------------------------------------------------------
-                    # compute selection Interac_score
-                    df_wnd_move["Interac_score"] = (
-                            df_wnd_move["Discrepancy"].max() - df_wnd_move["Discrepancy"] + 1
-                    )
-
-                    # --------------------------------------------------------------------------
-                    # normalize
-                    # set score = zero where place is beyond alpha threshold
-                    df_wnd_move["Interac_score"] = df_wnd_move["Interac_score"].values * (
-                            df_wnd_move["Discrepancy"].values <= a_alpha
-                    )
-
-                    # --------------------------------------------------------------------------
-                    # compute probabilistic weights
-                    if df_wnd_move["Interac_score"].sum() == 0:
-                        # uniform distribution when all scores == 0:
-                        df_wnd_move["Interac_prob"] = 1 / len(df_wnd_move)
-                    else:
-                        df_wnd_move["Interac_prob"] = (
-                                df_wnd_move["Interac_score"] / df_wnd_move["Interac_score"].sum()
+                    # ----------------------------------------------------------------------------------
+                    # get sampling probability
+                    if s_weight.lower() == 'uniform':
+                        # uniform interaction prob
+                        df_wnd_move["Prob"] = 1 / a_deltac
+                    elif s_weight.lower() == 'linear':
+                        # linear interaction score
+                        df_wnd_move["Prob"] = linear_prob(
+                            x=df_wnd_move['Discr'].values,
+                            x_max=a_deltac
                         )
+                    else:
+                        # uniform interaction prob
+                        df_wnd_move["Prob"] = 1 / a_deltac
 
-                    # --------------------------------------------------------------------------
+                    # ----------------------------------------------------------------------------------
+                    # apply cutoff criterion
+                    df_wnd_move["Prob"] = df_wnd_move["Prob"].values * (df_wnd_move['Discr'].values <= a_deltac)
+                    if df_wnd_move["Prob"].sum() == 0:
+                        # go uniform
+                        df_wnd_move["Prob"] = 1 / len(df_wnd_move)
+                    # normalize
+                    df_wnd_move["Prob"] = df_wnd_move["Prob"].values / df_wnd_move["Prob"].sum()
+
+                    # ----------------------------------------------------------------------------------
                     # weighted random sampling
                     n_next_index = np.random.choice(
-                        a=np.arange(len(df_wnd_move)),
+                        a=df_wnd_move.index,
                         size=1,
-                        p=df_wnd_move["Interac_prob"].values
+                        p=df_window["Prob"].values
                     )[0]  # get the first
+
             else:  # interact and move to outdoors randomly
 
                 # ------------------------------------------------------------------------------
@@ -302,15 +332,15 @@ def play(df_agents, df_places, grd_ids, n_steps, b_tui=False, b_trace=True, b_re
                 # get place trait
                 p_trait = df_places["Trait"].values[p_index]
                 # get place d
-                p_d = df_places["D"].values[p_index]
+                p_c_p = df_places["C_p"].values[p_index]
 
                 # ------------------------------------------------------------------------------
                 # apply interaction criteria
                 n_discrepancy = np.abs(a_trait - p_trait)
-                if n_discrepancy <= a_alpha:
+                if n_discrepancy <= a_deltac:
                     # compute means
-                    a_mean = (a_trait + (a_c * p_trait)) / (1 + a_c)
-                    p_mean = (p_trait + (p_d * a_trait)) / (1 + p_d)
+                    a_mean = (a_trait + (a_c_a * p_trait)) / (1 + a_c_a)
+                    p_mean = (p_trait + (p_c_p * a_trait)) / (1 + p_c_p)
 
                     # replace in simulation dataframes
                     df_agents["Trait"].values[a] = a_mean

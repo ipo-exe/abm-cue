@@ -427,13 +427,8 @@ def run_cue2d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     n_steps = int(
         df_param_sim.loc[df_param_sim["Metadata"] == "Steps", "Value"].values[0].strip()
     )
-
-    # weighting method
-    s_weigthing = (
-        df_param_sim.loc[df_param_sim["Metadata"] == "Weighting", "Value"]
-            .values[0]
-            .strip()
-    )
+    # string for weighting methods
+    s_weighting = df_param_sim.loc[df_param_sim["Metadata"] == "Weighting", "Value"].values[0].strip()
 
     # ------------------------------------------------------------------------------------------
     # string boolean return agents to original position
@@ -499,7 +494,7 @@ def run_cue2d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
         df_places=df_places,
         grd_ids=grd_ids,
         n_steps=n_steps,
-        s_weight=s_weigthing,
+        s_weight=s_weighting,
         b_tui=True,
         b_return=b_return,
         b_trace=b_trace
@@ -961,8 +956,8 @@ if __name__ == "__main__":
 
     # --------------------------------------------------------------------------------------------
     # run 1d
-    run_cue1d(s_fsim="./samples/param_simulation_1d.txt")
+    ##run_cue1d(s_fsim="./samples/param_simulation_1d.txt")
 
     # --------------------------------------------------------------------------------------------
     # run 2d
-    ### run_cue2d(s_fsim="./samples/param_simulation_2d.txt")
+    run_cue2d(s_fsim="./samples/param_simulation_2d.txt")

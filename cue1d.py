@@ -66,6 +66,8 @@ def play(df_agents, df_places, n_steps, s_weight='uniform', b_tui=False, b_retur
     :param df_agents: pandas dataframe of agents
     :param df_places: pandas dataframe of places
     :param n_steps: int number of time steps
+    :param s_weight: sampling method type. Options: 'uniform', 'linear'
+    :type s_weight: str
     :param b_tui: boolean to terminal display
     :param b_return: boolean to return agent back to initial position every time step
     :param b_trace: boolean to trace back simulation
@@ -177,47 +179,47 @@ def play(df_agents, df_places, n_steps, s_weight='uniform', b_tui=False, b_retur
         for a in range(n_agents):
             # ----------------------------------------------------------------------------------
             # get agent variables
-            n_agent_id = df_agents["Id"].values[a]
-            vct_crt_agent_memory = dct_memory[str(n_agent_id)]  # get memory
-            n_agent_trait = np.mean(vct_crt_agent_memory) # mean over memory
-            n_agent_x = df_agents["x"].values[a]
+            a_id = df_agents["Id"].values[a]
+            vct_a_memory = dct_memory[str(a_id)]  # get memory
+            a_trait = np.mean(vct_a_memory) # mean over memory
+            a_x = df_agents["x"].values[a]
 
             # ----------------------------------------------------------------------------------
             # get agent parameters
-            n_agent_deltac = df_agents["Delta_c"].values[a]
-            n_agent_rc = df_agents["R_c"].values[a]
-            n_agent_ca = df_agents["C_a"].values[a]
+            a_deltac = df_agents["Delta_c"].values[a]
+            a_rc = df_agents["R_c"].values[a]
+            a_ca = df_agents["C_a"].values[a]
 
             # ----------------------------------------------------------------------------------
             # get current window objects
-            vct_rows_base_ids = dct_window[str(n_agent_rc)]["ids"]
-            df_window = dct_window[str(n_agent_rc)]["df"]
+            vct_rows_base_ids = dct_window[str(a_rc)]["ids"]
+            df_window = dct_window[str(a_rc)]["df"]
 
             # ----------------------------------------------------------------------------------
             # update window dataframe
-            df_window["x"] = (n_agent_x + vct_rows_base_ids) % n_places # here the magic happens
+            df_window["x"] = (a_x + vct_rows_base_ids) % n_places # here the magic happens
             df_window["Trait"] = df_places["Trait"].values[df_window["x"].values]
             df_window["C_p"] = df_places["C_p"].values[df_window["x"].values]
-            df_window["Discr"] = np.abs(n_agent_trait - df_window["Trait"].values)
+            df_window["Discr"] = np.abs(a_trait - df_window["Trait"].values)
 
             # ----------------------------------------------------------------------------------
             # get sampling probability
             if s_weight.lower() == 'uniform':
                 # uniform interaction prob
-                df_window["Prob"] = 1 / n_agent_deltac
+                df_window["Prob"] = 1 / a_deltac
             elif s_weight.lower() == 'linear':
                 # linear interaction score
                 df_window["Prob"] = linear_prob(
                     x=df_window['Discr'].values,
-                    x_max=n_agent_deltac
+                    x_max=a_deltac
                 )
             else:
                 # uniform interaction prob
-                df_window["Prob"] = 1 / n_agent_deltac
+                df_window["Prob"] = 1 / a_deltac
 
             # ----------------------------------------------------------------------------------
             # apply cutoff criterion
-            df_window["Prob"] = df_window["Prob"].values * (df_window['Discr'].values <= n_agent_deltac)
+            df_window["Prob"] = df_window["Prob"].values * (df_window['Discr'].values <= a_deltac)
             if df_window["Prob"].sum() == 0:
                 # go uniform
                 df_window["Prob"] = 1 / len(df_window)
@@ -249,8 +251,8 @@ def play(df_agents, df_places, n_steps, s_weight='uniform', b_tui=False, b_retur
 
                 # ------------------------------------------------------------------------------
                 # compute means
-                r_mean_agent = (n_agent_trait + (n_agent_ca * n_crt_place_trait)) / (1 + n_agent_ca)
-                r_mean_place = (n_crt_place_trait + (n_crt_place_d * n_agent_trait)) / (1 + n_crt_place_d)
+                r_mean_agent = (a_trait + (a_ca * n_crt_place_trait)) / (1 + a_ca)
+                r_mean_place = (n_crt_place_trait + (n_crt_place_d * a_trait)) / (1 + n_crt_place_d)
 
                 # ------------------------------------------------------------------------------
                 # replace in simulation dataframes
@@ -259,10 +261,10 @@ def play(df_agents, df_places, n_steps, s_weight='uniform', b_tui=False, b_retur
 
                 # ------------------------------------------------------------------------------
                 # update memory vector
-                for i in range(len(vct_crt_agent_memory) - 1, 0, -1):
-                    vct_crt_agent_memory[i] = vct_crt_agent_memory[i - 1]
-                vct_crt_agent_memory[0] = r_mean_agent
-                dct_memory[str(n_agent_id)] = vct_crt_agent_memory
+                for i in range(len(vct_a_memory) - 1, 0, -1):
+                    vct_a_memory[i] = vct_a_memory[i - 1]
+                vct_a_memory[0] = r_mean_agent
+                dct_memory[str(a_id)] = vct_a_memory
 
         # ----------------------------------------------------------------------------------
         # trace

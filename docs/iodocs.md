@@ -58,9 +58,9 @@ Id;  x; Trait; Delta_c; R_c;  M;  C_a;    Name; Alias;  Color
  - **Formating example**:
 ```
 Id; x; y; Trait; Delta_c; R_c; M; C_a;    Name; Alias;  Color
- 1; 2; 2;  10.0;      10;   1; 1; 0.0; Agent A;   AgA;    red
+ 1; 2; 2;  10.0;      10;   1; 5; 0.0; Agent A;   AgA;    red
  2; 2; 6;  10.0;      10;   1; 1; 0.0; Agent B;   AgB;   blue
- 3; 6; 2;    10;      10;   1; 1; 0.0; Agent C;   AgC; orange
+ 3; 6; 2;    10;      10;   1; 3; 0.1; Agent C;   AgC; orange
  4; 6; 6;    10;      10;   1; 1; 0.0; Agent D;   AgD;  green
 ```
  - **Requirements**:
@@ -322,6 +322,7 @@ Return Agents;                                                      False
   Places File; C:/000_myFiles/myCodes/abm-cue/samples/param_places_2d.txt
    Places Map;   C:/000_myFiles/myCodes/abm-cue/samples/map_places_2d.asc
         Steps;                                                        300
+    Weighting;                                                     Linear
 Return Agents;                                                      False
    Trace Back;                                                       True
    Plot Steps;                                                       True

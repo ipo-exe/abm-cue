@@ -1,4 +1,4 @@
-Id;Trait;D;Name;Alias;Color
+Id;Trait;C_p;Name;Alias;Color
 0;0;0;Outdoors;Out;blue
 0;0;0;Outdoors;Out;blue
 0;0;0;Outdoors;Out;blue
