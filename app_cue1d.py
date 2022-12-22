@@ -776,8 +776,8 @@ lst_lbls_wplc = ["Input Folder", "Run Folder"]
 # input files
 lst_lbls_inp = ["Places File", "Agents File"]
 lst_urls_inp = [
-    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_placestxt",
-    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agentstxt"
+    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_places_1dtxt",
+    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agents_1dtxt"
 ]
 lst_types_inp = [("Text File", "*.txt"), ("Text File", "*.txt")]
 # parameters
@@ -1000,7 +1000,7 @@ menu_help.add_command(
     compound=LEFT,
     foreground=color_fg,
     activeforeground=color_fg,
-    command=command_demo,
+    command=command_demo, # todo replace this command
 )
 # add the Help menu to the menubar
 menubar.add_cascade(

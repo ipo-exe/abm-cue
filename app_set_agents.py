@@ -348,7 +348,7 @@ def format_string(lst_block, s_sep=' '):
     :param s_sep: string separator
     :return: string formatted
     """
-    s_aux = ' {:>6s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>12s}{}{:>8s}{}{:>8s}'.format(
+    s_aux = ' {:>6s}{}{:>6s}{}{:>8s}{}{:>6s}{}{:>6s}{}{:>6s}{}{:>10s}{}{:>8s}{}{:>8s}'.format(
         lst_block[0].strip(),
         s_sep,
         lst_block[1].strip(),
@@ -623,20 +623,20 @@ def append_header():
     listbox_blocks.insert(END, s_blocks_header)
     #listbox_blocks.insert(END, '-' * len(s_blocks_header))
 
-
+# --------------------------------------------------------------------------------------------------
 # >>> change current dir to here
 s_current_dir = os.path.dirname(os.path.abspath(__file__))  # get file directory
 os.chdir(path=s_current_dir)  # change dir
 
+# --------------------------------------------------------------------------------------------------
 # >>> define window
 root = tkinter.Tk()
 
+# --------------------------------------------------------------------------------------------------
 # >>> TOOL SETUP
-
 lst_lbls_inp = ["Places File"]
-lst_urls_inp = ["https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_placestxt"]
+lst_urls_inp = ["https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_places_1dtxt"]
 lst_types_inp = [("Text File", "*.txt")]
-
 # block settings
 lst_lbls_block = [
     "Block Size",
@@ -672,7 +672,8 @@ lst_lbls_block_aux = [
     "format: text"
 ]
 
-# ----- geometry setup
+# --------------------------------------------------------------------------------------------------
+# Geometry setup
 
 # get platform name
 s_platform = platform.system().lower()
@@ -726,14 +727,13 @@ except IndexError:
     n_width_options_check = 2
     n_listbox_height = 7
     n_listbox_width = 72
-
 # app customization
 n_height = int(1.2 * n_height)
-
 # set
 root.geometry("{}x{}".format(int(n_width), int(n_height)))
 root.resizable(0, 0)
 
+# --------------------------------------------------------------------------------------------------
 # color setup
 color_bg = "#343434"
 color_bg_alt = "#484848"
@@ -741,8 +741,8 @@ color_actbg = "#df4a16"
 color_fg = "white"
 root.config(bg=color_bg)
 
+# --------------------------------------------------------------------------------------------------
 # icons setup
-# todo board buttons icon
 img_add = tkinter.PhotoImage(file="gui/add.png")
 img_remove = tkinter.PhotoImage(file="gui/remove.png")
 img_logo = tkinter.PhotoImage(file="gui/logo.png")
@@ -756,16 +756,17 @@ img_update = tkinter.PhotoImage(file="gui/update.png")
 img_brush = tkinter.PhotoImage(file="gui/brush.png")
 img_chat = tkinter.PhotoImage(file="gui/chat.png")
 img_terminal = tkinter.PhotoImage(file="gui/terminal.png")
-
 # set icon
 root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
 
+# --------------------------------------------------------------------------------------------------
 # files setup
 s_title = "Agents File Tool"
 root.title(s_title)
 
-# -------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 # >> set menus
+
 
 # Add the menu
 menubar = tkinter.Menu(
@@ -773,6 +774,7 @@ menubar = tkinter.Menu(
 )
 root.config(menu=menubar)
 
+# --------------------------------------------------------------------------------------------------
 # >> create the File Menu
 menu_file = tkinter.Menu(
     menubar, tearoff=0, bg=color_bg_alt, activebackground=color_actbg
@@ -804,6 +806,7 @@ menubar.add_cascade(
     activeforeground=color_fg,
     activebackground=color_actbg,
 )
+# --------------------------------------------------------------------------------------------------
 # >> create the Help Menu
 menu_help = tkinter.Menu(
     menubar, tearoff=0, bg=color_bg_alt, activebackground=color_actbg
@@ -815,17 +818,10 @@ menu_help.add_command(
     compound=LEFT,
     foreground=color_fg,
     activeforeground=color_fg,
-    command=command_demo,
+    command=command_demo, # todo replace this command
 )
-menu_help.add_command(
-    label="Language",
-    image=img_chat,
-    compound=LEFT,
-    foreground=color_fg,
-    activeforeground=color_fg,
-    command=command_demo,
-)
-# add the File menu to the menubar
+
+# add the Help menu to the menubar
 menubar.add_cascade(
     label="Help",
     menu=menu_help,
@@ -868,7 +864,7 @@ frame_list.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 frame_board_params.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 frame_board_export.pack(fill="x", padx=n_frame_padx, pady=n_frame_pady)
 
-
+# --------------------------------------------------------------------------------------------------
 # >> Header layout
 label_logo = tkinter.Label(
     frame_logo,
@@ -1085,6 +1081,7 @@ dct_btn_upd_blocks[lst_lbls_block[8]].config(
                                   s_entry_type=lst_types_block[8])
 )
 
+# --------------------------------------------------------------------------------------------------
 # >> block Board
 
 # update button
@@ -1172,9 +1169,8 @@ button_remove_block.config(
 button_remove_block.config(command=remove_block)
 button_remove_block.pack(side=LEFT, padx=n_widg_padx, pady=n_widg_pady)
 
-
+# --------------------------------------------------------------------------------------------------
 # >> List frame widgets Layout
-
 
 scrollbar_log_y = tkinter.Scrollbar(
     frame_list, bg=color_bg_alt, bd=0, activebackground=color_actbg
@@ -1207,7 +1203,7 @@ listbox_blocks.grid(row=1, column=0)
 scrollbar_log_y.grid(row=1, column=1, sticky="NS")
 scrollbar_log_x.grid(row=2, column=0, sticky="WE")
 
-
+# --------------------------------------------------------------------------------------------------
 # >> Parameters Board
 
 n_option = IntVar(root, 1)
@@ -1284,7 +1280,7 @@ radio_randomize = tkinter.Radiobutton(
 label_randomize.pack(side=LEFT)
 radio_randomize.pack(side=LEFT)
 
-
+# --------------------------------------------------------------------------------------------------
 # >> Export Board
 
 # export button
@@ -1309,6 +1305,9 @@ button_export.config(command=lambda : save_file())
 button_export.pack(side=LEFT, padx=n_widg_padx, pady=n_widg_pady)
 
 
+# --------------------------------------------------------------------------------------------------
+# last setups
+
 # append header
 append_header()
 
@@ -1317,5 +1316,6 @@ reset_status()
 
 authorize_save()
 
+# --------------------------------------------------------------------------------------------------
 # run root window
 root.mainloop()

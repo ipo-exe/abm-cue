@@ -23,14 +23,14 @@ These files must be prepared and sourced by the user. Samples are provided for p
  - **Format**: Data Table;
  - **Formating example**:
 ```
-Id;  x; Trait; Delta_c; R_c; M;  C_a;    Name; Alias;  Color
- 1;  5;    20;      20;   5; 1;  0.0; Agent A;   AgA;    red
- 2; 10;    20;      20;   5; 1;  0.0; Agent B;   AgB;   blue
- 3; 15;     1;      20;   5; 1; 0.01; Agent C;   AgC; orange
- 4; 20;     1;      20;   3; 1; 0.01; Agent C;   AgC; orange
- 5; 25;     1;      20;   3; 1; 0.01; Agent C;   AgC; orange
- 6; 30;     1;      20;   3; 1; 0.01; Agent C;   AgC; orange
- 7; 35;     1;      20;   3; 1; 0.01; Agent C;   AgC; orange
+Id;  x; Trait; Delta_c; R_c;  M;  C_a;    Name; Alias;  Color
+ 1;  5;    20;      20;   5;  4;  0.0; Agent A;   AgA;    red
+ 2; 10;    20;      20;   5; 10;  0.0; Agent B;   AgB;   blue
+ 3; 15;     1;      20;   5;  1; 0.01; Agent C;   AgC; orange
+ 4; 20;     1;      20;   3;  1; 0.01; Agent C;   AgC; orange
+ 5; 25;     1;      20;   3;  1; 0.01; Agent C;   AgC; orange
+ 6; 30;     1;      20;   3;  1; 0.01; Agent C;   AgC; orange
+ 7; 35;     1;      20;   3;  1; 0.01; Agent C;   AgC; orange
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -49,9 +49,6 @@ Id;  x; Trait; Delta_c; R_c; M;  C_a;    Name; Alias;  Color
 |` Name ` | text | Category name | -|
 |` Alias ` | text | Category alias (one-word only) | -|
 |` Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | -|
- - **Data view**:
-
-missing file
 
 ## `param_agents_2d.txt`
  - **Description**: Table of agents parameters and initial conditions;
@@ -84,9 +81,6 @@ Id; x; y; Trait; Delta_c; R_c; M; C_a;    Name; Alias;  Color
 |` Name ` | text | Category name | -|
 |` Alias ` | text | Category alias (one-word only) | -|
 |` Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | -|
- - **Data view**:
-
-missing file
 
 ## `param_places_1d.txt`
  - **Description**: Table of places parameters and initial conditions;
@@ -151,9 +145,6 @@ Id;  x; Trait; C_p;    Name; Alias; Color
 |` Name ` | text | Category name | -|
 |` Alias ` | text | Category alias (one-word only) | -|
 |` Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | -|
- - **Data view**:
-
-missing file
 
 ## `param_places_2d.txt`
  - **Description**: Table of places parameters and initial conditions;
@@ -258,9 +249,6 @@ missing file
 |` Name ` | text | Category name | -|
 |` Alias ` | text | Category alias (one-word only) | -|
 |` Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | -|
- - **Data view**:
-
-missing file
 
 ## `map_places_2d.asc`
  - **Description**: Map of places IDs;
@@ -289,9 +277,6 @@ NODATA_value -1
 	 - Grid cells must be squared;
 	 - All grid cells must be filled with values;
 	 - Default No-Data cell value: `-1`;
- - **Data view**:
-
-missing file
 
 ## `param_simulation_1d.txt`
  - **Description**: Table of simulation parameters;
@@ -301,12 +286,13 @@ missing file
  - **Formating example**:
 ```
      Metadata;                                                      Value
-    Timestamp;                                     2022/08/25 16:48:07.86
+    Timestamp;                                     2022/12/21 19:34:46.27
  Input Folder;                     C:/000_myFiles/myCodes/abm-cue/samples
    Run Folder;                                                     C:/bin
-  Agents File; C:/000_myFiles/myCodes/abm-cue/samples/param_agents_1d.txt
   Places File; C:/000_myFiles/myCodes/abm-cue/samples/param_places_1d.txt
-        Steps;                                                         50
+  Agents File; C:/000_myFiles/myCodes/abm-cue/samples/param_agents_1d.txt
+        Steps;                                                         30
+    Weighting;                                                     Linear
 Return Agents;                                                      False
    Trace Back;                                                       True
    Plot Steps;                                                       True
@@ -320,9 +306,6 @@ Return Agents;                                                      False
 |:--- | :--- | :--- | :---|
 |`Metadata ` | text | Name of metadata | -|
 |` Value` | miscellaneus | Value of data | -|
- - **Data view**:
-
-missing file
 
 ## `param_simulation_2d.txt`
  - **Description**: Table of simulation parameters;
@@ -352,9 +335,6 @@ Return Agents;                                                      False
 |:--- | :--- | :--- | :---|
 |`Metadata ` | text | Name of metadata | -|
 |` Value` | miscellaneus | Value of data | -|
- - **Data view**:
-
-missing file
 
 # Output files
 These files are generated by the program. Note that the user may source it as input to other processes.
@@ -408,9 +388,6 @@ Id;  x; Trait; Delta_c; R_c; M;  C_a;    Name; Alias;  Color
 |` R_c ` | positive integer number | Critical radius distance for agent movement. | cell units|
 |` M ` | positive integer number | Agent memory lag time. | step units|
 |` C_a` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | -|
- - **Data view**:
-
-missing file
 
 ## `param_agents_1d_end.txt`
  - **Description**: Table of agents parameters and final conditions;
@@ -441,9 +418,6 @@ Id;  x;              Trait; Delta_c; R_c; M;  C_a;    Name; Alias;  Color
 |` R_c ` | positive integer number | Critical radius distance for agent movement. | cell units|
 |` M ` | positive integer number | Agent memory lag time. | step units|
 |` C_a` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | -|
- - **Data view**:
-
-missing file
 
 ## `param_places_1d_start.txt`
  - **Description**: Table of places parameters and initial conditions;
@@ -504,9 +478,6 @@ Id;  x; Trait; C_p;    Name; Alias; Color
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
 |` C_p` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | -|
- - **Data view**:
-
-missing file
 
 ## `param_places_1d_end.txt`
  - **Description**: Table of places parameters and final conditions;
@@ -567,9 +538,6 @@ Id;  x;              Trait; C_p;    Name; Alias; Color
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
 |` C_p` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | -|
- - **Data view**:
-
-missing file
 
 ## `param_agents_2d_start.txt`
  - **Description**: Table of agents parameters and initial conditions;
@@ -591,9 +559,6 @@ missing file
 |` R_c ` | positive integer number | Critical radius distance for agent movement. | cell units|
 |` M ` | positive integer number | Agent memory lag time. | step units|
 |` C_a` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | -|
- - **Data view**:
-
-missing file
 
 ## `param_agents_2d_end.txt`
  - **Description**: Table of agents parameters and final conditions;
@@ -615,9 +580,6 @@ missing file
 |` R_c ` | positive integer number | Critical radius distance for agent movement. | cell units|
 |` M ` | positive integer number | Agent memory lag time. | step units|
 |` C_a` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | -|
- - **Data view**:
-
-missing file
 
 ## `param_places_2d_start.txt`
  - **Description**: Table of places parameters and initial conditions;
@@ -634,9 +596,6 @@ missing file
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` Trait ` | positive real number | Trait orientation value | trait units|
 |` C_p` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | -|
- - **Data view**:
-
-missing file
 
 ## `param_places_2d_end.txt`
  - **Description**: Table of places parameters and final conditions;
@@ -653,9 +612,6 @@ missing file
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` Trait ` | positive real number | Trait orientation value | trait units|
 |` C_p` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | -|
- - **Data view**:
-
-missing file
 
 ## `hist_agents_start.txt`
  - **Description**: Histogram table of agents on initial conditions;
@@ -899,9 +855,6 @@ Step; A_1_x; A_2_x; A_3_x; A_4_x; A_5_x; A_6_x; A_7_x
 |`Step ` | positive integer number | Time step number | -|
 |` A_Id_x ` | positive integer number | Position coordinate in the x axis of Agent A_Id (ex: A_12_x) | cell units|
 |` A_Id_y` | positive integer number | Position coordinate in the y axis of Agent A_Id (ex: A_12_y) | cell units|
- - **Data view**:
-
-missing file
 
 ## `traced_places_traits.txt`
  - **Description**: Time series table of places traits;
@@ -954,9 +907,6 @@ Start;  0.863120568566631;               -0.0
 |`Step ` | positive integer number | Time step number | -|
 |` H_agents ` | real number | Shannon Entropy of Agents | Bits|
 |` H_places` | real number | Shannon Entropy of Places | Bits|
- - **Data view**:
-
-missing file
 
 ## Glossary
 
