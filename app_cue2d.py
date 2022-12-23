@@ -351,7 +351,6 @@ def get_entry_metadata():
     )
 
 
-
 def authorize():
     """
     evaluate if is ok to run -- all metadata must be OK

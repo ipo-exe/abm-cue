@@ -55,7 +55,7 @@ import backend, inp, tools
 
 def callsub():
     import subprocess
-    subprocess.run(["python", "app_set_places.py"])
+    subprocess.run(["python", "app_set_places_1d.py"])
 
 
 def call_place_tool():
@@ -65,7 +65,7 @@ def call_place_tool():
     :rtype: None
     """
     import subprocess
-    subprocess.run(["python", "app_set_places.py"])
+    subprocess.run(["python", "app_set_places_1d.py"])
 
 
 def call_agents_tool():
@@ -75,7 +75,7 @@ def call_agents_tool():
     :rtype:
     """
     import subprocess
-    subprocess.run(["python", "app_set_agents.py"])
+    subprocess.run(["python", "app_set_agents_1d.py"])
 
 # todo replace this
 def command_demo():
