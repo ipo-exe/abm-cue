@@ -16,16 +16,52 @@ The model is characterized by the following general rules:
 4) Agents have a limited window of sight to the nearest Places to go;
 5) Agents interact with Places only if they are related enough;
 6) Agents evaluate their own trait with a limited memory of previous states;
-7) Agents interaction, Agents may contaminate the Place trait to a certain extent, and vice-versa.
+7) Agents may contaminate the Place trait to a certain extent, and vice-versa.
 
 The expected output from simulations is a evolving environment of the traits of Agents and Places. A low-entropy system may or not emerge depending on the initial conditions.
 
-### The 1-D and 2-D worlds
+> **Note**: see the Input/Output and Glossary documentation:
+> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
 
-The simulated world has a gridded structure. That is, it is a rectagular grid of cells. Both versions of 1-D and 2-D worlds are _infinite_ in the sense that Agents can loop around, leaving one edge to show up in the other. Locality is determined by the rows and columns indexes `x` and `y`. 
+## The 1-D and 2-D worlds
+
+The simulated world has a gridded structure. That is, it is a rectagular grid of cells. Both versions of 1-D and 2-D worlds are infinite in the sense that Agents can loop around, leaving one edge to show up in the other. Locality is determined by the rows and columns coordinates.
+
+> **Note**: In the 1-D world `x` denotes the row coordinate.
+
+> **Note**: In the 2-D world and `y` denotes the row coordinate and `x` denotes the column coordinate.
+
+> **Note**: In the 2-D world Places must be categorized in `Indoor` and `Outdoor`. 
 
 ![figure](https://github.com/ipo-exe/abm-cue/blob/main/figs/worlds.PNG "Worlds")
 
+
+## Attributes of Agents and Places 
+
+> **Note**: see the theoretical notation PDF:
+> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
+
+### Id number
+
+Each Agent and Place has an unique integer number, the `Id` label.
+
+### Trait
+
+Trait is a variable attribute of both Agents and Places. They share the same units of traits.
+
+### Position
+
+Agents and Places have locality defined by integer coordinates in the gridded world. Agents positions (`x` and `y`) are mutable. Places positions (`x` and `y`) are immutable.
+
+### Name, Alias and Color
+
+All Agents and Places must have a `Name`, `Alias` (a short nickname for chart plotting) and `Color`. `Color` must be the HEX code or available in the `matplotlib` package [color list](https://matplotlib.org/stable/gallery/color/named_colors.html).  
+
+
+## Model Parameters
+
+> **Note**: see the theoretical notation PDF:
+> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
 
 ### The D parameter
 
@@ -41,9 +77,6 @@ The simulated world has a gridded structure. That is, it is a rectagular grid of
 ![figure](https://github.com/ipo-exe/abm-cue/blob/main/figs/windows.png "Windows")
 
 ### The C parameter
-
-> **Note**: see the theoretical notation PDF:
-> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
 
 `C` is a parameter of both Agents and Places. It quantifies the openness to contamination, or place-to-agent degree of interaction influence. In the case of Agents, the `C` is the openness of any given Agent to change after interacting with a Place:
 
