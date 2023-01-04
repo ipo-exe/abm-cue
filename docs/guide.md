@@ -21,7 +21,7 @@ The expected output from simulations is a evolving environment of the traits of 
 
 The simulated world has a gridded structure. That is, it is a rectagular grid of cells. Both versions of 1-D and 2-D worlds are _infinite_ in the sense that Agents can loop around, leaving one edge to show up in the other. Locality is determined by the rows and columns indexes `x` and `y`. 
 
-![figure](https://github.com/ipo-exe/abm-cue/blob/main/figs/worlds.png "Worlds")
+![figure](https://github.com/ipo-exe/abm-cue/blob/main/figs/worlds.PNG "Worlds")
 
 
 ### The Delta_c parameter
