@@ -1,5 +1,10 @@
 # Agent-based Modelling - Coorperation of Urban Environments (CUE) 
+
  - [Model overview](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#model-overview)
+ - [The 1-D and 2-D worlds](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#the-1-d-and-2-d-worlds)
+ - [The random walk](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#the-random-walk)
+ - [Attributes of Agents and Places](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#attributes-of-agents-and-places)
+ - [Model parameters](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#model-parameters)
  - [CUE 1D guide](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#cue-1d-model-guide)
  - [CUE 2D guide](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#cue-2d-model-guide)
 
@@ -35,6 +40,14 @@ The simulated world has a gridded structure. That is, it is a rectagular grid of
 
 ![figure](https://github.com/ipo-exe/abm-cue/blob/main/figs/worlds.PNG "Worlds")
 
+## The random walk
+
+At each time step, Agents walk randomly towards the avaiable Places for interaction. The functions for weighting the decision likelihood are:
+
+* `Uniform` - equal likelihood for the available places;
+* `Linear` - trait-based proportional likelihood (Agents are biased to Places like them). 
+
+When all Places around are beyond the interaction threshold, the `Uniform` function is used.
 
 ## Attributes of Agents and Places 
 
@@ -55,7 +68,7 @@ Agents and Places have locality defined by integer coordinates in the gridded wo
 
 ### Name, Alias and Color
 
-All Agents and Places must have a `Name`, `Alias` (a short nickname for chart plotting) and `Color`. `Color` must be the HEX code or available in the `matplotlib` package [color list](https://matplotlib.org/stable/gallery/color/named_colors.html).  
+All Agents and Places must have a `Name`, `Alias` (a short nickname for chart plotting) and `Color`. `Color` must be the HEX code or available in the `matplotlib` package [color list](https://matplotlib.org/stable/gallery/color/named_colors.html). These attributes may not be unique for each Agent and Place (clones are allowed). 
 
 
 ## Model Parameters
@@ -104,101 +117,76 @@ So:
 
 The `M` parameter is a parameter of Agents. It defines the memory size for each Agent. It has units of time steps. This memory allocates the `M` previous traits so the Agent's `prior_trait` during interaction is the average of the states stored in memory. 
 
-### The random walk
-
-At each time step, Agents walk randomly towards the avaiable Places for interaction. The functions for weighting the decision likelihood are:
-
-* `Uniform` - equal likelihood for the available places;
-* `Linear` - trait-based proportional likelihood (Agents are biased to Places like them). 
-
-When all Places around are beyond the interaction threshold, the `Uniform` function is used.
-
 ## CUE 1d model guide
 
 ### Files to run the model
 
 There are 3 files needed to run the model:
-1) the simulation parameters file (`param_simulation.txt`);
-2) the Agents parameters file (`param_Agents.txt`);
-3) the Places parameters file (`param_Places.txt`).
+1) the simulation parameters file (`param_simulation_1d.txt`);
+2) the Agents parameters file (`param_agents_1d.txt`);
+3) the Places parameters file (`param_places_1d.txt`).
 
 All files to run the model are plain `.txt` files.
 
-> **Note**: see the Input/Output documentation:
+> **Note**: the model is not sensitive to file names, as long as the formatting is correct. 
+
+> **Note**: see the Input/Output documentation for proper formatting:
 > [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
 
-The simulation parameter file looks like this:
-```text
-     Metadata; Value
-    Timestamp; 2022/07/05 07:59:57.65
- Input Folder; C:/Users/You/Documents/abm-cue/samples
-   Run Folder; C:/Users/You/Documents/outputs
-  Agents File; C:/Users/You/Documents/abm-cue/samples/param_Agents.txt
-  Places File; C:/Users/You/Documents/abm-cue/samples/param_Places.txt
-        Steps; 100
-Return Agents; False
-   Trace Back; False
- Plot Results; True
-```
-Where the `Value` column can be edited either manually or via the Graphical User Interface.
+### Running the model in python script
 
-* `Input Folder` [text]: system path to a folder where the input file are stored;
-* `Run Folder` [text]: system path to a folder used for simulation outputs;
-* `Agents File` [text]: system path to the param_Agents.txt file;
-* `Places File `[text]: system path to the param_Places.txt file;
-* `Steps` [positive integer number]: number of time steps in the simulation;
-* `Return Agents` [boolean: False or True]: option to return Agents to the initial
-Place every time step;
-* `Trace Back` [boolean: False or True]: option to keep track of all steps in the simulation;
-> Note that if `Trace Back = True`, the simulation may turn out to be computationally heavy. 
-* `Plot Results` [boolean: False or True]: option to create graphics after simulation.
+A simple python script to run the model looks like this:
 
-The Agents parameters must be provided in tha plain `.txt` file like this:
+```python
+# import the function
+from tools import run_cue1d
 
-```text
-Id;  x; Trait; Alpha; Beta;    C;    Name; Alias; Color
- 1;  5;    20;    20;    5;  0.0; Agent A;   AgA; red
- 2; 10;    20;    20;    5;  0.0; Agent B;   AgB; blue
- 3; 15;     1;    20;    5; 0.01; Agent C;   AgC; orange
- 4; 35;     1;    20;    3; 0.01; Agent C;   AgC; orange
+# define the path to the simulation file
+file_simulation = "C:/You/Documents/abm-cue/param_simulation_1d.txt"
+
+# call the function
+run_cue1d(s_fsim=file_simulation)
+
 ```
 
-Where:
-* `Id`: [positive unique integer]: is the Agent unique identifier;
-* `x`: [positive integer]: is the Agent position in space;
-* `Trait`: [positive real] is the Agent trait;
-* `Alpha`: [positive real] orientation threshold for Agent-Place interaction;
-* `Beta`: [positive integer > 0] distance threshold for Agent movement;
-* `C`: [positive real] Place-to-Agent degree of interaction influence (Agents openness to change);
-* `Name`: [text] Agent full name;
-* `Alias`: [text] Agent alias (nickname);
-* `Color`: [text] Agent color.
+### Running the model by using the GUI app
 
-The Places parameters must be provided in tha plain `.txt` file like this:
-
-```text
-Id;  x; Trait;   D;    Name; Alias
- 1;  0;     5; 0.1; Place A;    PA
- 2;  1;     5; 0.1; Place A;    PA
- 3;  2;     5; 0.1; Place A;    PA
- 4;  3;     5; 0.1; Place A;    PA
- ...
-36; 35;     5; 0.1; Place B;    PB
-37; 36;     5; 0.1; Place B;    PB
-38; 37;     5; 0.1; Place B;    PB
-39; 38;     5; 0.1; Place B;    PB
-40; 39;     5; 0.1; Place B;    PB
-```
-
-Where:
-* `Id`: [positive unique integer] is the Place unique identifier;
-* `x`: [positive integer] is the Place position in space;
-* `Trait`: [positive real] is the Place trait;
-* `D`: [positive real] Agent-to-Place degree of interaction influence (Places openness to change);
-* `Name`: [text] Place full name;
-* `Alias`: [text] Place alias (nickname);
-* `Color`: [text] Place color.
+A simple Graphic User Interface is available to run the model. Data Management Tools are also available to setup the Agents and Places parameters files.
 
 
 
 ## CUE 2D Model Guide
+
+### Files to run the model
+
+There are 3 files needed to run the model:
+1) the simulation parameters file (`param_simulation_1d.txt`);
+2) the Agents parameters file (`param_agents_1d.txt`);
+3) the Places parameters file (`param_places_1d.txt`).
+
+All files to run the model are plain `.txt` files.
+
+> **Note**: the model is not sensitive to file names, as long as the formatting is correct. 
+
+> **Note**: see the Input/Output documentation for proper formatting:
+> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
+
+### Running the model in python script
+
+A simple python script to run the model looks like this:
+
+```python
+# import the function
+from tools import run_cue1d
+
+# define the path to the simulation file
+file_simulation = "C:/You/Documents/abm-cue/param_simulation_1d.txt"
+
+# call the function
+run_cue1d(s_fsim=file_simulation)
+
+```
+
+### Running the model by using the GUI app
+
+A simple Graphic User Interface is available to run the model. Data Management tools are also available for 
