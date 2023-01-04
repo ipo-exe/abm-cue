@@ -69,7 +69,7 @@ Example: `C:/Users/You/Documents/abm-cue-main`
 
 ## 5) Execute the application file
 
-The application file for the 1-d CUE model is the `app_cue1d.py` file.  
+The application file for the 1-d CUE model is the `app_cue1d.py` file. The same logic applies to the 2-D CUE model file (`app_cue2d.py`).
 
 ### 5.1) Executing by double-clicking
 The _easiest_ way to execute the app is **double-click the app file**. 

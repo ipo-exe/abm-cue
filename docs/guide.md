@@ -49,6 +49,10 @@ At each time step, Agents walk randomly towards the avaiable Places for interact
 
 When all Places around are beyond the interaction threshold, the `Uniform` function is used.
 
+### Random walk in the 2-D model
+
+In the 2-D model, Agents walk randomly between `Indoor` and `Outdoor` Places. `Indoor` Places are places where Agents interact. After interacting, an Agent tries to move to an `Outdoor` Place. If it fails to find an `Outdoor` Place, it walks randomly to another `Indoor` Place. 
+
 ## Attributes of Agents and Places 
 
 > **Note**: see the theoretical notation PDF:
@@ -56,7 +60,8 @@ When all Places around are beyond the interaction threshold, the `Uniform` funct
 
 ### Id number
 
-Each Agent and Place has an unique integer number, the `Id` label.
+Each Agent and Place has an unique integer number, the `Id` label. 
+> **Note**: in the CUE 2-D model, the `Id = 0` is reserved for `Outdoor` Places. 
 
 ### Trait
 
@@ -149,22 +154,25 @@ run_cue1d(s_fsim=file_simulation)
 
 ```
 
-### Running the model by using the GUI app
+> **Note**: the file of the script must be created in the same directory of the source code. 
 
-A simple Graphic User Interface is available to run the model. Data Management Tools are also available to setup the Agents and Places parameters files.
+### Running the model by using the GUI application
 
+An application with a simple Graphic User Interface is available to run the model. Data Management Tools are also available to setup the Agents and Places parameters files.
 
+To execute the app, [see here](https://github.com/ipo-exe/abm-cue/blob/main/docs/install_windows.md#5-execute-the-application-file) in the installation tutorial. 
 
 ## CUE 2D Model Guide
 
 ### Files to run the model
 
-There are 3 files needed to run the model:
-1) the simulation parameters file (`param_simulation_1d.txt`);
-2) the Agents parameters file (`param_agents_1d.txt`);
-3) the Places parameters file (`param_places_1d.txt`).
+There are 4 files needed to run the model:
+1) the simulation parameters file (`param_simulation_2d.txt`);
+2) the Agents parameters file (`param_agents_2d.txt`);
+3) the Places parameters file (`param_places_2d.txt`), and;
+4) the Places Map file (`map_places_2d.asc`).
 
-All files to run the model are plain `.txt` files.
+All files to run the model are plain `.txt` files except the Places Map file.
 
 > **Note**: the model is not sensitive to file names, as long as the formatting is correct. 
 
@@ -177,16 +185,48 @@ A simple python script to run the model looks like this:
 
 ```python
 # import the function
-from tools import run_cue1d
+from tools import run_cue2d
 
 # define the path to the simulation file
-file_simulation = "C:/You/Documents/abm-cue/param_simulation_1d.txt"
+file_simulation = "C:/You/Documents/abm-cue/param_simulation_2d.txt"
 
 # call the function
-run_cue1d(s_fsim=file_simulation)
+run_cue2d(s_fsim=file_simulation)
 
 ```
 
-### Running the model by using the GUI app
+> **Note**: the file of the script must be created in the same directory of the source code. 
 
-A simple Graphic User Interface is available to run the model. Data Management tools are also available for 
+### Running the model by using the GUI application
+
+An application with a simple Graphic User Interface is available to run the model. Data Management Tools are also available to setup the Agents and Places parameters files.
+
+To execute the app, [see here](https://github.com/ipo-exe/abm-cue/blob/main/docs/install_windows.md#5-execute-the-application-file) in the installation tutorial.
+
+### The Places Map file
+
+The Places Map file `map_places_2d.asc` is a raster map of the `Id` of places in the 2-D gridded space. The raster file can be created either manually or aided by GIS sofware such as QGIS. The file extension `.asc` is open so it can be created and edited directly in standard Notepad applications.
+
+The map file looks like this:
+
+```text
+ncols        9
+nrows        9
+xllcorner    485696.875
+yllcorner    6707375.0
+cellsize     5.0
+NODATA_value -1
+ 0  0  0  0  0  0  0  0  0
+ 0  1  2  3  0  4  5  6  0
+ 0  7  0  8  0  9  0  10 0
+ 0  11 12 13 0  14 15 16 0
+ 0  0  0  0  0  0  0  0  0
+ 0  17 18 19 0  20 21 22 0
+ 0  23 0  24 0  25 0  26 0
+ 0  27 28 29 0  30 31 32 0
+ 0  0  0  0  0  0  0  0  0
+```
+The header (first 6 lines) of the file is related to georreferencing metadata and is not used in the model. The bulk of the file (line 7 and beyond) stores the values of the grid cells.
+
+> **Note**: Clone cells are allowed in the raster map. 
+> **Note**: The `Id = 0` is reserved for `Outdoor` Places. 
