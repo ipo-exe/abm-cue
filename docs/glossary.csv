@@ -4,11 +4,10 @@ Id;unique integer number;Category numerical identifyier;-;field
 Name;text;Category name;-;field
 Alias;text;Category alias (one-word only);-;field
 Color;text;CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`).;-;field
-Delta_c;positive real number;Critical Hamming Distance of trait orientation for agent-place interaction;-;parameter
-R_c;positive integer number;Critical radius distance for agent movement.;cell units;parameter
+D;positive real number;Critical Hamming Distance of trait orientation for agent-place interaction;-;parameter
+R;positive integer number;Critical radius distance for agent movement.;cell units;parameter
 M;positive integer number;Agent memory lag time.;step units;parameter
-C_a;positive real number;Agent openness to contamination, or place-to-agent degree of interaction influence;-;parameter
-C_p;positive real number;Place openness to contamination or agent-to-place degree of interaction influence;-;parameter
+C;positive real number;Agent or Place openness to contamination, degree of interaction influence;-;parameter
 x;positive integer number;Position coordinate in the x axis;cell units;variable
 y;positive integer number;Position coordinate in the y axis;cell units;variable
 Trait;positive real number;Trait orientation value;trait units;variable

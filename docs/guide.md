@@ -1,4 +1,7 @@
 # Agent-based Modelling - Coorperation of Urban Environments (CUE) 
+ - [Model overview](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#model-overview)
+ - [CUE 1D guide](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#cue-1d-model-guide)
+ - [CUE 2D guide](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#cue-2d-model-guide)
 
 > **Note**: see the theoretical notation PDF:
 > [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
@@ -24,25 +27,28 @@ The simulated world has a gridded structure. That is, it is a rectagular grid of
 ![figure](https://github.com/ipo-exe/abm-cue/blob/main/figs/worlds.PNG "Worlds")
 
 
-### The Delta_c parameter
+### The D parameter
 
-The `Delta_c` parameter is the critical Hamming distance of trait orientation for Agent-Place interaction. It is used to decide if Agent-Place interactions occur or not. It has the same units of traits. For instance, if `Delta_c = 10` this means that Agent-Place interactions only will occur when the absolute discrepancy between traits is less than 10. If `Delta_c` is higher than the maximum value of traits in the model, interactions will always happen.
+`D` is a parameter of Agents. It is the critical Hamming distance of trait orientation for Agent-Place interaction. It is used to decide if Agent-Place interactions occur or not. It has the same units of traits. For instance, if `D = 10` this means that Agent-Place interactions only will occur when the absolute discrepancy between traits is less than 10. If `D` is higher than the maximum value of traits in the model, interactions will always happen.
 
-* When `Delta_c > max(Traits)`, Agents will _always_ interact with Places.
-* When `Delta_c = 0`, Agents will _never_ interact with Places.
+* When `D > max(Traits)`, Agents will _always_ interact with Places.
+* When `D = 0`, Agents will _never_ interact with Places.
 
-### The R_c parameter 
+### The R parameter 
 
-The `R_c` parameter defines the critical radius for the Agent's limited window of sight to the nearest Places to go. It has integer units of cells. The window of sight of the Agent comprises the Agent's position `i + - R_c` cell units in x and y spatial dimensions. For instance, if `R_c = 2` and the Agent cell position is `i = 5` then the window of sight is cells [3, 4, 6, 7] in one dimension. 
+`R` is a parameter of Agents. It defines the critical radius for the Agent's limited window of sight to the nearest Places to go. It has integer units of cells. The window of sight of the Agent comprises the Agent's position `i + - R` cell units in x and y spatial dimensions. For instance, if `R = 2` and the Agent cell position is `i = 5` then the window of sight is cells [3, 4, 6, 7] in one dimension. 
 
-### The C_a and C_p parameters
+![figure](https://github.com/ipo-exe/abm-cue/blob/main/figs/windows.png "Windows")
 
-The `C_a` is the Agent openness to contamination, or place-to-agent degree of interaction influence.  
+### The C parameter
 
-The `C` is the openness of Agents to change after interacting with a Place:
+> **Note**: see the theoretical notation PDF:
+> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
+
+`C` is a parameter of both Agents and Places. It quantifies the openness to contamination, or place-to-agent degree of interaction influence. In the case of Agents, the `C` is the openness of any given Agent to change after interacting with a Place:
 
 ```markdown
-posterior_Agent_trait = (prior_Agent_trait + (C * Place_trait)) / (1 + C)
+posterior_trait = (prior_trait + (Agent_C * Place_trait)) / (1 + Agent_C)
 ```
 So:
 * When `C = 0`, Agents will never be influenced by Places;
@@ -50,39 +56,29 @@ So:
 * When `C = 1`, Agents posterior trait will be the average between Agent and Place prior traits (50% influence);
 * When `C > 1`, Agents posterior trait will be strongly influenced by Places.
 
-The same logic applies to the `D` parameter. 
-The `D` is the openness of Places to change after interacting with an Agent:
+The same logic applies to Places: 
 
 ```markdown
-posterior_Place_trait = (prior_Place_trait + (D * Agent_trait)) / (1 + D)
+posterior_trait = (prior_trait + (Place_C * Agent_trait)) / (1 + Place_C)
 ```
 So:
-* When `D = 0`, Places will never be influenced by Agents;
-* When `D < 1`, Places posterior trait will be weakly influenced by Agents.
-* When `D = 1`, Places posterior trait will be the average between Agents and Places prior traits (50% influence);
-* When `D > 1`, Places posterior trait will be strongly influenced by Agents.
+* When `C = 0`, Places will never be influenced by Agents;
+* When `C < 1`, Places posterior trait will be weakly influenced by Agents.
+* When `C = 1`, Places posterior trait will be the average between Agents and Places prior traits (50% influence);
+* When `C > 1`, Places posterior trait will be strongly influenced by Agents.
 
-### The biased random walk
+### The M parameter
 
-Agents walk randomly but biased towards Places like them. 
+The `M` parameter is a parameter of Agents. It defines the memory size for each Agent. It has units of time steps. This memory allocates the `M` previous traits so the Agent's `prior_trait` during interaction is the average of the states stored in memory. 
 
-For example, let `Alpha = 100` (very large) so Agents can interact with any Place. 
-Now consider an Agent with orientation trait `Agent_trait = 10` surrounded by Places of the following
-traits: `[1, 20, 11, 8]`. Which Place it will move in the next step?
+### The random walk
 
-The answer is: _we will never know_, because his movement is **random**.
-However, the likelihood of moving towards the Place of trait `Place_trait = 11` is much higher
-than of moving towards the Place of trait `Place_trait = 20`. 
-In fact, in this example, the probabilities of moving to each Place is `[0.09, 0.05, 0.45, 0.41]`.
+At each time step, Agents walk randomly towards the avaiable Places for interaction. The functions for weighting the decision likelihood are:
 
-Now, let `Alpha < 10` in a way that the interaction threshold excludes 
-`Place_trait = 1` and `Place_trait = 20` from the possibility of interaction.
-In such condition, the probabilities of moving to each Place is `[0.0, 0.0, 0.53, 0.47]`.
+* `Uniform` - equal likelihood for the available places;
+* `Linear` - trait-based proportional likelihood (Agents are biased to Places like them). 
 
-Finally, in the situation when all Places around are beyond the interaction threshold, there is no bias in
-the random walk, and the probabilities of moving to each Place is `[0.25, 0.25, 0.25, 0.25]` (just an uniform random walk).
-
-
+When all Places around are beyond the interaction threshold, the `Uniform` function is used.
 
 ## CUE 1d model guide
 
@@ -172,311 +168,4 @@ Where:
 
 
 
-
-### Basic Benchmark runs
-
-Some bench tests of the model in very restricted conditions were performed in order to get useful insights.
-
-#### Benchmark 0: nothing happens
-
-Here a single Agent that never interacts walks in a constant world.
-
-Parameters:
-* `N_Agents`: 1
-* `N_Places`: 40
-* `Alpha`: 0 (no interaction)
-* `Beta`: 3
-* `C`: 0 (Agent never change)
-* `D`: 1 (Places change 50% at each interaction)
-* `N_Steps`: 200
-
-Initial conditions:
-* `Agent_trait = 18`
-* `Agent_i = 20` (position)
-* `Place_trait = 2` (all)
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench0.gif "bench0")
-
-#### Benchmark 1: the closed Agent alone in an open world
-
-Here a single Agent that never change (closed Agent) walks in a constant (but open) world, changing it.
-
-Parameters:
-* `N_Agents`: 1
-* `N_Places`: 40
-* `Alpha`: 20 (full interaction)
-* `Beta`: 3
-* `C`: 0 (Agent never change)
-* `D`: 1 (Places change 50% at each interaction)
-* `N_Steps`: 200
-
-Initial conditions:
-* `Agent_trait = 18`
-* `Agent_i = 20` (position)
-* `Place_trait = 2` (all)
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench1.gif "bench1")
-
-#### Benchmark 2: the open Agent alone in a closed world
-
-Here a single Agent that is open to change walks in a world that never change (closed world).
-
-Parameters:
-* `N_Agents`: 1
-* `N_Places`: 40
-* `Alpha`: 20 (full interaction)
-* `Beta`: 3
-* `C`: 0.01 (Agent change 1% at each interaction)
-* `D`: 0.0 (Places never change)
-* `N_Steps`: 200
-
-Initial conditions:
-* `Agent_trait = 18`
-* `Agent_i = 20` (position)
-* `Place_trait = 2` (all)
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench2.gif "bench2")
-
-
-#### Benchmark 3: the open Agent alone in an open world
-
-Here a single Agent that is open to change walks in a world that is also open to change.
-
-Parameters:
-* `N_Agents`: 1
-* `N_Places`: 40
-* `Alpha`: 20 (full interaction)
-* `Beta`: 3
-* `C`: 0.01 (Agent change 1% at each interaction)
-* `D`: 0.05 (Places change 5% at each interaction)
-* `N_Steps`: 200
-
-Initial conditions:
-* `Agent_trait = 18`
-* `Agent_i = 20` (position)
-* `Place_trait = 2` (all)
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench3.gif "bench3")
-
-
-#### Benchmark 4: Agent with larger window of sigth
-
-Here benchmark 3 is revisited with an Agent with a larger window of sight (`Beta` parameter).
-
-Parameters:
-* `N_Agents`: 1
-* `N_Places`: 40
-* `Alpha`: 20 (full interaction)
-* `Beta`: 6 (larger)
-* `C`: 0.01 (Agent change 1% at each interaction)
-* `D`: 0.05 (Places change 5% at each interaction)
-* `N_Steps`: 200
-
-Initial conditions:
-* `Agent_trait = 18`
-* `Agent_i = 20` (position)
-* `Place_trait = 2` (all)
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench4.gif "bench4")
-
-#### Benchmark 5: an Agent (not that open) in a binary world
-
-Here the Agent interacts only with Places within the `Alpha` threshold. 
-
-Parameters:
-* `N_Agents`: 1
-* `N_Places`: 40
-* `Alpha`: 10
-* `Beta`: 3
-* `C`: 0.01 (Agent change 1% at each interaction)
-* `D`: 0.05 (Places change 5% at each interaction)
-* `N_Steps`: 200
-
-Initial conditions:
-* `Agent_trait = 13`
-* `Agent_i = 20` (position)
-* `Place_trait = 18` (first half)
-* `Place_trait = 2` (second half)
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench5.gif "bench5")
-
-#### Benchmark 6: two Agents (not that open) in a binary world
-
-Benchmark 5 revisited with two different Agents.
-
-Parameters:
-* `N_Agents`: 2
-* `N_Places`: 40
-* `N_Types`: 20
-* `Alpha`: 10
-* `Beta`: 3
-* `C`: 0.01 (Agent change 1% at each interaction)
-* `D`: 0.05 (Places change 5% at each interaction)
-* `N_Steps`: 200
-
-Initial conditions:
-* `Agent_trait = 13` (first Agent)
-* `Agent_trait = 8` (second Agent)
-* `Agent_i = 20` (both positions)
-* `Place_trait = 18` (first half)
-* `Place_trait = 2` (second half)
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench6.gif "bench6")
-
-### Multi-parameter simulations
-
-The 1D world can be populated with Places with different combinations of parameters. For instance, Agents can have
-different interaction thresholds (`Alpha` parameter). Or different distance thresholds (`Beta` parameter), and so on.
-
-#### Benchmark 7: multi-alpha simulation of closed Agents in an open world
-
-Here we have 3 closed Agents with same `Beta = 2` but different `Alpha` so only two of them interact with Places.
-The environment in which they walk is a constant world of `Trait = 1`. 
-Agents are set to return to they initial Place each time step.
-
-Agents Parameters:
-```
-Id;  x; Trait; Alpha; Beta;   C;    Name; Alias; Color
- 1;  5;    12;    20;    2; 0.0; Agent 1;    a1;   red
- 2; 15;     8;     5;    2; 0.0; Agent 2;    a2;  blue
- 3; 24;     4;     5;    2; 0.0; Agent 3;    a3; green
-```
-
-Despite having a high-value trait, Agent 1 has also a large interaction threshold 
-(`Alpha = 20`) so it expected to interact with Places.
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench7.gif "bench7")
-
-
-#### Benchmark 8: "attractor" effect with multi-alpha and multi-beta combinations
-
-As already stated, Agents walk randomly but biased towards Places like them. This allows to scenarios where
-the effect of one Agent in the environment attracts others by changing the environment to a sufficient trait level.
-
-Agents Parameters:
-```
-Id;  x; Trait; Alpha; Beta;   C;    Name; Alias; Color
- 1;  5;    10;     7;    2; 0.0; Agent 1;    a1;   red
- 2; 15;     5;     6;    2; 0.0; Agent 2;    a2;  blue
- 3; 25;    12;     9;    2; 0.0; Agent 3;    a3; green
-```
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench8.gif "bench8")
-
-
-Plot for Agents's positions. Note that Agent 2 is the cause of the attractor effect.
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench8a.png "bench8a")
-
-
-#### Benchmark 9: "preference" effect with multi-alpha and multi-beta combinations
-
-If Agents are set to return to their respective initial Place every time step, the attractor effect only happens
-if there are superpositions on the distance thresholds. In this sense, it might be described more like a 
-"preference effect" -- a more interesting neighborhood for some Agents.
-
-Agents Parameters:
-```
-Id;  x; Trait; Alpha; Beta;   C;    Name; Alias; Color
- 1;  5;    10;     7;    6; 0.0; Agent 1;    a1;   red
- 2; 15;     5;     6;    8; 0.0; Agent 2;    a2;  blue
- 3; 25;    12;     9;    6; 0.0; Agent 3;    a3; green
-```
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench9.gif "bench9")
-
-
-Plot for Agents's positions. Note that Agent 2 is the cause of the attractor effect.
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench9a.png "bench9a")
-
-
-#### Benchmark 10: "attract-release" or "contamination" effect with open Agents
-
-So far Agents were completely closed for change (`C = 0`). However, if some Agents are even slightly open for 
-change (`C > 0`) then the attracting effect ends up with a rebound, releasing the Agents to interact with
-Places that earlier were uninteresting. They end up being "contaminated" after enough interactions.
-
-Agents Parameters:
-```
-Id;  x; Trait; Alpha; Beta;   C;    Name; Alias; Color
- 1;  8;    10;     7;    6; 0.01; Agent 1;    a1;   red
- 2; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
- 3; 22;    12;     9;    6; 0.01; Agent 3;    a3; green
-```
-
-Output:
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench10.gif "bench10")
-
-
-Plot for Agents' positions. Note that Agent 2 is the cause of the attractor effect. 
-Initially, Agents 1 and 3 walk randomly without interactions until they got attracted by
-the region of influence of Agent 2. Then, after changing enough, Agents 1 and 3 start
-to interact with their respective region of influence. 
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench10a.png "bench10a")
-
-Plot for Agents' traits. Note that Agent 2 is closed and is (`C = 0`) the cause of the attractor effect. 
-Agents 1 and 3 are open (`C > 0`) and start interacting in the attractor region of influence after some random walk.
-Then they change so much that they are released from the attractor region. 
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench10b.png "bench10b")
-
-
-#### Benchmark 11: exploring density effects
-
-Agents can be grouped into blocks of categories so density effects can be simulated. 
-This is done simply by adding identical Agents (same Name, Alias and Color) like this:
-
-Agents Parameters:
-```
-Id;  x; Trait; Alpha; Beta;   C;    Name; Alias; Color
- 1;  8;    10;     7;    6; 0.01; Agent 1;    a1;   red
- 2;  7;    10;     7;    6; 0.01; Agent 1;    a1;   red
- 3;  6;    10;     7;    6; 0.01; Agent 1;    a1;   red
- 4;  8;    10;     7;    6; 0.01; Agent 1;    a1;   red
- 5; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
- 6; 14;     5;     6;    4;  0.0; Agent 2;    a2;  blue
- 7; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
- 8; 16;     5;     6;    4;  0.0; Agent 2;    a2;  blue
- 9; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
-10; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
-11; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
-12; 15;     5;     6;    4;  0.0; Agent 2;    a2;  blue
-13; 22;    12;     9;    6; 0.01; Agent 3;    a3; green
-14; 23;    12;     9;    6; 0.01; Agent 3;    a3; green
-15; 22;    12;     9;    6; 0.01; Agent 3;    a3; green
-```
-
-This is the same settings for the attractor-release scenario. 
-However, note that there are several clones of Agent 1, 2 and 3. 
-They can start in any position `x`. 
-
-
-Plot for Agents' positions. Note that Agent 2 is the cause of the attractor effect. 
-Clearly, the higher density of Agents accelerated the attraction since the environment
-changed much faster.
-
-![anim](https://github.com/ipo-exe/abm-cue/blob/main/figs/bench11a.png "bench11a")
-
+## CUE 2D Model Guide

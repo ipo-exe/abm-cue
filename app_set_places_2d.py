@@ -125,7 +125,7 @@ def save_file():
                 {
                     'Id': lst_id,
                     'Trait': lst_trait,
-                    'C_p': lst_cp,
+                    'C': lst_cp,
                     'Name': lst_name,
                     'Alias': lst_alias,
                     'Color': lst_color,
@@ -424,7 +424,7 @@ def append_header():
     :return:
     """
     lst_head = [
-        'Id', 'Trait', 'C_p', 'Name', 'Alias', 'Color'
+        'Id', 'Trait', 'C', 'Name', 'Alias', 'Color'
     ]
     s_blocks_header = format_string(lst_block=lst_head, s_sep=';')
     listbox_blocks.insert(END, s_blocks_header)
@@ -444,7 +444,7 @@ root = tkinter.Tk()
 lst_lbls_block = [
     "Place Id",
     "Place Trait ",
-    "Place C_p",
+    "Place C",
     "Place Name",
     "Place Alias",
     "Place Color"

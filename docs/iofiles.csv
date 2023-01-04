@@ -1,19 +1,19 @@
 Name;Extension;Source;Format;Description;Dtype;Units;Scale;NoData value;Mandatory Fields;Optional Fields;Special
-param_agents_1d;txt;imported by user;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & Trait & Delta_c & R_c & M & C_a & Name & Alias & Color;none;none
-param_agents_2d;txt;imported by user;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & y & Trait & Delta_c & R_c & M & C_a & Name & Alias & Color;none;none
-param_places_1d;txt;imported by user;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & x & Trait & C_p & Name & Alias & Color;none;none
-param_places_2d;txt;imported by user;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & Trait & C_p & Name & Alias & Color;none;none
+param_agents_1d;txt;imported by user;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & Trait & D & R & M & C & Name & Alias & Color;none;none
+param_agents_2d;txt;imported by user;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & y & Trait & D & R & M & C & Name & Alias & Color;none;none
+param_places_1d;txt;imported by user;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & x & Trait & C & Name & Alias & Color;none;none
+param_places_2d;txt;imported by user;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & Trait & C & Name & Alias & Color;none;none
 map_places_2d;asc;imported by user;Raster Map;Map of places IDs;int16;none;none;none;none;none;none
 param_simulation_1d;txt;imported by user;Data Table;Table of simulation parameters;none;none;none;none;Metadata & Value;none;none
 param_simulation_2d;txt;imported by user;Data Table;Table of simulation parameters;none;none;none;none;Metadata & Value;none;none
-param_agents_1d_start;txt;process output;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & Trait & Delta_c & R_c & M & C_a;none;none
-param_agents_1d_end;txt;process output;Data Table;Table of agents parameters and final conditions;none;none;none;none;Id & x & Trait & Delta_c & R_c & M & C_a;none;none
-param_places_1d_start;txt;process output;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & x & Trait & C_p;none;none
-param_places_1d_end;txt;process output;Data Table;Table of places parameters and final conditions;none;none;none;none;Id & x & Trait & C_p;none;none
-param_agents_2d_start;txt;process output;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & y & Trait & Delta_c & R_c & M & C_a;none;none
-param_agents_2d_end;txt;process output;Data Table;Table of agents parameters and final conditions;none;none;none;none;Id & x & y & Trait & Delta_c & R_c & M & C_a;none;none
-param_places_2d_start;txt;process output;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & Trait & C_p;none;none
-param_places_2d_end;txt;process output;Data Table;Table of places parameters and final conditions;none;none;none;none;Id & Trait & C_p;none;none
+param_agents_1d_start;txt;process output;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & Trait & D & R & M & C;none;none
+param_agents_1d_end;txt;process output;Data Table;Table of agents parameters and final conditions;none;none;none;none;Id & x & Trait & D & R & M & C;none;none
+param_places_1d_start;txt;process output;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & x & Trait & C;none;none
+param_places_1d_end;txt;process output;Data Table;Table of places parameters and final conditions;none;none;none;none;Id & x & Trait & C;none;none
+param_agents_2d_start;txt;process output;Data Table;Table of agents parameters and initial conditions;none;none;none;none;Id & x & y & Trait & D & R & M & C;none;none
+param_agents_2d_end;txt;process output;Data Table;Table of agents parameters and final conditions;none;none;none;none;Id & x & y & Trait & D & R & M & C;none;none
+param_places_2d_start;txt;process output;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & Trait & C;none;none
+param_places_2d_end;txt;process output;Data Table;Table of places parameters and final conditions;none;none;none;none;Id & Trait & C;none;none
 hist_agents_start;txt;process output;Data Table;Histogram table of agents on initial conditions;none;none;none;none;Trait & Count;none;none
 hist_agents_end;txt;process output;Data Table;Histogram table of agents on final conditions;none;none;none;none;Trait & Count;none;none
 hist_places_start;txt;process output;Data Table;Histogram table places of placess on initial conditions;none;none;none;none;Trait & Count;none;none

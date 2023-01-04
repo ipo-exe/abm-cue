@@ -1,4 +1,4 @@
-Id;Trait;C_p;Name;Alias;Color
+Id;Trait;C;Name;Alias;Color
 0;0;0.0;Outdoors;P0;white
 1;10;0.1;Place 1;P1;blue
 2;1;0.1;Place 2;P2;blue

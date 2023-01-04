@@ -105,7 +105,7 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
     df_places = pd.merge(
         how='left',
         left=df_places_grd,
-        right=df_places[["Id", "Trait", "C_p", "Name", "Alias", "Color"]],
+        right=df_places[["Id", "Trait", "C", "Name", "Alias", "Color"]],
         left_on="Id",
         right_on="Id"
     )
@@ -120,7 +120,7 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
 
     # ------------------------------------------------------------------------------------------
     # scanning window parameters set up
-    lst_unique_beta = list(df_agents["R_c"].unique())  # get unique beta (radius size) values
+    lst_unique_beta = list(df_agents["R"].unique())  # get unique beta (radius size) values
     dct_window = dict()
     # construction loop
     for n_beta in lst_unique_beta:
@@ -233,9 +233,9 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
 
             # ----------------------------------------------------------------------------------
             # get agent parameters
-            a_deltac = df_agents["Delta_c"].values[a]
-            a_rc = df_agents["R_c"].values[a]
-            a_c_a = df_agents["C_a"].values[a]
+            a_deltac = df_agents["D"].values[a]
+            a_rc = df_agents["R"].values[a]
+            a_C = df_agents["C"].values[a]
 
             # ----------------------------------------------------------------------------------
             # access window dataframe using
@@ -331,7 +331,7 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
                 # get place trait
                 p_trait = df_places["Trait"].values[p_index]
                 # get place d
-                p_c_p = df_places["C_p"].values[p_index]
+                p_c_p = df_places["C"].values[p_index]
 
                 # ------------------------------------------------------------------------------
                 # apply interaction criteria

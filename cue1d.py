@@ -83,7 +83,7 @@ def play(df_agents, df_places, n_steps, s_weight='uniform', b_tui=False, b_retur
     # scanning window parameters set up
 
     # get unique beta (radius size) values
-    lst_unique_rc = list(df_agents["R_c"].unique())
+    lst_unique_rc = list(df_agents["R"].unique())
     dct_window = dict()
     for n_rc in lst_unique_rc:
 
@@ -120,7 +120,7 @@ def play(df_agents, df_places, n_steps, s_weight='uniform', b_tui=False, b_retur
             {
                 "x": np.zeros(n_window_size, dtype="uint16"),
                 "Trait": np.zeros(n_window_size, dtype=s_dtype),
-                "C_p": np.zeros(n_window_size, dtype=s_dtype),
+                "C": np.zeros(n_window_size, dtype=s_dtype),
                 "Discr": np.zeros(n_window_size, dtype=s_dtype),
                 "Prob": np.zeros(n_window_size, dtype=s_dtype),
             }
@@ -186,9 +186,9 @@ def play(df_agents, df_places, n_steps, s_weight='uniform', b_tui=False, b_retur
 
             # ----------------------------------------------------------------------------------
             # get agent parameters
-            a_deltac = df_agents["Delta_c"].values[a]
-            a_rc = df_agents["R_c"].values[a]
-            a_ca = df_agents["C_a"].values[a]
+            a_deltac = df_agents["D"].values[a]
+            a_rc = df_agents["R"].values[a]
+            a_ca = df_agents["C"].values[a]
 
             # ----------------------------------------------------------------------------------
             # get current window objects
@@ -199,7 +199,7 @@ def play(df_agents, df_places, n_steps, s_weight='uniform', b_tui=False, b_retur
             # update window dataframe
             df_window["x"] = (a_x + vct_rows_base_ids) % n_places # here the magic happens
             df_window["Trait"] = df_places["Trait"].values[df_window["x"].values]
-            df_window["C_p"] = df_places["C_p"].values[df_window["x"].values]
+            df_window["C"] = df_places["C"].values[df_window["x"].values]
             df_window["Discr"] = np.abs(a_trait - df_window["Trait"].values)
 
             # ----------------------------------------------------------------------------------
@@ -247,7 +247,7 @@ def play(df_agents, df_places, n_steps, s_weight='uniform', b_tui=False, b_retur
                 # get space parameters from window dataframe
                 n_crt_place_trait = df_window["Trait"].values[n_next_index]
                 n_crt_place_x = df_window["x"].values[n_next_index]
-                n_crt_place_d = df_window["C_p"].values[n_next_index]
+                n_crt_place_d = df_window["C"].values[n_next_index]
 
                 # ------------------------------------------------------------------------------
                 # compute means

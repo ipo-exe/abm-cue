@@ -23,14 +23,14 @@ These files must be prepared and sourced by the user. Samples are provided for p
  - **Format**: Data Table;
  - **Formating example**:
 ```
-Id;  x; Trait; Delta_c; R_c;  M;  C_a;    Name; Alias;  Color
- 1;  5;    20;      20;   5;  4;  0.0; Agent A;   AgA;    red
- 2; 10;    20;      20;   5; 10;  0.0; Agent B;   AgB;   blue
- 3; 15;     1;      20;   5;  1; 0.01; Agent C;   AgC; orange
- 4; 20;     1;      20;   3;  1; 0.01; Agent C;   AgC; orange
- 5; 25;     1;      20;   3;  1; 0.01; Agent C;   AgC; orange
- 6; 30;     1;      20;   3;  1; 0.01; Agent C;   AgC; orange
- 7; 35;     1;      20;   3;  1; 0.01; Agent C;   AgC; orange
+Id;  x; Trait;  D; R;  M;    C;    Name; Alias;  Color
+ 1;  5;    20; 20; 5;  4;  0.0; Agent A;   AgA;    red
+ 2; 10;    20; 20; 5; 10;  0.0; Agent B;   AgB;   blue
+ 3; 15;     1; 20; 5;  1; 0.01; Agent C;   AgC; orange
+ 4; 20;     1; 20; 3;  1; 0.01; Agent C;   AgC; orange
+ 5; 25;     1; 20; 3;  1; 0.01; Agent C;   AgC; orange
+ 6; 30;     1; 20; 3;  1; 0.01; Agent C;   AgC; orange
+ 7; 35;     1; 20; 3;  1; 0.01; Agent C;   AgC; orange
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -42,10 +42,10 @@ Id;  x; Trait; Delta_c; R_c;  M;  C_a;    Name; Alias;  Color
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` Delta_c ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
-|` R_c ` | positive integer number | Critical radius distance for agent movement. | cell units|
+|` D ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
+|` R ` | positive integer number | Critical radius distance for agent movement. | cell units|
 |` M ` | positive integer number | Agent memory lag time. | step units|
-|` C_a ` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | -|
+|` C ` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 |` Name ` | text | Category name | -|
 |` Alias ` | text | Category alias (one-word only) | -|
 |` Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | -|
@@ -57,11 +57,11 @@ Id;  x; Trait; Delta_c; R_c;  M;  C_a;    Name; Alias;  Color
  - **Format**: Data Table;
  - **Formating example**:
 ```
-Id; x; y; Trait; Delta_c; R_c; M; C_a;    Name; Alias;  Color
- 1; 2; 2;  10.0;      10;   1; 5; 0.0; Agent A;   AgA;    red
- 2; 2; 6;  10.0;      10;   1; 1; 0.0; Agent B;   AgB;   blue
- 3; 6; 2;    10;      10;   1; 3; 0.1; Agent C;   AgC; orange
- 4; 6; 6;    10;      10;   1; 1; 0.0; Agent D;   AgD;  green
+Id; x; y; Trait;  D; R; M;   C;    Name; Alias;  Color
+ 1; 2; 2;  10.0; 10; 1; 5; 0.0; Agent A;   AgA;    red
+ 2; 2; 6;  10.0; 10; 1; 1; 0.0; Agent B;   AgB;   blue
+ 3; 6; 2;    10; 10; 1; 3; 0.1; Agent C;   AgC; orange
+ 4; 6; 6;    10; 10; 1; 1; 0.0; Agent D;   AgD;  green
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -74,10 +74,10 @@ Id; x; y; Trait; Delta_c; R_c; M; C_a;    Name; Alias;  Color
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` y ` | positive integer number | Position coordinate in the y axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` Delta_c ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
-|` R_c ` | positive integer number | Critical radius distance for agent movement. | cell units|
+|` D ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
+|` R ` | positive integer number | Critical radius distance for agent movement. | cell units|
 |` M ` | positive integer number | Agent memory lag time. | step units|
-|` C_a ` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | -|
+|` C ` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 |` Name ` | text | Category name | -|
 |` Alias ` | text | Category alias (one-word only) | -|
 |` Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | -|
@@ -89,7 +89,7 @@ Id; x; y; Trait; Delta_c; R_c; M; C_a;    Name; Alias;  Color
  - **Format**: Data Table;
  - **Formating example**:
 ```
-Id;  x; Trait; C_p;    Name; Alias; Color
+Id;  x; Trait;   C;    Name; Alias; Color
  1;  0;     5; 0.1; Place A;    PA;  blue
  2;  1;     5; 0.1; Place A;    PA;  blue
  3;  2;     5; 0.1; Place A;    PA;  blue
@@ -141,7 +141,7 @@ Id;  x; Trait; C_p;    Name; Alias; Color
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` C_p ` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | -|
+|` C ` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 |` Name ` | text | Category name | -|
 |` Alias ` | text | Category alias (one-word only) | -|
 |` Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | -|
@@ -153,88 +153,40 @@ Id;  x; Trait; C_p;    Name; Alias; Color
  - **Format**: Data Table;
  - **Formating example**:
 ```
- Id; Trait;   D;     Name; Alias; Color
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
- 20;    10; 0.1;  Indoors;   P20;  blue
- 21;     1; 0.1;  Indoors;   P21;  blue
- 22;     1; 0.1;  Indoors;   P22;  blue
-  0;     0;   0; Outdoors;   Out;  blue
- 24;     9; 0.1;  Indoors;   P24;  blue
- 25;     6; 0.1;  Indoors;   P25;  blue
- 26;     7; 0.1;  Indoors;   P26;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
- 38;     7; 0.1;  Indoors;   P38;  blue
-  0;     0;   0; Outdoors;   Out;  blue
- 40;     4; 0.1;  Indoors;   P40;  blue
-  0;     0;   0; Outdoors;   Out;  blue
- 42;     9; 0.1;  Indoors;   P42;  blue
-  0;     0;   0; Outdoors;   Out;  blue
- 44;     3; 0.2;  Indoors;   P44;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
- 56;     4; 0.2;  Indoors;   P56;  blue
- 57;     3; 0.2;  Indoors;   P57;  blue
- 58;     9; 0.2;  Indoors;   P58;  blue
-  0;     0;   0; Outdoors;   Out;  blue
- 60;     3; 0.2;  Indoors;   P60;  blue
- 61;     5; 0.2;  Indoors;   P61;  blue
- 62;     2; 0.2;  Indoors;   P62;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
- 92;     9; 0.2;  Indoors;   P92;  blue
- 93;     4; 0.2;  Indoors;   P93;  blue
- 94;     4; 0.2;  Indoors;   P94;  blue
-  0;     0;   0; Outdoors;   Out;  blue
- 96;     7; 0.2;  Indoors;   P96;  blue
- 97;    10; 0.2;  Indoors;   P97;  blue
- 98;     1; 0.2;  Indoors;   P98;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-110;     7; 0.2;  Indoors;  P110;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-112;     3; 0.2;  Indoors;  P112;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-114;     7; 0.2;  Indoors;  P114;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-116;     2; 0.2;  Indoors;  P116;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-128;     5; 0.2;  Indoors;  P128;  blue
-129;     5; 0.2;  Indoors;  P129;  blue
-130;     7; 0.2;  Indoors;  P130;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-132;     9; 0.2;  Indoors;  P132;  blue
-133;     2; 0.2;  Indoors;  P133;  blue
-134;     6; 0.2;  Indoors;  P134;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
-  0;     0;   0; Outdoors;   Out;  blue
+Id; Trait;   C;     Name; Alias; Color
+ 0;     0; 0.0; Outdoors;    P0; white
+ 1;    10; 0.1;  Place 1;    P1;  blue
+ 2;     1; 0.1;  Place 2;    P2;  blue
+ 3;     1; 0.1;  Place 3;    P3;  blue
+ 4;     9; 0.1;  Place 4;    P4;  blue
+ 5;     6; 0.1;  Place 5;    P5;  blue
+ 6;     7; 0.1;  Place 6;    P6;  blue
+ 7;     7; 0.1;  Place 7;    P7;  blue
+ 8;     4; 0.1;  Place 8;    P8;  blue
+ 9;     9; 0.1;  Place 9;    P9;  blue
+10;     3; 0.2; Place 10;   P10;  blue
+11;     4; 0.2; Place 11;   P11;  blue
+12;     3; 0.2; Place 12;   P12;  blue
+13;     9; 0.2; Place 13;   P13;  blue
+14;     3; 0.2; Place 14;   P14;  blue
+15;     5; 0.2; Place 15;   P15;  blue
+16;     2; 0.2; Place 16;   P16;  blue
+17;     9; 0.2; Place 17;   P17;  blue
+18;     4; 0.2; Place 18;   P18;  blue
+19;     4; 0.2; Place 19;   P19;  blue
+20;     7; 0.2; Place 20;   P20;  blue
+21;    10; 0.2; Place 21;   P21;  blue
+22;     1; 0.2; Place 22;   P22;  blue
+23;     7; 0.2; Place 23;   P23;  blue
+24;     3; 0.2; Place 24;   P24;  blue
+25;     7; 0.2; Place 25;   P25;  blue
+26;     2; 0.2; Place 26;   P26;  blue
+27;     5; 0.2; Place 27;   P27;  blue
+28;     5; 0.2; Place 28;   P28;  blue
+29;     7; 0.2; Place 29;   P29;  blue
+30;     9; 0.2; Place 30;   P30;  blue
+31;     2; 0.2; Place 31;   P31;  blue
+32;     6; 0.2; Place 32;   P32;  blue
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -245,7 +197,7 @@ Id;  x; Trait; C_p;    Name; Alias; Color
 |:--- | :--- | :--- | :---|
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` C_p ` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | -|
+|` C ` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 |` Name ` | text | Category name | -|
 |` Alias ` | text | Category alias (one-word only) | -|
 |` Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | -|
@@ -318,10 +270,10 @@ Return Agents;                                                      False
     Timestamp;                                     2022/08/25 16:48:07.86
  Input Folder;                     C:/000_myFiles/myCodes/abm-cue/samples
    Run Folder;                                                     C:/bin
-  Agents File; C:/000_myFiles/myCodes/abm-cue/samples/param_agents_2d.txt
-  Places File; C:/000_myFiles/myCodes/abm-cue/samples/param_places_2d.txt
    Places Map;   C:/000_myFiles/myCodes/abm-cue/samples/map_places_2d.asc
-        Steps;                                                        300
+  Places File; C:/000_myFiles/myCodes/abm-cue/samples/param_places_2d.txt
+  Agents File; C:/000_myFiles/myCodes/abm-cue/samples/param_agents_2d.txt
+        Steps;                                                         50
     Weighting;                                                     Linear
 Return Agents;                                                      False
    Trace Back;                                                       True
@@ -366,14 +318,14 @@ These files are generated by the program. Note that the user may source it as in
  - **Format**: Data Table;
  - **Formating example**:
 ```
-Id;  x; Trait; Delta_c; R_c; M;  C_a;    Name; Alias;  Color
- 1;  5;  20.0;      20;   5; 1;  0.0; Agent A;   AgA;    red
- 2; 10;  20.0;      20;   5; 1;  0.0; Agent B;   AgB;   blue
- 3; 15;   1.0;      20;   5; 1; 0.01; Agent C;   AgC; orange
- 4; 20;   1.0;      20;   3; 1; 0.01; Agent C;   AgC; orange
- 5; 25;   1.0;      20;   3; 1; 0.01; Agent C;   AgC; orange
- 6; 30;   1.0;      20;   3; 1; 0.01; Agent C;   AgC; orange
- 7; 35;   1.0;      20;   3; 1; 0.01; Agent C;   AgC; orange
+Id;  x; Trait;  D; R; M;    C;    Name; Alias;  Color
+ 1;  5;  20.0; 20; 5; 1;  0.0; Agent A;   AgA;    red
+ 2; 10;  20.0; 20; 5; 1;  0.0; Agent B;   AgB;   blue
+ 3; 15;   1.0; 20; 5; 1; 0.01; Agent C;   AgC; orange
+ 4; 20;   1.0; 20; 3; 1; 0.01; Agent C;   AgC; orange
+ 5; 25;   1.0; 20; 3; 1; 0.01; Agent C;   AgC; orange
+ 6; 30;   1.0; 20; 3; 1; 0.01; Agent C;   AgC; orange
+ 7; 35;   1.0; 20; 3; 1; 0.01; Agent C;   AgC; orange
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -385,10 +337,10 @@ Id;  x; Trait; Delta_c; R_c; M;  C_a;    Name; Alias;  Color
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` Delta_c ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
-|` R_c ` | positive integer number | Critical radius distance for agent movement. | cell units|
+|` D ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
+|` R ` | positive integer number | Critical radius distance for agent movement. | cell units|
 |` M ` | positive integer number | Agent memory lag time. | step units|
-|` C_a` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | -|
+|` C` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 
 ## `param_agents_1d_end.txt`
  - **Description**: Table of agents parameters and final conditions;
@@ -396,14 +348,14 @@ Id;  x; Trait; Delta_c; R_c; M;  C_a;    Name; Alias;  Color
  - **Format**: Data Table;
  - **Formating example**:
 ```
-Id;  x;              Trait; Delta_c; R_c; M;  C_a;    Name; Alias;  Color
- 1;  8;               20.0;      20;   5; 1;  0.0; Agent A;   AgA;    red
- 2;  2;               20.0;      20;   5; 1;  0.0; Agent B;   AgB;   blue
- 3; 24; 2.0169052053126433;      20;   5; 1; 0.01; Agent C;   AgC; orange
- 4; 37;  2.796720743555842;      20;   3; 1; 0.01; Agent C;   AgC; orange
- 5; 35;  2.398801065834344;      20;   3; 1; 0.01; Agent C;   AgC; orange
- 6; 11; 2.3202020984591623;      20;   3; 1; 0.01; Agent C;   AgC; orange
- 7; 24;  2.223469829024803;      20;   3; 1; 0.01; Agent C;   AgC; orange
+Id;  x;              Trait;  D; R; M;    C;    Name; Alias;  Color
+ 1;  8;               20.0; 20; 5; 1;  0.0; Agent A;   AgA;    red
+ 2;  2;               20.0; 20; 5; 1;  0.0; Agent B;   AgB;   blue
+ 3; 24; 2.0169052053126433; 20; 5; 1; 0.01; Agent C;   AgC; orange
+ 4; 37;  2.796720743555842; 20; 3; 1; 0.01; Agent C;   AgC; orange
+ 5; 35;  2.398801065834344; 20; 3; 1; 0.01; Agent C;   AgC; orange
+ 6; 11; 2.3202020984591623; 20; 3; 1; 0.01; Agent C;   AgC; orange
+ 7; 24;  2.223469829024803; 20; 3; 1; 0.01; Agent C;   AgC; orange
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -415,10 +367,10 @@ Id;  x;              Trait; Delta_c; R_c; M;  C_a;    Name; Alias;  Color
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` Delta_c ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
-|` R_c ` | positive integer number | Critical radius distance for agent movement. | cell units|
+|` D ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
+|` R ` | positive integer number | Critical radius distance for agent movement. | cell units|
 |` M ` | positive integer number | Agent memory lag time. | step units|
-|` C_a` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | -|
+|` C` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 
 ## `param_places_1d_start.txt`
  - **Description**: Table of places parameters and initial conditions;
@@ -426,7 +378,7 @@ Id;  x;              Trait; Delta_c; R_c; M;  C_a;    Name; Alias;  Color
  - **Format**: Data Table;
  - **Formating example**:
 ```
-Id;  x; Trait; C_p;    Name; Alias; Color
+Id;  x; Trait;   C;    Name; Alias; Color
  1;  0;   5.0; 0.1; Place A;    PA;  blue
  2;  1;   5.0; 0.1; Place A;    PA;  blue
  3;  2;   5.0; 0.1; Place A;    PA;  blue
@@ -478,7 +430,7 @@ Id;  x; Trait; C_p;    Name; Alias; Color
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` C_p` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | -|
+|` C` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 
 ## `param_places_1d_end.txt`
  - **Description**: Table of places parameters and final conditions;
@@ -486,7 +438,7 @@ Id;  x; Trait; C_p;    Name; Alias; Color
  - **Format**: Data Table;
  - **Formating example**:
 ```
-Id;  x;              Trait; C_p;    Name; Alias; Color
+Id;  x;              Trait;   C;    Name; Alias; Color
  1;  0; 10.263800082090642; 0.1; Place A;    PA;  blue
  2;  1;  5.615619196714282; 0.1; Place A;    PA;  blue
  3;  2; 10.880599978926014; 0.1; Place A;    PA;  blue
@@ -538,7 +490,7 @@ Id;  x;              Trait; C_p;    Name; Alias; Color
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` C_p` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | -|
+|` C` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 
 ## `param_agents_2d_start.txt`
  - **Description**: Table of agents parameters and initial conditions;
@@ -556,10 +508,10 @@ Id;  x;              Trait; C_p;    Name; Alias; Color
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` y ` | positive integer number | Position coordinate in the y axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` Delta_c ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
-|` R_c ` | positive integer number | Critical radius distance for agent movement. | cell units|
+|` D ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
+|` R ` | positive integer number | Critical radius distance for agent movement. | cell units|
 |` M ` | positive integer number | Agent memory lag time. | step units|
-|` C_a` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | -|
+|` C` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 
 ## `param_agents_2d_end.txt`
  - **Description**: Table of agents parameters and final conditions;
@@ -577,10 +529,10 @@ Id;  x;              Trait; C_p;    Name; Alias; Color
 |` x ` | positive integer number | Position coordinate in the x axis | cell units|
 |` y ` | positive integer number | Position coordinate in the y axis | cell units|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` Delta_c ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
-|` R_c ` | positive integer number | Critical radius distance for agent movement. | cell units|
+|` D ` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | -|
+|` R ` | positive integer number | Critical radius distance for agent movement. | cell units|
 |` M ` | positive integer number | Agent memory lag time. | step units|
-|` C_a` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | -|
+|` C` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 
 ## `param_places_2d_start.txt`
  - **Description**: Table of places parameters and initial conditions;
@@ -596,7 +548,7 @@ Id;  x;              Trait; C_p;    Name; Alias; Color
 |:--- | :--- | :--- | :---|
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` C_p` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | -|
+|` C` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 
 ## `param_places_2d_end.txt`
  - **Description**: Table of places parameters and final conditions;
@@ -612,7 +564,7 @@ Id;  x;              Trait; C_p;    Name; Alias; Color
 |:--- | :--- | :--- | :---|
 |`Id ` | unique integer number | Category numerical identifyier | -|
 |` Trait ` | positive real number | Trait orientation value | trait units|
-|` C_p` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | -|
+|` C` | positive real number | Agent or Place openness to contamination, degree of interaction influence | -|
 
 ## `hist_agents_start.txt`
  - **Description**: Histogram table of agents on initial conditions;
@@ -919,13 +871,12 @@ Start;  0.863120568566631;               -0.0
 |`A_Id_y` | positive integer number | Position coordinate in the y axis of Agent A_Id (ex: A_12_y) | cell units | variable|
 |`Agents File` | text | File path to the agents parameter file (ex: C:/data/param_agents.txt) | - | keyword|
 |`Alias` | text | Category alias (one-word only) | - | field|
-|`C_a` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | - | parameter|
-|`C_p` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | - | parameter|
+|`C` | positive real number | Agent or Place openness to contamination, degree of interaction influence | - | parameter|
 |`Color` | text | CSS color name available in [matplotlib](https://matplotlib.org/stable/gallery/color/named_colors.html) (ex: `blue`) or hexadecimal code of color (ex: `#5234eb`). | - | field|
 |`Count` | positive integer number | Counting units | - | field|
 |`Count` | positive integer number | Keyword for `Counting` | - | keyword|
+|`D` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | - | parameter|
 |`Date` | date | Date of record | - | field|
-|`Delta_c` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | - | parameter|
 |`H` | real number | Shannon Entropy | Bits | field|
 |`H_agents` | real number | Shannon Entropy of Agents | Bits | field|
 |`H_places` | real number | Shannon Entropy of Places | Bits | field|
@@ -941,7 +892,7 @@ Start;  0.863120568566631;               -0.0
 |`P_Id_Trait` | positive integer number | Trait orientation of Place P_Id (ex: P_10_Trait) | trait units | variable|
 |`P_Id_x` | positive integer number | Position coordinate in the x axis of Place P_Id (ex: P_10_x) | cell units | variable|
 |`Places File` | text | File path to the places parameter file (ex: C:/data/param_places.txt) | - | keyword|
-|`R_c` | positive integer number | Critical radius distance for agent movement. | cell units | parameter|
+|`R` | positive integer number | Critical radius distance for agent movement. | cell units | parameter|
 |`Run Folder` | text | Folder path to the folder to store simulation outputs (ex: C:/output) | - | keyword|
 |`SD` | positive real number | Keyword for `Standard Deviation` | - | keyword|
 |`Stat` | text | Keyword for `statistic` | - | keyword|
@@ -1006,9 +957,8 @@ Start;  0.863120568566631;               -0.0
 #### Parameter
 |Keyword | Data Type | Description | Units | Category|
 |:--- | :--- | :--- | :--- | :---|
-|`C_a` | positive real number | Agent openness to contamination, or place-to-agent degree of interaction influence | - | parameter|
-|`C_p` | positive real number | Place openness to contamination or agent-to-place degree of interaction influence | - | parameter|
-|`Delta_c` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | - | parameter|
+|`C` | positive real number | Agent or Place openness to contamination, degree of interaction influence | - | parameter|
+|`D` | positive real number | Critical Hamming Distance of trait orientation for agent-place interaction | - | parameter|
 |`M` | positive integer number | Agent memory lag time. | step units | parameter|
-|`R_c` | positive integer number | Critical radius distance for agent movement. | cell units | parameter|
+|`R` | positive integer number | Critical radius distance for agent movement. | cell units | parameter|
 |`Steps` | positive integer number | Number of time steps in the simulation | - | parameter|

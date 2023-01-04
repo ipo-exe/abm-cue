@@ -240,10 +240,10 @@ def save_file():
                         'x': lst_x,
                         'y': lst_y,
                         'Trait': lst_trait,
-                        'Delta_c': lst_delta_c,
-                        'R_c': lst_r_c,
+                        'D': lst_delta_c,
+                        'R': lst_r_c,
                         'M': lst_m,
-                        'C_a': lst_c,
+                        'C': lst_c,
                         'Name': lst_name,
                         'Alias': lst_alias,
                         'Color': lst_color,
@@ -604,10 +604,10 @@ def append_header():
     lst_head = [
         'Size',
         'Trait',
-        'Delta_c',
-        'R_c',
+        'D',
+        'R',
         'M',
-        'C_a',
+        'C',
         'Name',
         'Alias',
         'Color'
@@ -634,10 +634,10 @@ lst_types_inp = [("ASC File", "*.asc")]
 lst_lbls_block = [
     "Block Size",
     "Agent Trait ",
-    "Agent Delta_c",
-    "Agent R_c",
+    "Agent D",
+    "Agent R",
     "Agent M",
-    "Agent C_a",
+    "Agent C",
     "Agent Name",
     "Agent Alias",
     "Agent Color"
@@ -1224,33 +1224,6 @@ radio_sepeven = tkinter.Radiobutton(
 )
 label_sepeven.pack(side=LEFT)
 radio_sepeven.pack(side=LEFT)
-
-'''
-# separate proportionally
-label_sepprop = tkinter.Label(
-    frame_board_params,
-    text='Separate Proportionally',
-    width=n_width_options_labels,
-    anchor="e",
-    bg=color_bg,
-    activebackground=color_actbg,
-    foreground=color_fg,
-    activeforeground=color_fg,
-)
-radio_sepprop = tkinter.Radiobutton(
-    frame_board_params,
-    variable=n_option,
-    value=2,
-    width=n_width_options_check,
-    bg=color_bg,
-    activebackground=color_actbg,
-    highlightbackground=color_bg,
-    bd=0,
-)
-label_sepprop.pack(side=LEFT)
-radio_sepprop.pack(side=LEFT)
-'''
-
 # randomize
 label_randomize = tkinter.Label(
     frame_board_params,

@@ -1,4 +1,4 @@
-Id;x;Trait;C_p;Name;Alias;Color
+Id;x;Trait;C;Name;Alias;Color
 1;0;10.263800082090642;0.1;Place A;PA;blue
 2;1;5.615619196714282;0.1;Place A;PA;blue
 3;2;10.880599978926014;0.1;Place A;PA;blue
