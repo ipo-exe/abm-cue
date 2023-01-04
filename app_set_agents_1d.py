@@ -269,7 +269,6 @@ def save_file():
                         df_out['x'] = np.random.randint(low=0, high=n_places, size=n_agents)
                 # proportionally distributed
                 elif int(n_option.get()) == 2:
-                    print('Proport')
                     if n_places >= n_blocks:
                         # vectorize sizes
                         vct_sizes = np.array(lst_sizes)
@@ -304,7 +303,6 @@ def save_file():
                     df_out['x'] = np.random.randint(low=0, high=n_places, size=n_agents)
                 # exporto to file
                 df_out.to_csv(s_filepath, sep=';', index=False)
-                # todo export view
                 tkinter.messagebox.showinfo(message="File Saved")
             else:
                 tkinter.messagebox.showerror(
@@ -761,7 +759,7 @@ root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
 
 # --------------------------------------------------------------------------------------------------
 # files setup
-s_title = "Agents File Tool"
+s_title = "Agents File Tool - CUE1d"
 root.title(s_title)
 
 # --------------------------------------------------------------------------------------------------
@@ -876,7 +874,7 @@ label_logo = tkinter.Label(
     activeforeground=color_fg,
 )
 label_logo.pack(side=RIGHT)
-s_head_msg = "CUE1d Data Management Tool - Agents"
+s_head_msg = "CUE1d Data Management Tool - Agents 1D"
 label_infos = tkinter.Label(
     frame_info,
     text=s_head_msg,

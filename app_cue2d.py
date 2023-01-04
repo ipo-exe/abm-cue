@@ -65,7 +65,7 @@ def call_place_tool():
     :rtype: None
     """
     import subprocess
-    subprocess.run(["python", "app_set_places.py"])
+    subprocess.run(["python", "app_set_places_2d.py"])
 
 
 def call_agents_tool():

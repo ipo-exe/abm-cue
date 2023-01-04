@@ -565,7 +565,7 @@ root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
 
 
 # files setup
-s_title = "Places File Tool"
+s_title = "Places File Tool - CUE1d"
 root.title(s_title)
 
 # >> set menus
@@ -679,7 +679,7 @@ label_logo = tkinter.Label(
     activeforeground=color_fg,
 )
 label_logo.pack(side=RIGHT)
-s_head_msg = "CUE1d Data Management Tool - Places"
+s_head_msg = "CUE1d Data Management Tool - Places 1D"
 label_infos = tkinter.Label(
     frame_info,
     text=s_head_msg,
