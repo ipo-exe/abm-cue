@@ -4,8 +4,8 @@ Input Folder;C:/000_myFiles/myCodes/abm-cue/samples
 Run Folder;C:/bin
 Places File;C:/000_myFiles/myCodes/abm-cue/samples/param_places_1d.txt
 Agents File;C:/000_myFiles/myCodes/abm-cue/samples/param_agents_1d.txt
-Steps;30
+Steps;100
 Weighting;Linear
-Return Agents;False
+Return Agents;True
 Trace Back;True
 Plot Steps;True

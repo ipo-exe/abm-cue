@@ -1,5 +1,5 @@
 Id;x;y;Trait;D;R;M;C;Name;Alias;Color
 1;2;2;10.0;10;1;5;0.0;Agent A;AgA;red
-2;2;6;10.0;10;1;1;0.0;Agent B;AgB;blue
-3;6;2;10;10;1;3;0.1;Agent C;AgC;orange
-4;6;6;10;10;1;1;0.0;Agent D;AgD;green
+2;2;6;1.0;10;1;1;0.1;Agent B;AgB;blue
+3;6;2;1;10;1;3;0.5;Agent C;AgC;orange
+4;6;6;1;10;1;1;0.0;Agent D;AgD;green

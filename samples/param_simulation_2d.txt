@@ -5,8 +5,8 @@ Run Folder;C:/bin
 Places Map;C:/000_myFiles/myCodes/abm-cue/samples/map_places_2d.asc
 Places File;C:/000_myFiles/myCodes/abm-cue/samples/param_places_2d.txt
 Agents File;C:/000_myFiles/myCodes/abm-cue/samples/param_agents_2d.txt
-Steps;50
+Steps;100
 Weighting;Linear
-Return Agents;False
+Return Agents;True
 Trace Back;True
 Plot Steps;True

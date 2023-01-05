@@ -233,13 +233,13 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
 
             # ----------------------------------------------------------------------------------
             # get agent parameters
-            a_deltac = df_agents["D"].values[a]
-            a_rc = df_agents["R"].values[a]
-            a_C = df_agents["C"].values[a]
+            a_d = df_agents["D"].values[a]
+            a_r = df_agents["R"].values[a]
+            a_c = df_agents["C"].values[a]
 
             # ----------------------------------------------------------------------------------
             # access window dataframe using
-            df_window = dct_window[str(a_rc)]["df"]
+            df_window = dct_window[str(a_r)]["df"]
             # update window x and y
             df_window["x"] = (a_x + df_window["cols"].values) % n_cols
             df_window["y"] = (a_y + df_window["rows"].values) % n_rows
@@ -293,20 +293,20 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
                     # get sampling probability
                     if s_weight.lower() == 'uniform':
                         # uniform interaction prob
-                        df_wnd_move["Prob"] = 1 / a_deltac
+                        df_wnd_move["Prob"] = 1 / a_d
                     elif s_weight.lower() == 'linear':
                         # linear interaction score
                         df_wnd_move["Prob"] = linear_prob(
                             x=df_wnd_move['Discr'].values,
-                            x_max=a_deltac
+                            x_max=a_d
                         )
                     else:
                         # uniform interaction prob
-                        df_wnd_move["Prob"] = 1 / a_deltac
+                        df_wnd_move["Prob"] = 1 / a_d
 
                     # ----------------------------------------------------------------------------------
                     # apply cutoff criterion
-                    df_wnd_move["Prob"] = df_wnd_move["Prob"].values * (df_wnd_move['Discr'].values <= a_deltac)
+                    df_wnd_move["Prob"] = df_wnd_move["Prob"].values * (df_wnd_move['Discr'].values <= a_d)
                     if df_wnd_move["Prob"].sum() == 0:
                         # go uniform
                         df_wnd_move["Prob"] = 1 / len(df_wnd_move)
@@ -336,9 +336,9 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
                 # ------------------------------------------------------------------------------
                 # apply interaction criteria
                 n_discrepancy = np.abs(a_trait - p_trait)
-                if n_discrepancy <= a_deltac:
+                if n_discrepancy <= a_d:
                     # compute means
-                    a_mean = (a_trait + (a_c_a * p_trait)) / (1 + a_c_a)
+                    a_mean = (a_trait + (a_c * p_trait)) / (1 + a_c)
                     p_mean = (p_trait + (p_c_p * a_trait)) / (1 + p_c_p)
 
                     # replace in simulation dataframes
