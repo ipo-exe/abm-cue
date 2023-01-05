@@ -19,14 +19,13 @@ This repository includes:
 5) Agents interact with places only if they are related enough;
 7) During interaction, agents influence the place orientation trait to a certain extent, and vice-versa.
 
-The result is an evolving urban environment:
+The result is an evolving urban environment in 1-D:
 
-![intro](https://github.com/ipo-exe/abm-cue/blob/main/figs/intro.gif "intro")
+![intro](https://github.com/ipo-exe/abm-cue/blob/main/figs/intro1d.gif "intro")
 
-The traits of places changes over time:
+Or in 2-D:
 
-![intro_places](https://github.com/ipo-exe/abm-cue/blob/main/samples/view_traced_places_traits.png "places")
-
+![intro](https://github.com/ipo-exe/abm-cue/blob/main/figs/intro2d.gif "intro")
 
 ## Installing and Running CUE on a local machine
 
