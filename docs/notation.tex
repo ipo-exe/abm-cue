@@ -1,0 +1,128 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\title{CUE - Cooperation in Urban Environments: Theoretical Notation}
+\author{}
+\begin{document}
+
+\maketitle
+
+\section{Model general notation}
+
+\begin{itemize}
+    \item $A$ -- Agent;
+    \item $P$ -- Place;
+    \item $\sigma$ -- trait value;
+    \item $D$ -- critical Hamming distance of trait;
+    \item $R$ -- critical radius;
+    \item $C$ -- openness to contamination, or degree of interaction influence;
+    \item $M$ -- memory size;
+    
+\end{itemize}
+
+\section{Simulation notation}
+
+\begin{itemize}
+    \item $t$ -- Timestep;
+    \item $T$ -- Total number of timesteps;
+    \item $x$ -- position coordinate;
+    \item $y$ -- position coordinate;
+\end{itemize}
+
+\section{Agents}
+
+\par Agents are denoted by $A$. Any specific Agent is denoted by $A^{i}$, where $i$ is the ID number of the Agent in a world of $N_A$ Agents.  
+
+\subsection{Parameters of Agents}
+
+\par Parameters are those static, constant attributes. They can be accessed by their names in the Agent subscript:
+
+\begin{itemize}
+    \item $A^{i}_{D}$ -- $D$ of $A^{i}$;
+    \item $A^{i}_{R}$ -- $R$ of $A^{i}$;
+    \item $A^{i}_{C}$ -- $C$ of $A^{i}$;
+    \item $A^{i}_{M}$ -- $M$ of $A^{i}$;
+\end{itemize}
+
+\subsection{Variables of Agents}
+
+\par Variables are those mutable, changing attributes. They can be accessed by their names in the Agent subscript and by time step $t$ in the Agent superscript: 
+
+\begin{itemize}
+    \item $A^{i,t}_{\sigma}$ -- $\sigma$ of $A^{i}$ in time step $t$;
+    \item $A^{i,t}_{x}$ -- $x$ position of $A^{i}$ in time step $t$;
+    \item $A^{i,t}_{y}$ -- $y$ position  of $A^{i}$ in time step $t$;
+\end{itemize}
+
+
+\section{Places}
+
+\par Places are denoted by $P$. Any specific Place is denoted by it's own position: $P^{x,y}$ in 2D or $P^{x}$ in 1D.
+
+\subsection{Parameters of Places}
+
+\par Parameters are those static, constant attributes. They can be accessed by their names in the Agent subscript:
+
+\begin{itemize}
+    \item $P^{x,y}_{C}$ -- $C$ of $P^{x,y}$;
+\end{itemize}
+
+\subsection{Variables of Places}
+
+\par Variables are those mutable, changing attributes. They can be accessed by their names in the Place subscript and by time step $t$ in the Place superscript: 
+
+\begin{itemize}
+    \item $P^{x,y,t}_{\sigma}$ -- $\sigma$ of $P^{x,y,t}$ in time step $t$;
+\end{itemize}
+
+\section{Model equations}
+
+\subsection{Interaction equations}
+
+\par When Agents interact with Places, both get some contamination from each other. Their next $\sigma$ value changes by the following equations. For Agents:  
+\begin{equation}
+    A^{i,t + 1}_{\sigma} = \frac{A^{i, t}_{\bar{\sigma}} + P^{X,Y,t}_{\sigma} A^{i}_{C}}{1 + A^{i}_{C}} \quad \forall i, t
+\end{equation}
+And for Places:
+\begin{equation}
+    P^{X,Y,t + 1}_{\sigma} = \frac{P^{X,Y,t}_{\sigma} + A^{i, t}_{\bar{\sigma}} P^{x,y}_{C}}{1 + P^{X,Y}_{C}} \quad \forall i, t
+\end{equation}
+Where $X = A^{i,t}_{x}$ and $Y = A^{i,t}_{y}$. The value of $A^{i, t}_{\bar{\sigma}}$ is the average of $\sigma$ values allocated in the Agent's memory:
+\begin{equation}
+    A^{i, t}_{\bar{\sigma}} = \frac{1}{A^{i}_{M}} \sum_{n=0}^{A^{i}_{M}} A^{i, t - n}_{\sigma} \quad \forall i, t
+\end{equation}
+
+\subsection{Random walk}
+
+\subsubsection{Set of candidate Places}
+
+\par At any time step, each Agent has a set $\mathbb{P}$ of candidate Places to move in so they can interact. This set is made of Places $P$ within the Agent's window of sight of size $A_{R}$ and below the Agent's interaction threshold $A_{D}$. Hence:
+\begin{equation}
+    P \in \mathbb{P} \;\big|\;|X - A_{x}| \leq A_{R} \cap |Y - A_{y}| \leq A_{R} \cap |P_{\sigma} - A_{\bar{\sigma}}| \leq A_{D} 
+\end{equation}
+
+\subsubsection{Uniform weighting function}
+
+\par The \texttt{uniform} weighting function is defined to set all available places the same likelihood to be chosen by a given Agent. Therefore:
+\begin{equation}
+    P_L = \frac{1}{{\mathbb{P}_N}} 
+\end{equation}
+Where $P_L$ is the likelihood of the candidate Place $P$ and ${\mathbb{P}_N}$ is the number of candidate Places in $\mathbb{P}$.
+
+\subsubsection{Linear weighting function}
+
+\par \par The \texttt{linear} weighting function is defined to set the likelihoods of candidate Places proportinal to the $\sigma$ discrepancy. Therefore, Agents are biased to go to Places like themselves. The function:
+\begin{equation}
+     P_L = -\frac{2}{\delta_{max}^2} \delta + \frac{2}{\delta_{max}}
+\end{equation}
+Where $P_L$ is the likelihood of the candidate Place $P$, $\delta = |A_{\sigma} - P_{\sigma}|$ and $\delta_{max}$ is the highest $\delta$ value found in $\mathbb{P}$.
+
+\subsubsection{Exception case}
+
+\par When the set $\mathbb{P}$ of candidate Places is empty so ${\mathbb{P}}_N = 0$ then the set is recomputed without the interaction threshold constrain and \texttt{uniform} function is used. In this case:
+\begin{equation}
+    P \in \mathbb{P} \;\big|\;|X - A_{x}| \leq A_{R} \cap |Y - A_{y}| \leq A_{R} 
+\end{equation}
+
+\end{document}
