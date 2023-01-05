@@ -9,7 +9,7 @@
  - [CUE 2D guide](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#cue-2d-model-guide)
 
 > **Note**: see the theoretical notation PDF:
-> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
+> [`notation.pdf`](https://github.com/ipo-exe/abm-cue/blob/main/docs/notation.pdf);
 
 ## Model overview
 
@@ -56,7 +56,7 @@ In the 2-D model, Agents walk randomly between `Indoor` and `Outdoor` Places. `I
 ## Attributes of Agents and Places 
 
 > **Note**: see the theoretical notation PDF:
-> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
+> [`notation.pdf`](https://github.com/ipo-exe/abm-cue/blob/main/docs/notation.pdf);
 
 ### Id number
 
@@ -83,7 +83,7 @@ All Agents and Places must have a `Name`, `Alias` (a short nickname for chart pl
 
 ### The D parameter
 
-`D` is a parameter of Agents. It is the critical Hamming distance of trait orientation for Agent-Place interaction. It is used to decide if Agent-Place interactions occur or not. It has the same units of traits. For instance, if `D = 10` this means that Agent-Place interactions only will occur when the absolute discrepancy between traits is less than 10. If `D` is higher than the maximum value of traits in the model, interactions will always happen.
+`D` is a parameter of Agents. It is the critical Hamming distance of trait for Agent-Place interaction. It is used to decide if Agent-Place interactions occur or not. It has the same units of traits. For instance, if `D = 10` this means that Agent-Place interactions only will occur when the absolute discrepancy between traits is less than 10. If `D` is higher than the maximum value of traits in the model, interactions will always happen.
 
 * When `D > max(Traits)`, Agents will _always_ interact with Places.
 * When `D = 0`, Agents will _never_ interact with Places.
@@ -120,7 +120,7 @@ So:
 
 ### The M parameter
 
-The `M` parameter is a parameter of Agents. It defines the memory size for each Agent. It has units of time steps. This memory allocates the `M` previous traits so the Agent's `prior_trait` during interaction is the average of the states stored in memory. 
+The `M` parameter is a parameter of Agents. It defines the memory size for each Agent. It has units of time steps. This memory allocates the `M` previous traits so the Agent's `prior_trait` during interaction is the average of the states stored in mem	ory. 
 
 ## CUE 1d model guide
 
@@ -229,4 +229,5 @@ NODATA_value -1
 The header (first 6 lines) of the file is related to georreferencing metadata and is not used in the model. The bulk of the file (line 7 and beyond) stores the values of the grid cells.
 
 > **Note**: Clone cells are allowed in the raster map. 
+
 > **Note**: The `Id = 0` is reserved for `Outdoor` Places. 
