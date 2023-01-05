@@ -7,6 +7,6 @@ Places File;C:/000_myFiles/myCodes/abm-cue/samples/param_places_2d.txt
 Agents File;C:/000_myFiles/myCodes/abm-cue/samples/param_agents_2d.txt
 Steps;100
 Weighting;Linear
-Return Agents;True
+Return Agents;False
 Trace Back;True
 Plot Steps;True

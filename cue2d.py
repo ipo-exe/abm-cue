@@ -230,6 +230,13 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
             a_trait = np.mean(vct_a_memory)  # mean over memory
             a_x = df_agents["x"].values[a]
             a_y = df_agents["y"].values[a]
+            # --------------------------------------------------------------------------------------
+            # reset position values
+            if b_return:
+                # reset x
+                a_x = vct_agents_origin_x[a]
+                # reset y
+                a_y = vct_agents_origin_y[a]
 
             # ----------------------------------------------------------------------------------
             # get agent parameters
@@ -256,26 +263,27 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
             # ----------------------------------------------------------------------------------
             # action conditional
 
-            # todo problems with return feature
 
             np.random.seed(grd_seeds[t, a])  # restart random state
-            if p_id == 0:  # just move to indoors
 
-                # ------------------------------------------------------------------------------
+            if b_return:
+                # -------------------------------------------------------------------------
                 # filter window
                 df_wnd_move = df_window.query("Id != 0")
 
-                # ------------------------------------------------------------------------------
+                # -------------------------------------------------------------------------
                 # movement conditional
-                if len(df_wnd_move) == 0:  # there is no indoor place to go
+                # there is no indoor place to go
+                if len(df_wnd_move) == 0:
                     df_wnd_move = df_window.copy()
                     # then just move randomly
                     n_next_index = np.random.choice(
                         a=np.arange(len(df_wnd_move)),
                         size=1
                     )[0]  # get the first
-                else:  # there is indoor places to go
-                    # --------------------------------------------------------------------------
+                # there is indoor places to go
+                else:
+                    # ---------------------------------------------------------------------
                     # append fields from places using ID
                     df_wnd_move = pd.merge(
                         how='left',
@@ -285,11 +293,11 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
                         right_on="Id"
                     )
 
-                    # --------------------------------------------------------------------------
+                    # ---------------------------------------------------------------------
                     # compute discrepancy
                     df_wnd_move["Discr"] = np.abs(a_trait - df_wnd_move["Trait"].values)
 
-                    # ----------------------------------------------------------------------------------
+                    # ---------------------------------------------------------------------
                     # get sampling probability
                     if s_weight.lower() == 'uniform':
                         # uniform interaction prob
@@ -304,7 +312,7 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
                         # uniform interaction prob
                         df_wnd_move["Prob"] = 1 / a_d
 
-                    # ----------------------------------------------------------------------------------
+                    # ---------------------------------------------------------------------
                     # apply cutoff criterion
                     df_wnd_move["Prob"] = df_wnd_move["Prob"].values * (df_wnd_move['Discr'].values <= a_d)
                     if df_wnd_move["Prob"].sum() == 0:
@@ -313,7 +321,7 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
                     # normalize
                     df_wnd_move["Prob"] = df_wnd_move["Prob"].values / df_wnd_move["Prob"].sum()
 
-                    # ----------------------------------------------------------------------------------
+                    # ---------------------------------------------------------------------
                     # weighted random sampling
                     n_next_index = np.random.choice(
                         a=df_wnd_move.index,
@@ -321,7 +329,11 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
                         p=df_wnd_move["Prob"].values
                     )[0]  # get the first
 
-            else:  # interact and move to outdoors randomly
+                # ----------------------------------------------------------------------------------
+                # get agent's place id based on its location
+                a_x = df_wnd_move["x"].values[n_next_index]
+                a_y = df_wnd_move["y"].values[n_next_index]
+                p_id = grd_ids[a_y][a_x]
 
                 # ------------------------------------------------------------------------------
                 # interact
@@ -345,18 +357,106 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
                     df_agents["Trait"].values[a] = a_mean
                     df_places["Trait"].values[p_index] = p_mean
 
-                # ------------------------------------------------------------------------------
-                # move to outdoors
-                # filter window
-                df_wnd_move = df_window.query("Id == 0")
-                #
-                if len(df_wnd_move) == 0:  # there is no outdoor place to go
-                    df_wnd_move = df_window.copy()
-                # then move randomly indoors
-                n_next_index = np.random.choice(
-                    a=np.arange(len(df_wnd_move)),
-                    size=1
-                )[0]  # get the first
+
+            else:
+                # move to indoors
+                if p_id == 0:
+
+                    # -------------------------------------------------------------------------
+                    # filter window
+                    df_wnd_move = df_window.query("Id != 0")
+
+                    # -------------------------------------------------------------------------
+                    # movement conditional
+                    if len(df_wnd_move) == 0:  # there is no indoor place to go
+                        df_wnd_move = df_window.copy()
+                        # then just move randomly
+                        n_next_index = np.random.choice(
+                            a=np.arange(len(df_wnd_move)),
+                            size=1
+                        )[0]  # get the first
+                    else:  # there is indoor places to go
+                        # ---------------------------------------------------------------------
+                        # append fields from places using ID
+                        df_wnd_move = pd.merge(
+                            how='left',
+                            left=df_wnd_move,
+                            right=df_places,
+                            left_on="Id",
+                            right_on="Id"
+                        )
+
+                        # ---------------------------------------------------------------------
+                        # compute discrepancy
+                        df_wnd_move["Discr"] = np.abs(a_trait - df_wnd_move["Trait"].values)
+
+                        # ---------------------------------------------------------------------
+                        # get sampling probability
+                        if s_weight.lower() == 'uniform':
+                            # uniform interaction prob
+                            df_wnd_move["Prob"] = 1 / a_d
+                        elif s_weight.lower() == 'linear':
+                            # linear interaction score
+                            df_wnd_move["Prob"] = linear_prob(
+                                x=df_wnd_move['Discr'].values,
+                                x_max=a_d
+                            )
+                        else:
+                            # uniform interaction prob
+                            df_wnd_move["Prob"] = 1 / a_d
+
+                        # ---------------------------------------------------------------------
+                        # apply cutoff criterion
+                        df_wnd_move["Prob"] = df_wnd_move["Prob"].values * (df_wnd_move['Discr'].values <= a_d)
+                        if df_wnd_move["Prob"].sum() == 0:
+                            # go uniform
+                            df_wnd_move["Prob"] = 1 / len(df_wnd_move)
+                        # normalize
+                        df_wnd_move["Prob"] = df_wnd_move["Prob"].values / df_wnd_move["Prob"].sum()
+
+                        # ---------------------------------------------------------------------
+                        # weighted random sampling
+                        n_next_index = np.random.choice(
+                            a=df_wnd_move.index,
+                            size=1,
+                            p=df_wnd_move["Prob"].values
+                        )[0]  # get the first
+                # interact and move to outdoors randomly
+                else:
+                    # ------------------------------------------------------------------------------
+                    # interact
+
+                    # get place dataframe index
+                    p_index = df_places.query("Id == {}".format(p_id)).index[0]
+                    # get place trait
+                    p_trait = df_places["Trait"].values[p_index]
+                    # get place d
+                    p_c_p = df_places["C"].values[p_index]
+
+                    # ------------------------------------------------------------------------------
+                    # apply interaction criteria
+                    n_discrepancy = np.abs(a_trait - p_trait)
+                    if n_discrepancy <= a_d:
+                        # compute means
+                        a_mean = (a_trait + (a_c * p_trait)) / (1 + a_c)
+                        p_mean = (p_trait + (p_c_p * a_trait)) / (1 + p_c_p)
+
+                        # replace in simulation dataframes
+                        df_agents["Trait"].values[a] = a_mean
+                        df_places["Trait"].values[p_index] = p_mean
+
+                    # ------------------------------------------------------------------------------
+                    # move to outdoors
+                    # filter window
+                    df_wnd_move = df_window.query("Id == 0")
+                    #
+                    if len(df_wnd_move) == 0:  # there is no outdoor place to go
+                        df_wnd_move = df_window.copy()
+                    # then move randomly indoors
+                    n_next_index = np.random.choice(
+                        a=np.arange(len(df_wnd_move)),
+                        size=1
+                    )[0]  # get the first
 
             # ----------------------------------------------------------------------------------
             # update agent position
@@ -371,13 +471,7 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
             grd_traced_agents_x[t] = df_agents["x"].values
             grd_traced_agents_y[t] = df_agents["y"].values
 
-        # --------------------------------------------------------------------------------------
-        # reset position values
-        if b_return:
-            # reset x
-            df_agents["x"] = vct_agents_origin_x
-            # reset y
-            df_agents["y"] = vct_agents_origin_y
+
 
     # ------------------------------------------------------------------------------------------
     # prepare output dict
