@@ -43,6 +43,6 @@ For Windows, Mac and Linux, follow these generic steps:
 3) Clone the [latest release of this repository](https://github.com/ipo-exe/abm-cue/releases) (download the asset zip folder);
 4) Extract the files to a folder of preference (ex: `C:\Users\Home\Documents\abm-cue-main`);
 > **Warning**: do not change internal folder and file names.
-6) Execute the `app_cue1d.py` file for the CUE 1-d model.
+6) Execute the `app_cue1d.py` file for the CUE 1-D model or the `app_cue2d.py` file for the CUE 2-D model.
 
 
