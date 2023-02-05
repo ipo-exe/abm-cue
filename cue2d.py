@@ -70,7 +70,8 @@ def map_traits(grd_ids, vct_traits, vct_ids):
     return grd_traits
 
 
-def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False, b_trace=True, b_return=False):
+def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform',
+         b_tui=False, b_trace=True, b_return=False, b_edges=False):
     """
     Simulation of CUE 2D
 
@@ -88,6 +89,8 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
     :type b_tui: bool
     :param b_trace: boolean to traceback simulation
     :type b_trace: bool
+    :param b_edges: boolean to consider edges in the 2-d world
+    :type b_edges: bool
     :return: simulation object
     :rtype: dict
     """
@@ -246,15 +249,38 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform', b_tui=False
 
             # ----------------------------------------------------------------------------------
             # access window dataframe using
-            df_window = dct_window[str(a_r)]["df"]
+            df_window = dct_window[str(a_r)]["df"].copy()
             # update window x and y
             df_window["x"] = (a_x + df_window["cols"].values) % n_cols
             df_window["y"] = (a_y + df_window["rows"].values) % n_rows
+
+            # ----------------------------------------------------------------------------------
             # find cells ids
             for i in range(len(df_window)):
                 lcl_x = df_window["x"].values[i]
                 lcl_y = df_window["y"].values[i]
                 df_window["Id"].values[i] = grd_ids[lcl_y][lcl_x]
+            '''
+            print(df_window.to_string())
+            print(len(df_window))
+            '''
+
+            # ----------------------------------------------------------------------------------
+            # check edged world condition
+            if b_edges:
+                # filter window
+                df_window["Dist_x"] = np.abs(df_window["x"].values.astype("int16") - a_x)
+                df_window["Dist_y"] = np.abs(df_window["y"].values.astype("int16") - a_y)
+                df_window["Inrange_x"] = 1 * (df_window["Dist_x"].values <= a_r)
+                df_window["Inrange_y"] = 1 * (df_window["Dist_y"].values <= a_r)
+                df_window["Inrange"] = df_window["Inrange_x"].values * df_window["Inrange_y"].values
+                df_window = df_window.query("Inrange == 1")
+            '''
+            print('A_x = {}'.format(a_x))
+            print('A_y = {}'.format(a_y))
+            print(df_window.to_string())
+            print(len(df_window))
+            '''
 
             # ----------------------------------------------------------------------------------
             # get agent's place id based on its location

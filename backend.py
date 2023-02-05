@@ -84,13 +84,13 @@ def get_window_ids(n_rows, n_cols, n_rsize=1, b_flat=True):
     lst_aux = list()
     for r in range(len(vct_window_base_rows)):
         lst_aux.append(vct_window_base_rows[r] * np.ones(shape=np.shape(vct_window_base_rows)))
-    grd_window_rows = np.array(lst_aux, dtype="uint16")
+    grd_window_rows = np.array(lst_aux, dtype="int32")
 
     # generate grid for cols
     lst_aux = list()
     for r in range(len(vct_window_base_cols)):
         lst_aux.append(vct_window_base_cols)
-    grd_window_cols = np.array(lst_aux, dtype="uint16")
+    grd_window_cols = np.array(lst_aux, dtype="int32")
 
     if b_flat:
         vct_window_rows = grd_window_rows.flatten()
