@@ -1,0 +1,12 @@
+Metadata;Value
+Timestamp;2023/02/06 18:06:28.83
+Input Folder;C:/000_myFiles/myCodes/abm-cue/demo
+Run Folder;C:/bin
+Places Map;C:/000_myFiles/myCodes/abm-cue/demo/saoleo_places_ids.asc
+Places File;C:/000_myFiles/myCodes/abm-cue/demo/demo_param_places_2d.txt
+Agents File;C:/000_myFiles/myCodes/abm-cue/demo/demo_param_agents_2d.txt
+Steps;50
+Weighting;uniform
+Return Agents;False
+Trace Back;True
+Plot Steps;True

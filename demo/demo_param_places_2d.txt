@@ -1,0 +1,8 @@
+Id;Trait;C;Name;Alias;Color
+0;0;0.0;Outdoors;P0;white
+1;50;0.5;Place 1;P1;grey
+2;10;0.2;Place 2;P2;red
+3;20;0.1;Place 3;P3;orange
+4;30;0.1;Place 4;P4;magenta
+5;40;0.1;Place 5;P5;blue
+6;90;0.0;Place 6;P6;cyan
