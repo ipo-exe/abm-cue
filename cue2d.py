@@ -71,7 +71,7 @@ def map_traits(grd_ids, vct_traits, vct_ids):
 
 
 def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform',
-         b_tui=False, b_trace=True, b_return=False, b_edges=False):
+         b_tui=False, b_trace=True, b_return=False, b_edges=True):
     """
     Simulation of CUE 2D
 

@@ -508,7 +508,7 @@ def plot_cue_2d_pannel(
     if b_dark:
         plt.style.use("dark_background")
 
-    fig = plt.figure(figsize=(6, 4))  # Width, Height
+    fig = plt.figure(figsize=(8, 5))  # Width, Height
     gs = mpl.gridspec.GridSpec(
         2, 4, wspace=0.0, hspace=0.8, left=0.1, bottom=0.2, top=0.8, right=0.9
     )  # nrows, ncols

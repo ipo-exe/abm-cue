@@ -50,9 +50,9 @@
 \par Variables are those mutable, changing attributes. They can be accessed by their names in the Agent subscript and by time step $t$ in the Agent superscript: 
 
 \begin{itemize}
-    \item $A^{i,t}_{\sigma}$ -- $\sigma$ of $A^{i}$ in time step $t$;
-    \item $A^{i,t}_{x}$ -- $x$ position of $A^{i}$ in time step $t$;
-    \item $A^{i,t}_{y}$ -- $y$ position  of $A^{i}$ in time step $t$;
+    \item $A^{i}_{\sigma}(t)$ -- $\sigma$ of $A^{i}$ in time step $t$;
+    \item $A^{i}_{x}(t)$ -- $x$ position of $A^{i}$ in time step $t$;
+    \item $A^{i}_{y}(t)$ -- $y$ position  of $A^{i}$ in time step $t$;
 \end{itemize}
 
 
@@ -73,24 +73,29 @@
 \par Variables are those mutable, changing attributes. They can be accessed by their names in the Place subscript and by time step $t$ in the Place superscript: 
 
 \begin{itemize}
-    \item $P^{x,y,t}_{\sigma}$ -- $\sigma$ of $P^{x,y,t}$ in time step $t$;
+    \item $P^{x,y}_{\sigma}(t)$ -- $\sigma$ of $P^{x,y}$ in time step $t$;
 \end{itemize}
 
 \section{Model equations}
 
 \subsection{Interaction equations}
 
-\par When Agents interact with Places, both get some contamination from each other. Their next $\sigma$ value changes by the following equations. For Agents:  
+\par When Agents interact with Places, both get some contamination from each other. Their next $t+1$ value of $\sigma$ changes by the following equations. For Agents:  
 \begin{equation}
-    A^{i,t + 1}_{\sigma} = \frac{A^{i, t}_{\bar{\sigma}} + P^{X,Y,t}_{\sigma} A^{i}_{C}}{1 + A^{i}_{C}} \quad \forall i, t
+    A^{i}_{\sigma}(t + 1) = \frac{A^{i}_{\bar{\sigma}}(t) + P^{X,Y}_{\sigma}(t) \cdot A^{i}_{C}}{1 + A^{i}_{C}} \quad \forall i, t
 \end{equation}
 And for Places:
 \begin{equation}
-    P^{X,Y,t + 1}_{\sigma} = \frac{P^{X,Y,t}_{\sigma} + A^{i, t}_{\bar{\sigma}} P^{X,Y}_{C}}{1 + P^{X,Y}_{C}} \quad \forall i, t
+    P^{X,Y}_{\sigma}(t + 1) = \frac{P^{X,Y}_{\sigma}(t) + A^{i}_{\bar{\sigma}}(t)\cdot P^{X,Y}_{C}}{1 + P^{X,Y}_{C}} \quad \forall i, t
 \end{equation}
-Where $X = A^{i,t}_{x}$ and $Y = A^{i,t}_{y}$. The value of $A^{i, t}_{\bar{\sigma}}$ is the average of $\sigma$ values allocated in the Agent's memory:
+Where $X = A^{i}_{x}(t)$ and $Y = A^{i}_{y}(t)$. The value of $A^{i, t}_{\bar{\sigma}}$ is a function of the Agent's previous traits ($A_{\sigma}$) and memory size ($A_M$):
 \begin{equation}
-    A^{i, t}_{\bar{\sigma}} = \frac{1}{A^{i}_{M}} \sum_{n=0}^{A^{i}_{M}} A^{i, t - n}_{\sigma} \quad \forall i, t
+    A^{i}_{\bar{\sigma}}(t) = \Psi(A^{i}_{\sigma}, A^{i}_{M}) \quad \forall i, t
+\end{equation}
+
+Currently, the function $\Psi$ the average of $\sigma$ values allocated in the Agent's memory:
+\begin{equation}
+    A^{i}_{\bar{\sigma}}(t) = \frac{1}{A^{i}_{M}} \sum_{n=0}^{A^{i}_{M}} A^{i}_{\sigma}(t - n) \quad \forall i, t
 \end{equation}
 
 \subsection{Random walk}

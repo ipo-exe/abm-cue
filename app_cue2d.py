@@ -75,7 +75,7 @@ def call_agents_tool():
     :rtype:
     """
     import subprocess
-    subprocess.run(["python", "app_set_agents.py"])
+    subprocess.run(["python", "app_set_agents_2d.py"])
 
 # todo replace this
 def command_demo():
