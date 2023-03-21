@@ -51,6 +51,27 @@ import matplotlib.pyplot as plt
 def get_n_conections(total_size, n_places):
     return (-np.square(n_places)) + (total_size * n_places)
 
+def path_to_wkt(vct_i, vct_j, metadata):
+    n_cols = metadata["ncols"]
+    n_rows = metadata["nrows"]
+    n_scale = metadata["cellsize"]
+    vct_x = metadata["xllcorner"] + ((vct_j * n_scale) + (n_scale / 2))
+    vct_y = metadata["yllcorner"] + ((n_rows - vct_i) * n_scale) - (n_scale / 2)
+    lst_vertex = list()
+    for i in range(len(vct_x)):
+        lst_vertex.append("{} {}".format(vct_x[i], vct_y[i]))
+    s_vertex = ", ".join(lst_vertex)
+    return "LineString({})".format(s_vertex)
+
+def get_wkt(df_network, metadata):
+    df_network = df_network.copy()
+    df_network["Geom"] = "-"
+    for i in range(len(df_network)):
+        vct_i = np.array(list(map(int, df_network["Path_i"].values[i].split("-"))))
+        vct_j = np.array(list(map(int, df_network["Path_j"].values[i].split("-"))))
+        df_network["Geom"].values[i] = path_to_wkt(vct_i, vct_j, metadata)
+    return df_network
+
 
 # traceback
 def traceback(src_i, src_j, par_df, closed_df):
@@ -474,6 +495,8 @@ if __name__ == "__main__":
     grd_places[2][6] = 4
     grd_places[2][7] = 4
 
+    dct_meta, grd_places = inp.asc_raster(file="./samples/map_places_2d.asc")
+    print(dct_meta)
     # -----------------------------------------------------------------------------------------------------------
     # Load or create places data frame
     df_places = pd.DataFrame(
@@ -495,6 +518,10 @@ if __name__ == "__main__":
     print(df_net.to_string())
     df_q = df_net.query("Id_node_src == 0")
     print(df_q.to_string())
+
+    df_wkt = get_wkt(df_network=df_net, metadata=dct_meta)
+    print(df_wkt.to_string())
+    df_wkt.to_csv("C:/data/lines2.txt", sep=";", index=False)
 
 
 
