@@ -744,6 +744,11 @@ def run_cue2d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
             )
 
 
+
+def run_network(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
+    pass
+
+
 def animate_frames_1d(
         s_param_agents,
         s_param_places,
