@@ -48,10 +48,15 @@ import matplotlib.pyplot as plt
 
 # -----------------------------------------------------------------------------------------------------------
 # utils
-def get_n_conections(total_size, n_places):
-    return (-np.square(n_places)) + (total_size * n_places)
 
 def path_to_wkt(vct_i, vct_j, metadata):
+    '''
+    convert a path to WKT given Raster Metadata
+    :param vct_i: numpy array of i coordinates (rows)
+    :param vct_j: numpy array of j coordinates (cols)
+    :param metadata: dict of raster metadata
+    :return: string of WTK path
+    '''
     n_cols = metadata["ncols"]
     n_rows = metadata["nrows"]
     n_scale = metadata["cellsize"]
@@ -64,6 +69,12 @@ def path_to_wkt(vct_i, vct_j, metadata):
     return "LineString({})".format(s_vertex)
 
 def get_wkt(df_network, metadata):
+    '''
+    compute WTK for all paths in Network dataframe
+    :param df_network: pandas dataframe of network
+    :param metadata: dict metadata from
+    :return: new dataframe with WKT
+    '''
     df_network = df_network.copy()
     df_network["Geom"] = "-"
     for i in range(len(df_network)):
@@ -75,6 +86,14 @@ def get_wkt(df_network, metadata):
 
 # traceback
 def traceback(src_i, src_j, par_df, closed_df):
+    """
+    trace back path from closed queue
+    :param src_i: int source i
+    :param src_j: int source j
+    :param par_df: parents dataframe
+    :param closed_df: closed nodes dataframe
+    :return: dict of path
+    """
     lst_i = []
     lst_j = []
     lst_i.insert(0, par_df["i"].values[0])
@@ -98,6 +117,15 @@ def traceback(src_i, src_j, par_df, closed_df):
 
 # window
 def get_window(cell_i, cell_j, rows, cols, size=1):
+    """
+    get window dict for 2d grid
+    :param cell_i: int i
+    :param cell_j: int j
+    :param rows: int number of grid rows
+    :param cols: int number of grid cols
+    :param size: int window size
+    :return: dict of grid window
+    """
     factors = np.arange(-size, size + 1)
     window_i = []
     window_j = []
@@ -121,12 +149,26 @@ def get_window(cell_i, cell_j, rows, cols, size=1):
 # Distance functions
 
 def get_xy_distance(x1, y1, x2, y2):
+    """
+    get Euclidean distance
+    :param x1: point 1 x
+    :param y1: point 1 y
+    :param x2: point 2 x
+    :param y2: point 2 y
+    :return: number distance
+    """
     dx = x2 - x1
     dy = y2 - y1
     return np.sqrt(np.square(dx) + np.square(dy))
 
 
 def get_path_distance(vct_x, vct_y):
+    """
+    compute path distance
+    :param vct_x: numpy x of points
+    :param vct_y: numpy y of points
+    :return: path distance
+    """
     n_d = 0
     for i in range(1, len(vct_x)):
         n_d = n_d + get_xy_distance(
@@ -137,8 +179,9 @@ def get_path_distance(vct_x, vct_y):
 
 def get_astar_path(grid_maze, grid_h, src_i, src_j, dst_i, dst_j):
     """
-
+    compute A-Star distance (path)
     :param grid_maze: numpy grid maze
+    :param grid_h: numpy grid of Heuristics map
     :param src_i: int source place i
     :param src_j: int source place j
     :param dst_i: int destiny place i
@@ -522,6 +565,74 @@ if __name__ == "__main__":
     df_wkt = get_wkt(df_network=df_net, metadata=dct_meta)
     print(df_wkt.to_string())
     df_wkt.to_csv("C:/data/lines2.txt", sep=";", index=False)
+
+    # -----------------------------------------------------------------------------------------------------------
+    # CONTINUE HERE
+
+    import astar
+    import inp
+
+    n_size = 30
+
+    grd_rand = np.random.randint(1, 100, size=(n_size, n_size))
+    grd = np.random.randint(1, 100, size=(n_size, n_size))
+    grd = grd * (grd_rand > 50)
+
+    dct_meta, grd = inp.asc_raster(file="C:/data/saoleo_small_2m.asc", dtype="float32")
+    grd = grd.astype("byte")
+
+    plt.imshow(grd)
+    plt.show()
+
+    # Scanning loop to find nodes
+    n_rows = len(grd)
+    n_cols = len(grd[0])
+    lst_nodes = []
+    lst_i = []
+    lst_j = []
+    lst_place = []
+    c = 0
+    for i in range(len(grd)):
+        for j in range(len(grd[i])):
+            n_lcl_value = grd[i][j]
+            if n_lcl_value == 0:  # is outdoor
+                pass
+            elif n_lcl_value in lst_place:  # already assessed
+                pass
+            else:
+                # get window
+                dct_window = astar.get_window(cell_i=i, cell_j=j, rows=n_rows, cols=n_cols, size=1)
+                df_window = pd.DataFrame(dct_window)
+                # collect window values
+                df_window["Value"] = 0.0
+                for k in range(len(df_window)):
+                    df_window["Value"].values[k] = grd[df_window["i"].values[k]][df_window["j"].values[k]]
+                print("{}, {}".format(i, j))
+                # check if there is a way out
+                if df_window["Value"].min() == 0:
+                    print("Is node")
+                    lst_nodes.append(c)
+                    lst_i.append(i)
+                    lst_j.append(j)
+                    lst_place.append(n_lcl_value)
+                    c = c + 1
+                else:
+                    print("Inner cell")
+
+    df_nodes = pd.DataFrame(
+        {
+            "Id_node": lst_nodes,
+            "i": lst_i,
+            "j": lst_j,
+            "Id_place": lst_place,
+        }
+    )
+
+    print(df_nodes.to_string())
+
+    plt.imshow(grd)
+    plt.scatter(df_nodes["j"], df_nodes["i"], marker='.')
+    plt.show()
 
 
 
