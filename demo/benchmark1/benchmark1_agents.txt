@@ -1,0 +1,10 @@
+Id;x;y;Trait;D;R;M;C;Name;Alias;Color
+1;5;5;47;20;6;5;0.1;Agent;A;red
+2;9;3;48;20;6;5;0.1;Agent;A;red
+3;4;9;55;20;6;5;0.1;Agent;A;red
+4;7;1;50;20;6;5;0.1;Agent;A;red
+5;3;6;52;20;6;5;0.1;Agent;A;red
+6;8;8;46;20;6;5;0.1;Agent;A;red
+7;2;6;53;20;6;5;0.1;Agent;A;red
+8;0;7;55;20;6;5;0.1;Agent;A;red
+9;0;5;52;10;6;5;0.1;Agent;A;red
