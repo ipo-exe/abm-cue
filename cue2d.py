@@ -288,10 +288,7 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform',
 
             # ----------------------------------------------------------------------------------
             # action conditional
-
-
             np.random.seed(grd_seeds[t, a])  # restart random state
-
             if b_return:
                 # -------------------------------------------------------------------------
                 # filter window
@@ -382,8 +379,6 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform',
                     # replace in simulation dataframes
                     df_agents["Trait"].values[a] = a_mean
                     df_places["Trait"].values[p_index] = p_mean
-
-
             else:
                 # move to indoors
                 if p_id == 0:
@@ -517,56 +512,254 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform',
 
 
 
+def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s_weight='uniform',
+         b_tui=False, b_trace=True, b_return=False, b_edges=True):
+
+    import astar
+
+    # ------------------------------------------------------------------------------------------
+    # start up
+    s_dtype = "float32"
+    n_agents = len(df_agents)
+    n_places = len(df_places)
+    n_rows = np.shape(grd_ids)[0]
+    n_cols = np.shape(grd_ids)[1]
+
+    # ------------------------------------------------------------------------------------------
+    # define random seeds prior to simulation loop
+    np.random.seed(backend.get_seed())
+    grd_seeds = np.random.randint(
+        low=100,
+        high=999,
+        size=(n_steps, n_agents),
+        dtype="uint16"
+    )
+
+    # ------------------------------------------------------------------------------------------
+    # agents setup
+    if b_tui:
+        backend.status("Setting agents into nearest nodes")
+    # set new field for distance
+    df_nodes["D"] = 0
+    for a in range(n_agents):
+        lcl_i = df_agents["y"].values[a]
+        lcl_j = df_agents["x"].values[a]
+        # filter data frame
+        df_aux = df_nodes.query("i == {} and j == {}".format(lcl_i, lcl_j))
+        # if empty, set new agent position
+        if len(df_aux) == 0:
+            # compute euclidean distances
+            df_nodes["D"] = astar.get_xy_distance(x1=lcl_j, y1=lcl_i, x2=df_nodes["j"].values, y2=df_nodes["i"].values)
+            df_nodes = df_nodes.sort_values(by="D", ignore_index=True)
+            # reset positions
+            df_agents["y"].values[a] = df_nodes["i"].values[0]
+            df_agents["x"].values[a] = df_nodes["j"].values[0]
+
+    plt.imshow(grd_ids)
+    plt.scatter(df_agents["x"], df_agents["y"], c="orange")
+    plt.show()
+
+    # ------------------------------------------------------------------------------------------
+    # return variables
+    if b_return:
+        vct_agents_origin_x = df_agents.copy()["x"].values
+        vct_agents_origin_y = df_agents.copy()["y"].values
+
+    # ------------------------------------------------------------------------------------------
+    # allocate memory variables
+    dct_memory = dict()
+    for a in range(n_agents):
+        n_memory = df_agents["M"].values[a]
+        n_trait = df_agents["Trait"].values[a]
+        dct_memory[str(df_agents["Id"].values[a])] = n_trait * np.ones(n_memory)
+
+
+    # ------------------------------------------------------------------------------------------
+    # main simulation loop:
+    for t in range(n_steps):
+        if b_tui:
+            backend.status(
+                "CUE2d NET :: simulation step {} [{:.2f}%]".format(t + 1, 100 * (t + 1) / n_steps)
+            )
+
+        # --------------------------------------------------------------------------------------
+        # agents loop
+        for a in range(len(df_agents)):
+
+
+            # ----------------------------------------------------------------------------------
+            # get agents variables
+            a_id = df_agents["Id"].values[a]
+            vct_a_memory = dct_memory[str(a_id)]  # get memory
+            a_trait = np.mean(vct_a_memory)  # mean over memory
+            a_x = df_agents["x"].values[a]
+            a_y = df_agents["y"].values[a]
+
+            # --------------------------------------------------------------------------------------
+            # reset position values
+            if b_return:
+                # reset x
+                a_x = vct_agents_origin_x[a]
+                # reset y
+                a_y = vct_agents_origin_y[a]
+
+            # ----------------------------------------------------------------------------------
+            # get agent parameters
+            a_d = df_agents["D"].values[a]
+            a_r = df_agents["R"].values[a]
+            a_c = df_agents["C"].values[a]
+
+            print("\n\nAgent {}| Sigma={} | R={} | D={} ".format(a, a_trait, a_r, a_d))
+
+            # ----------------------------------------------------------------------------------
+            # get available places
+
+            # finde node id
+            node_id = df_nodes.query("i == {} and j == {}".format(a_y, a_x))["Id_node"].values[0]
+            print("Node : {}".format(node_id))
+
+            # get node window
+            df_window = df_network.query("Id_node_src == {}".format(node_id)).copy()
+
+            # apply Spatial distance constrain
+            df_window = df_window.query("AStar <= {}".format(a_r)).copy()
+
+            # merge current destiny traits
+            df_window = pd.merge(df_window, df_places[["Id", "Trait", "C"]], how="left", left_on="Id_place_dst", right_on="Id")
+
+            # ---------------------------------------------------------------------
+            # compute discrepancy
+            df_window["Delta"] = np.abs(a_trait - df_window["Trait"])
+            # apply delta distance constrain
+            df_window = df_window.query("Delta <= {}".format(a_d)).copy()
+
+            if len(df_window) == 0:
+                print("no place to go and interact")
+            else:
+                # ---------------------------------------------------------------------
+                # get sampling probability
+                if s_weight.lower() == 'uniform':
+                    # uniform interaction prob
+                    df_window["Prob"] = 1 / a_d
+                elif s_weight.lower() == 'linear':
+                    # linear interaction score
+                    df_window["Prob"] = linear_prob(
+                        x=df_window['Delta'].values,
+                        x_max=a_d
+                    )
+                else:
+                    # uniform interaction prob
+                    df_window["Prob"] = 1 / a_d
+
+                # normalize
+                df_window["Prob"] = df_window["Prob"].values / df_window["Prob"].sum()
+                df_window = df_window.sort_values(by="Prob", ascending=False, ignore_index=True)
+
+                # ---------------------------------------------------------------------
+                # weighted random sampling
+                n_next_index = np.random.choice(
+                    a=df_window.index,
+                    size=1,
+                    p=df_window["Prob"].values
+                )[0]  # get the first
+
+                next_node_id = df_window["Id_node_dst"].values[n_next_index]
+
+
+
+                print(df_window.to_string())
+                print("Chosen: {}".format(next_node_id))
+
+                # ------------------------------------------------------------------------------
+                # interact
+
+
+
+
+
 if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    import random
+
+    b_cue2d = False
+    b_cue2d_network = True
 
 
-    n_steps = 50
-    n_agents = 3
-
-    # create agents dataframe (read from table)
-    df_agents = pd.DataFrame(
-        {
-            "Id": np.arange(1, n_agents + 1),
-            "x": [12, 12, 12],
-            "y": [5, 10, 15],
-            "Trait": [5.0, 5.0, 5.0],
-            "Alpha": [3, 3, 3],
-            "Beta": [1, 5, 3],
-            "C": [0.1, 0.2, 0.0]
-        }
-    )
-
-    # read places parameters table
-    df_places_input = pd.read_csv("C:/gis/bin/places_params.csv", sep=";")
-    df_places_input = df_places_input[["Id", "Trait"]]
-    df_places_input["D"] = 0.1
-    df_places_input["Name"] = "P"
-    for i in range(len(df_places_input)):
-        df_places_input["Name"].values[i] = "P" + str(df_places_input["Id"].values[i])
-    df_places_input["Alias"] = df_places_input["Name"]
-
-    number_of_colors = len(df_places_input)
-
-    color = ["#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
-             for i in range(number_of_colors)]
-
-    df_places_input["color"] = color
-
-    df_places_input.to_csv("C:/gis/bin/places_param_2d.txt", sep=";", index=False)
-
-    # read ID map
-    meta, grd_ids = inp.asc_raster(file="C:/gis/bin/places_demo_5m.asc")
+    if b_cue2d:
+        import matplotlib.pyplot as plt
+        import random
 
 
-    #grd_traits = map_places_traits(grd_ids=grd_ids, df_places=df_places)
+        n_steps = 50
+        n_agents = 3
 
-    play(
-        df_agents=df_agents,
-        df_places=df_places_input,
-        grd_ids=grd_ids,
-        n_steps=n_steps,
-        b_trace=True,
-        b_tui=False
-    )
+        # create agents dataframe (read from table)
+        df_agents = pd.DataFrame(
+            {
+                "Id": np.arange(1, n_agents + 1),
+                "x": [12, 12, 12],
+                "y": [5, 10, 15],
+                "Trait": [5.0, 5.0, 5.0],
+                "Alpha": [3, 3, 3],
+                "Beta": [1, 5, 3],
+                "C": [0.1, 0.2, 0.0]
+            }
+        )
+
+        # read places parameters table
+        df_places_input = pd.read_csv("C:/gis/bin/places_params.csv", sep=";")
+        df_places_input = df_places_input[["Id", "Trait"]]
+        df_places_input["D"] = 0.1
+        df_places_input["Name"] = "P"
+        for i in range(len(df_places_input)):
+            df_places_input["Name"].values[i] = "P" + str(df_places_input["Id"].values[i])
+        df_places_input["Alias"] = df_places_input["Name"]
+
+        number_of_colors = len(df_places_input)
+
+        color = ["#" + ''.join([random.choice('0123456789ABCDEF') for j in range(6)])
+                 for i in range(number_of_colors)]
+
+        df_places_input["color"] = color
+
+        df_places_input.to_csv("C:/gis/bin/places_param_2d.txt", sep=";", index=False)
+
+        # read ID map
+        meta, grd_ids = inp.asc_raster(file="C:/gis/bin/places_demo_5m.asc")
+
+
+        #grd_traits = map_places_traits(grd_ids=grd_ids, df_places=df_places)
+
+        play(
+            df_agents=df_agents,
+            df_places=df_places_input,
+            grd_ids=grd_ids,
+            n_steps=n_steps,
+            b_trace=True,
+            b_tui=False
+        )
+
+    if b_cue2d_network:
+
+        df_agents = pd.read_csv("./demo/benchmark1/benchmark1_agents.txt", sep=";")
+        df_places = pd.read_csv("./demo/benchmark1/benchmark1_places.txt", sep=";")
+
+        df_nodes = pd.read_csv("./demo/benchmark1/benchmark1_nodes.txt", sep=";")
+        df_network = pd.read_csv("./demo/benchmark1/benchmark1_network.txt", sep=";")
+
+        df_network = df_network[["Id_node_src", "Id_node_dst", "AStar", "Id_place_src", "Id_place_dst"]]
+
+
+        dct_meta, grd_ids = inp.asc_raster(file="./demo/benchmark1/benchmark1.asc", dtype="uint32")
+
+        plt.imshow(grd_ids)
+        plt.show()
+
+        play_network(
+            df_agents=df_agents,
+            df_places=df_places,
+            grd_ids=grd_ids,
+            df_nodes=df_nodes,
+            df_network=df_network,
+            n_steps=40,
+            s_weight="linear",
+            b_tui=True
+        )

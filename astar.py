@@ -49,6 +49,46 @@ import matplotlib.pyplot as plt
 # -----------------------------------------------------------------------------------------------------------
 # utils
 
+
+def get_benchmark_grid():
+    n_size = 100
+    grd = np.random.randint(1, 10000, size=(n_size, n_size), dtype="uint32")
+
+    grd[int(n_size / 2) - 1] = 0
+    grd[int(n_size / 2)] = 0
+    grd[int(n_size / 2) + 1] = 0
+
+    grd = grd.transpose()
+
+    for i in range(1, len(grd) - 1, 5):
+        grd[i - 1] = 0
+        grd[i] = 0
+        grd[i+ 1] = 0
+
+    return grd
+
+def get_benchmark_grid_2():
+    lst_grid = [
+        [0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 3, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 5],
+        [0, 0, 0, 0, 0, 4, 6],
+        [0, 0, 0, 0, 0, 0, 0]
+    ]
+    grd = np.array(lst_grid, dtype="uint32")
+    return grd
+
+def get_benchmark_grid_3():
+    np.random.seed(666)
+    n_size = 20
+    grd1 = np.random.randint(1, 10000, size=(n_size, n_size), dtype="uint32")
+    grd2 = np.random.randint(0, 100, size=(n_size, n_size), dtype="uint32")
+    grd = grd1 * (1 * (grd2 > 70))
+    return grd
+
+
 def path_to_wkt(vct_i, vct_j, metadata):
     '''
     convert a path to WKT given Raster Metadata
@@ -68,9 +108,40 @@ def path_to_wkt(vct_i, vct_j, metadata):
     s_vertex = ", ".join(lst_vertex)
     return "LineString({})".format(s_vertex)
 
-def get_wkt(df_network, metadata):
+
+def node_to_wkt(node_i, node_j, metadata):
+    """
+    convert a node to WKT given Raster Metadata
+    :param node_i: i coordinate
+    :type node_i: int
+    :param node_j: j coordinate
+    :type node_j: int
+    :param metadata: raster metadata
+    :type metadata: dict
+    :return: WKT of node
+    :rtype: str
+    """
+    n_cols = metadata["ncols"]
+    n_rows = metadata["nrows"]
+    n_scale = metadata["cellsize"]
+    vct_x = metadata["xllcorner"] + ((node_j * n_scale) + (n_scale / 2))
+    vct_y = metadata["yllcorner"] + ((n_rows - node_i) * n_scale) - (n_scale / 2)
+    return "Point ({} {})".format(vct_x, vct_y)
+
+
+def get_nodes_wkt(df_nodes, metadata):
+    df_nodes = df_nodes.copy()
+    df_nodes["Geom"] = "-"
+    for i in range(len(df_nodes)):
+        vct_i = df_nodes["i"].values[i]
+        vct_j = df_nodes["j"].values[i]
+        df_nodes["Geom"].values[i] = node_to_wkt(node_i=vct_i, node_j=vct_j, metadata=metadata)
+    return df_nodes
+
+
+def get_network_wkt(df_network, metadata):
     '''
-    compute WTK for all paths in Network dataframe
+    compute WTK for paths in Network dataframe
     :param df_network: pandas dataframe of network
     :param metadata: dict metadata from
     :return: new dataframe with WKT
@@ -212,12 +283,12 @@ def get_astar_path(grid_maze, grid_h, src_i, src_j, dst_i, dst_j):
 
     # ----------------------------------------------------------------------
     # search loop
-    t = 0
     while len(open_df) > 0:
 
         # ------------------------------------------------------------------
         # sort open queue by f
         open_df = open_df.sort_values(by='f').reset_index(drop=True)
+        #print(open_df.to_string())
 
         # ------------------------------------------------------------------
         # select top parent node
@@ -339,6 +410,57 @@ def get_astar_path(grid_maze, grid_h, src_i, src_j, dst_i, dst_j):
 
 
 def get_network(grd_places, df_places):
+    from scipy import ndimage
+    # -----------------------------------------------------------------------------------------------------------
+    # get NODES dataframe
+
+    # Scanning loop to find nodes
+
+    n_rows = len(grd_places)
+    n_cols = len(grd_places[0])
+    lst_nodes = []
+    lst_i = []
+    lst_j = []
+    lst_place = []
+    n_id = 0
+    for i in range(len(grd_places)):
+        for j in range(len(grd_places[i])):
+            n_lcl_value = grd_places[i][j]
+            if n_lcl_value == 0:  # is outdoor
+                pass
+            elif n_lcl_value in lst_place:  # already assessed
+                pass
+            else:
+                # get cell window
+                dct_window = get_window(cell_i=i, cell_j=j, rows=n_rows, cols=n_cols, size=1)
+                df_window = pd.DataFrame(dct_window)
+                # collect cell window values
+                df_window["Value"] = 0.0
+                for k in range(len(df_window)):
+                    lcl_i = df_window["i"].values[k]
+                    lcl_j = df_window["j"].values[k]
+                    df_window["Value"].values[k] = grd_places[lcl_i][lcl_j]
+                # check if there is a way out
+                if df_window["Value"].min() == 0:
+                    # append node to lists
+                    lst_nodes.append(n_id)
+                    lst_i.append(i)
+                    lst_j.append(j)
+                    lst_place.append(n_lcl_value)
+                    # update id
+                    n_id = n_id + 1
+
+    df_nodes = pd.DataFrame(
+        {
+            "Id_node": lst_nodes,
+            "i": lst_i,
+            "j": lst_j,
+            "Id_place": lst_place,
+        }
+    )
+
+    #df_nodes = df_nodes.sample(100)
+
     # -----------------------------------------------------------------------------------------------------------
     # network parameters
 
@@ -346,61 +468,22 @@ def get_network(grd_places, df_places):
     grd_maze = grd_places == 0
 
     # compute map attributes
-    n_indoors = np.sum(grd_places != 0)
+    n_indoors = len(df_nodes)
 
     # number of paths to compute
     n_paths = int((n_indoors * (n_indoors - 1)) / 2)
 
-    print("Number of paths: {}".format(n_paths))
+    #print("Number of paths to find: {}".format(n_paths))
 
-    # -----------------------------------------------------------------------------------------------------------
-    # get NODES dataframe
-
-    df_nodes = pd.DataFrame(
-        {
-            "Id_node": np.zeros(n_indoors, dtype="uint16"),
-            "i": np.zeros(n_indoors, dtype="uint16"),
-            "j": np.zeros(n_indoors, dtype="uint16"),
-            "Id_place": np.zeros(n_indoors, dtype="uint16"),
-
-        }
-    )
-    n_id = 0
-    # scanning loop
-    dct_h_grids = {}  # dict for storing heuristics grids
-    grid_h_blank = np.ones(shape=np.shape(grd_places), dtype='uint32')
-    for i in range(len(grd_places)):
-        for j in range(len(grd_places[i])):
-            n_lcl_value = grd_places[i][j]
-            if n_lcl_value == 0:
-                # outdoor place
-                pass
-            else:
-                # append fields
-                df_nodes["Id_node"].values[n_id] = n_id
-                df_nodes["j"].values[n_id] = j
-                df_nodes["i"].values[n_id] = i
-                df_nodes["Id_place"].values[n_id] = n_lcl_value
-
-                # get heuristic grid for each node
-                grid_h_local = grid_h_blank.copy()
-                grid_h_local[i][j] = 0
-                # get distance image (manhattan)
-                grid_h_local = 10 * ndimage.distance_transform_edt(grid_h_local)
-                # grid_h_local = grid_h_local.astype("uint16")
-                '''
-                plt.imshow(grid_h_local)
-                plt.show()
-                '''
-                dct_h_grids[n_id] = grid_h_local
-                # update
-                n_id = n_id + 1
+    '''
+    plt.imshow(grd_maze, "Greys")
+    plt.scatter(df_nodes["j"], df_nodes["i"], marker='.', color="orange")
+    plt.show()
+    '''
 
     # -----------------------------------------------------------------------------------------------------------
     # get NETWORK dataframe
 
-    n_network_size = n_paths
-    n_matrix = 10
     df_network = pd.DataFrame(
         {
             "Id_node_src": np.zeros(n_paths, dtype="uint16"),
@@ -441,22 +524,35 @@ def get_network(grd_places, df_places):
     )
 
     # compute AStar distance and path
+
+    # instantiate heuristics grid
+    grid_h_blank = np.ones(shape=np.shape(grd_places), dtype='uint32')
+
     print("processing A-Star distance...")
     for i in range(len(df_network)):
-        # print("computing iteration {} of {}".format(i + 1, len(df_distances)))
+        print("computing iteration {} of {}".format(i + 1, len(df_network)))
         n_dst_id = df_network["Id_node_dst"].values[i]
         n_src_j = df_network["j_src"].values[i]
         n_src_i = df_network["i_src"].values[i]
         n_dst_j = df_network["j_dst"].values[i]
         n_dst_i = df_network["i_dst"].values[i]
+        print("from ({},{}) to ({},{})".format(n_src_i, n_src_j, n_dst_i, n_dst_j))
+
+        # get distance heuristic grid for each node
+        grd_h_distance = grid_h_blank.copy()
+        grd_h_distance[n_dst_i][n_dst_j] = 0
+        # get distance image
+        grd_h_distance = 10 * ndimage.distance_transform_edt(grd_h_distance)
+
         df_path = get_astar_path(
             grid_maze=grd_maze,
-            grid_h=dct_h_grids[n_dst_id],
+            grid_h=grd_h_distance,
             src_i=n_src_i,
             src_j=n_src_j,
             dst_i=n_dst_i,
             dst_j=n_dst_j
         )
+
         n_dist = get_path_distance(
             vct_x=df_path["j"].values,
             vct_y=df_path["i"].values,
@@ -506,17 +602,16 @@ def get_network(grd_places, df_places):
         }
     )
 
-    return df_network
-
+    return df_network, df_nodes
 
 
 if __name__ == "__main__":
-    from scipy import ndimage
-    import inp
+    import inp, out
     # -----------------------------------------------------------------------------------------------------------
     # set random state
 
     np.random.seed(662)
+
     #
     # i = y = row coordinate
     # j = x = column coordinate
@@ -524,115 +619,39 @@ if __name__ == "__main__":
     # -----------------------------------------------------------------------------------------------------------
     # Load or create maze
 
-    #dct_meta, grd_places = inp.asc_raster(file="./samples/map_places_2d.asc")
 
     # ------------------------------------------------------
-    # create map
+    # load map
 
-    # get id grid
-    grd_places = np.zeros(shape=(8, 8), dtype="byte")
-    grd_places[1][1] = 1
-    grd_places[4][3] = 2
-    grd_places[6][4] = 3
-    grd_places[6][2] = 3
-    grd_places[2][6] = 4
-    grd_places[2][7] = 4
+    dct_meta, grd_places = inp.asc_raster(file="./demo/benchmark1/benchmark1.asc", dtype="float32")
+    #grd_places = grd_places.astype("uint32")
+    #print(dct_meta)
 
-    dct_meta, grd_places = inp.asc_raster(file="./samples/map_places_2d.asc")
-    print(dct_meta)
+
+    #grd_places = get_benchmark_grid_3() #get_benchmark_grid_2()
+    vct_uniques = np.unique(grd_places)
+
+
+
+
     # -----------------------------------------------------------------------------------------------------------
     # Load or create places data frame
-    df_places = pd.DataFrame(
-        {
-            "Id": np.unique(grd_places),
-            "Trait": np.random.randint(1, 20, len(np.unique(grd_places))),
-        }
-    )
-    df_places["C"] = 0.1
-    df_places["Name"] = "Place"
-    df_places["Name"].values[0] = "Outdoors"
-    print(df_places.to_string())
+    df_places = pd.read_csv("./demo/benchmark1/benchmark1_places.txt", sep=";")
 
     # -----------------------------------------------------------------------------------------------------------
     # Compute network
+    df_net, df_nodes = get_network(grd_places=grd_places, df_places=df_places)
 
-    df_net = get_network(grd_places=grd_places, df_places=df_places)
 
-    print(df_net.to_string())
-    df_q = df_net.query("Id_node_src == 0")
-    print(df_q.to_string())
+    df_wkt = get_nodes_wkt(df_nodes=df_nodes, metadata=dct_meta)
+    df_wkt.to_csv("./demo/benchmark1/benchmark1_nodes.txt", sep=";", index=False)
 
-    df_wkt = get_wkt(df_network=df_net, metadata=dct_meta)
-    print(df_wkt.to_string())
-    df_wkt.to_csv("C:/data/lines2.txt", sep=";", index=False)
+    df_wkt = get_network_wkt(df_network=df_net, metadata=dct_meta)
+    df_wkt.to_csv("./demo/benchmark1/benchmark1_network.txt", sep=";", index=False)
+
 
     # -----------------------------------------------------------------------------------------------------------
-    # CONTINUE HERE
 
-    import astar
-    import inp
-
-    n_size = 30
-
-    grd_rand = np.random.randint(1, 100, size=(n_size, n_size))
-    grd = np.random.randint(1, 100, size=(n_size, n_size))
-    grd = grd * (grd_rand > 50)
-
-    dct_meta, grd = inp.asc_raster(file="C:/data/saoleo_small_2m.asc", dtype="float32")
-    grd = grd.astype("byte")
-
-    plt.imshow(grd)
-    plt.show()
-
-    # Scanning loop to find nodes
-    n_rows = len(grd)
-    n_cols = len(grd[0])
-    lst_nodes = []
-    lst_i = []
-    lst_j = []
-    lst_place = []
-    c = 0
-    for i in range(len(grd)):
-        for j in range(len(grd[i])):
-            n_lcl_value = grd[i][j]
-            if n_lcl_value == 0:  # is outdoor
-                pass
-            elif n_lcl_value in lst_place:  # already assessed
-                pass
-            else:
-                # get window
-                dct_window = astar.get_window(cell_i=i, cell_j=j, rows=n_rows, cols=n_cols, size=1)
-                df_window = pd.DataFrame(dct_window)
-                # collect window values
-                df_window["Value"] = 0.0
-                for k in range(len(df_window)):
-                    df_window["Value"].values[k] = grd[df_window["i"].values[k]][df_window["j"].values[k]]
-                print("{}, {}".format(i, j))
-                # check if there is a way out
-                if df_window["Value"].min() == 0:
-                    print("Is node")
-                    lst_nodes.append(c)
-                    lst_i.append(i)
-                    lst_j.append(j)
-                    lst_place.append(n_lcl_value)
-                    c = c + 1
-                else:
-                    print("Inner cell")
-
-    df_nodes = pd.DataFrame(
-        {
-            "Id_node": lst_nodes,
-            "i": lst_i,
-            "j": lst_j,
-            "Id_place": lst_place,
-        }
-    )
-
-    print(df_nodes.to_string())
-
-    plt.imshow(grd)
-    plt.scatter(df_nodes["j"], df_nodes["i"], marker='.')
-    plt.show()
 
 
 
