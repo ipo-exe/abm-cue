@@ -511,7 +511,6 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform',
     return dct_output
 
 
-
 def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s_weight='uniform',
          b_tui=False, b_trace=True, b_return=False, b_edges=True):
 
@@ -524,6 +523,7 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
     n_places = len(df_places)
     n_rows = np.shape(grd_ids)[0]
     n_cols = np.shape(grd_ids)[1]
+
 
     # ------------------------------------------------------------------------------------------
     # define random seeds prior to simulation loop
@@ -554,17 +554,35 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
             # reset positions
             df_agents["y"].values[a] = df_nodes["i"].values[0]
             df_agents["x"].values[a] = df_nodes["j"].values[0]
-
+    '''
     plt.imshow(grd_ids)
     plt.scatter(df_agents["x"], df_agents["y"], c="orange")
     plt.show()
+    '''
+    # ------------------------------------------------------------------------------------------
+    # output dict
+    dct_out = {
+        "Places_Start": df_places.copy(),
+        "Agents_Start": df_agents.copy(),
+    }
+
+    # ------------------------------------------------------------------------------------------
+    # tracing variables
+    if b_trace:
+        grd_traced_agents_x = np.zeros(shape=(n_steps, n_agents), dtype=s_dtype)
+        grd_traced_agents_y = np.zeros(shape=(n_steps, n_agents), dtype=s_dtype)
+        grd_traced_agents_traits = np.zeros(shape=(n_steps, n_agents), dtype=s_dtype)
+        grd_traced_places_traits = np.zeros(shape=(n_steps, n_places), dtype=s_dtype)
+        grd_traced_places_traits[0] = df_places["Trait"].values
+        grd_traced_agents_traits[0] = df_agents["Trait"].values
+        grd_traced_agents_x[0] = df_agents["x"].values
+        grd_traced_agents_y[0] = df_agents["y"].values
 
     # ------------------------------------------------------------------------------------------
     # return variables
     if b_return:
         vct_agents_origin_x = df_agents.copy()["x"].values
         vct_agents_origin_y = df_agents.copy()["y"].values
-
     # ------------------------------------------------------------------------------------------
     # allocate memory variables
     dct_memory = dict()
@@ -595,28 +613,20 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
             a_x = df_agents["x"].values[a]
             a_y = df_agents["y"].values[a]
 
-            # --------------------------------------------------------------------------------------
-            # reset position values
-            if b_return:
-                # reset x
-                a_x = vct_agents_origin_x[a]
-                # reset y
-                a_y = vct_agents_origin_y[a]
-
             # ----------------------------------------------------------------------------------
             # get agent parameters
             a_d = df_agents["D"].values[a]
             a_r = df_agents["R"].values[a]
             a_c = df_agents["C"].values[a]
 
-            print("\n\nAgent {}| Sigma={} | R={} | D={} ".format(a, a_trait, a_r, a_d))
+            #print("\n\nAgent {}| Sigma={} | R={} | D={} ".format(a, a_trait, a_r, a_d))
 
             # ----------------------------------------------------------------------------------
             # get available places
 
             # finde node id
             node_id = df_nodes.query("i == {} and j == {}".format(a_y, a_x))["Id_node"].values[0]
-            print("Node : {}".format(node_id))
+            #print("Node : {}".format(node_id))
 
             # get node window
             df_window = df_network.query("Id_node_src == {}".format(node_id)).copy()
@@ -642,15 +652,16 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
                     # uniform interaction prob
                     df_window["Prob"] = 1 / a_d
                 elif s_weight.lower() == 'linear':
-                    # linear interaction score
-                    df_window["Prob"] = linear_prob(
-                        x=df_window['Delta'].values,
-                        x_max=a_d
-                    )
+                    df_window["Prob"] = 1 / a_d
+                    if len(df_window) > 1:
+                        # linear interaction score
+                        df_window["Prob"] = linear_prob(
+                            x=df_window['Delta'].values,
+                            x_max=a_d
+                        )
                 else:
                     # uniform interaction prob
                     df_window["Prob"] = 1 / a_d
-
                 # normalize
                 df_window["Prob"] = df_window["Prob"].values / df_window["Prob"].sum()
                 df_window = df_window.sort_values(by="Prob", ascending=False, ignore_index=True)
@@ -663,18 +674,59 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
                     p=df_window["Prob"].values
                 )[0]  # get the first
 
+                # ---------------------------------------------------------------------
+                # get next node and place data
                 next_node_id = df_window["Id_node_dst"].values[n_next_index]
-
-
-
-                print(df_window.to_string())
-                print("Chosen: {}".format(next_node_id))
+                place_id = df_window["Id_place_dst"].values[n_next_index]
+                df_next_node = df_nodes.query("Id_node == {}".format(next_node_id)).copy()
+                df_next_place = df_places.query("Id == {}".format(place_id)).copy()
+                # get place trait
+                p_index = df_next_place.index[0]
+                p_trait = df_next_place["Trait"].values[0]
+                # get place d
+                p_c_p = df_next_place["C"].values[0]
 
                 # ------------------------------------------------------------------------------
-                # interact
+                # move agent to next node
+                df_agents["y"].values[a] = df_next_node["i"].values[0]
+                df_agents["x"].values[a] = df_next_node["j"].values[0]
 
+                # ------------------------------------------------------------------------------
+                # interact agent with place in new node
 
+                # compute means
+                a_mean = (a_trait + (a_c * p_trait)) / (1 + a_c)
+                p_mean = (p_trait + (p_c_p * a_trait)) / (1 + p_c_p)
 
+                # replace in simulation dataframes
+                df_agents["Trait"].values[a] = a_mean
+                df_places["Trait"].values[p_index] = p_mean
+
+        # --------------------------------------------------------------------------------------
+        # trace variables
+        if b_trace:
+            grd_traced_places_traits[t] = df_places["Trait"].values
+            grd_traced_agents_traits[t] = df_agents["Trait"].values
+            grd_traced_agents_x[t] = df_agents["x"].values
+            grd_traced_agents_y[t] = df_agents["y"].values
+
+        # --------------------------------------------------------------------------------------
+        # reset position values
+        if b_return:
+            # reset x
+            df_agents["x"] = vct_agents_origin_x
+            # reset y
+            df_agents["y"] = vct_agents_origin_y
+
+    dct_out["Places_End"] = df_places.copy()
+    dct_out["Agents_End"] = df_agents.copy()
+    if b_trace:
+        dct_out["Places_traits"] = grd_traced_places_traits
+        dct_out["Agents_traits"] = grd_traced_agents_traits
+        dct_out["Agents_x"] = grd_traced_agents_x
+        dct_out["Agents_y"] = grd_traced_agents_y
+
+    return dct_out
 
 
 if __name__ == "__main__":
@@ -746,14 +798,17 @@ if __name__ == "__main__":
         df_network = pd.read_csv("./demo/benchmark1/benchmark1_network.txt", sep=";")
 
         df_network = df_network[["Id_node_src", "Id_node_dst", "AStar", "Id_place_src", "Id_place_dst"]]
-
+        #print(df_agents.to_string())
+        #print(df_places.head().to_string())
+        #print(df_nodes.head().to_string())
+        #print(df_network.head().to_string())
 
         dct_meta, grd_ids = inp.asc_raster(file="./demo/benchmark1/benchmark1.asc", dtype="uint32")
 
         plt.imshow(grd_ids)
         plt.show()
 
-        play_network(
+        o = play_network(
             df_agents=df_agents,
             df_places=df_places,
             grd_ids=grd_ids,
@@ -761,5 +816,26 @@ if __name__ == "__main__":
             df_network=df_network,
             n_steps=40,
             s_weight="linear",
-            b_tui=True
+            b_tui=True,
+            b_trace=False,
+            b_return=False
         )
+        print("\n\n")
+        print(o["Agents_start"])
+        print()
+        print(o["Agents_end"])
+
+        plt.scatter(o["Agents_start"]["x"], o["Agents_start"]["y"])
+        plt.scatter(o["Agents_end"]["x"], o["Agents_end"]["y"])
+        plt.ylim(0, 20)
+        plt.xlim(0, 20)
+        plt.show()
+
+        plt.plot(o["Agents_start"]["Trait"])
+        plt.plot(o["Agents_end"]["Trait"])
+        plt.show()
+
+        plt.plot(o["Places_start"]["Trait"])
+        plt.plot(o["Places_end"]["Trait"])
+        plt.show()
+
