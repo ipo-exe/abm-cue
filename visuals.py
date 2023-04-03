@@ -516,7 +516,7 @@ def plot_cue_2d_pannel(
     #
     # space map
     ax = fig.add_subplot(gs[:, :2])
-    im = plt.imshow(grd_traits, cmap=s_cmap, vmin=0, vmax=n_traits, origin="lower")
+    im = plt.imshow(grd_traits, cmap=s_cmap, vmin=0, vmax=n_traits)#, origin="lower")
     plt.colorbar(im, shrink=0.4)
     plt.title("places and agents")
     plt.ylabel("y")

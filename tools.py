@@ -372,8 +372,7 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
             )
     return {"Output folder": s_dir_out, "Error Status": "OK"}
 
-
-def run_cue2d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
+def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
     import cue2d
     # ------------------------------------------------------------------------------------------
     # import param_simulation_2d.txt
@@ -419,6 +418,24 @@ def run_cue2d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
             .values[0]
             .strip()
     )
+
+    # ------------------------------------------------------------------------------------------
+    # get files for network simulation
+    if b_network:
+        # --------------------------------------------------------------------------------------
+        # get nodes file
+        f_nodes = (
+            df_param_sim.loc[df_param_sim["Metadata"] == "Nodes File", "Value"]
+            .values[0]
+            .strip()
+        )
+        # --------------------------------------------------------------------------------------
+        # get network file
+        f_network = (
+            df_param_sim.loc[df_param_sim["Metadata"] == "Network File", "Value"]
+            .values[0]
+            .strip()
+        )
 
     # ------------------------------------------------------------------------------------------
     # get simulation parameters
@@ -482,6 +499,20 @@ def run_cue2d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
     # import places map
     meta, grd_ids = inp.asc_raster(file=f_places_map)
 
+    # -------------------------------------------------------------------------------------------
+    # import file for network simulation
+    if b_network:
+        # ------------------------------------------------------------------------------------------
+        # import nodes file
+        dct_nodes = inp.import_data_table(s_table_name="nodes_2d", s_filepath=f_nodes)
+        df_nodes = dct_nodes["df"]
+        # ------------------------------------------------------------------------------------------
+        # import network file
+        dct_network = inp.import_data_table(s_table_name="network_2d", s_filepath=f_network)
+        df_network = dct_network["df"]
+        # filter
+        df_network_filter = df_network[["Id_node_src", "Id_node_dst", "AStar", "Id_place_src", "Id_place_dst"]]
+
     #-------------------------------------------------------------------------------------------
     # extra params
     n_agents = len(df_agents)
@@ -489,16 +520,31 @@ def run_cue2d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
 
     #--------------------------------------------------------------------------------------------
     # run model
-    dct_out = cue2d.play(
-        df_agents=df_agents,
-        df_places=df_places,
-        grd_ids=grd_ids,
-        n_steps=n_steps,
-        s_weight=s_weighting,
-        b_tui=True,
-        b_return=b_return,
-        b_trace=b_trace
-    )
+    if b_network:
+        dct_out = cue2d.play_network(
+            df_agents=df_agents,
+            df_places=df_places,
+            grd_ids=grd_ids,
+            df_nodes=df_nodes,
+            df_network=df_network,
+            n_steps=n_steps,
+            s_weight=s_weighting,
+            b_tui=True,
+            b_return=b_return,
+            b_trace=b_trace
+        )
+
+    else:
+        dct_out = cue2d.play(
+            df_agents=df_agents,
+            df_places=df_places,
+            grd_ids=grd_ids,
+            n_steps=n_steps,
+            s_weight=s_weighting,
+            b_tui=True,
+            b_return=b_return,
+            b_trace=b_trace
+        )
 
     #--------------------------------------------------------------------------------------------
     # retrieve outputs
@@ -617,18 +663,21 @@ def run_cue2d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
             df_traced_agents_traits[s_lcl_agent_trait] = grd_traced_agents_traits_t[i]
 
         # ----------------------------------------------------------------------------------------
-        # deploy places dataframes
-        df_traced_places_traits = pd.DataFrame({"Step": np.arange(0, n_steps)})
+        # deploy places dict
+
+        dct_traced_places_traits = {
+            "Step": np.arange(0, n_steps)
+        }
 
         # ----------------------------------------------------------------------------------------
         # loop to append fields to dataframe
         for i in range(n_places):
             s_lcl_place_trait = "{}_{}_Trait".format(
                 df_places_end["Alias"].values[i],
-                df_places_end["Id"].values[i]
+                int(df_places_end["Id"].values[i])
             )
-            df_traced_places_traits[s_lcl_place_trait] = grd_traced_places_traits_t[i]
-
+            dct_traced_places_traits[s_lcl_place_trait] = grd_traced_places_traits_t[i]
+        df_traced_places_traits = pd.DataFrame(dct_traced_places_traits)
         # ----------------------------------------------------------------------------------------
         # run series analyst
         # set H field for agents
@@ -742,11 +791,6 @@ def run_cue2d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
                 s_dir_frames=s_dir_frames,
                 s_dir_out=s_dir_out
             )
-
-
-
-def run_network(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
-    pass
 
 
 def animate_frames_1d(
@@ -874,7 +918,6 @@ def animate_frames_2d(
     dct_places = inp.import_data_table(s_table_name="param_places_2d", s_filepath=s_param_places)
     df_places = dct_places["df"]
     df_places["Trait"] = df_places["Trait"].astype("float64")
-
     # --------------------------------------------------------------------------------------------
     # import agents file
     dct_agents = inp.import_data_table(s_table_name="param_agents_2d", s_filepath=s_param_agents)
@@ -926,9 +969,10 @@ def animate_frames_2d(
         grd_traits = cue2d.map_traits(
             grd_ids=grd_ids,
             vct_ids=df_places["Id"].values,
-            vct_traits=df_traced_places_traits.values[t][1:]
+            vct_traits=df_traced_places_traits.values[t][:-1]
         )
-        grd_traits[grd_traits == 0] = np.nan
+        grd_traits[grd_ids == 0] = np.nan
+
         plot_cue_2d_pannel(
             grd_traits=grd_traits,
             n_step=t,
@@ -965,4 +1009,8 @@ if __name__ == "__main__":
 
     # --------------------------------------------------------------------------------------------
     # run 2d
-    run_cue2d(s_fsim="./samples/param_simulation_2d.txt")
+    #run_cue2d(s_fsim="./samples/param_simulation_2d.txt")
+
+    # --------------------------------------------------------------------------------------------
+    # run 2d network
+    run_cue2d(s_fsim="./samples/param_simulation_network_2d.txt", b_network=True)

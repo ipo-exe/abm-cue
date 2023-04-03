@@ -644,7 +644,7 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
             df_window = df_window.query("Delta <= {}".format(a_d)).copy()
 
             if len(df_window) == 0:
-                print("no place to go and interact")
+                pass
             else:
                 # ---------------------------------------------------------------------
                 # get sampling probability
@@ -721,10 +721,12 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
     dct_out["Places_End"] = df_places.copy()
     dct_out["Agents_End"] = df_agents.copy()
     if b_trace:
-        dct_out["Places_traits"] = grd_traced_places_traits
-        dct_out["Agents_traits"] = grd_traced_agents_traits
-        dct_out["Agents_x"] = grd_traced_agents_x
-        dct_out["Agents_y"] = grd_traced_agents_y
+        dct_out["Simulation"] = {
+            "Places_traits": grd_traced_places_traits,
+            "Agents_traits": grd_traced_agents_traits,
+            "Agents_x": grd_traced_agents_x,
+            "Agents_y": grd_traced_agents_y,
+        }
 
     return dct_out
 
@@ -794,14 +796,20 @@ if __name__ == "__main__":
         df_agents = pd.read_csv("./demo/benchmark1/benchmark1_agents.txt", sep=";")
         df_places = pd.read_csv("./demo/benchmark1/benchmark1_places.txt", sep=";")
 
-        df_nodes = pd.read_csv("./demo/benchmark1/benchmark1_nodes.txt", sep=";")
-        df_network = pd.read_csv("./demo/benchmark1/benchmark1_network.txt", sep=";")
+        dct_nodes = inp.import_data_table(s_table_name="nodes_2d", s_filepath="./demo/benchmark1/benchmark1_nodes.txt")
+        df_nodes = dct_nodes["df"]
+
+        dct_network = inp.import_data_table(s_table_name="network_2d", s_filepath="./demo/benchmark1/benchmark1_network.txt")
+        df_network = dct_network["df"]
+
+        #df_nodes = pd.read_csv("./demo/benchmark1/benchmark1_nodes.txt", sep=";")
+        #df_network = pd.read_csv("./demo/benchmark1/benchmark1_network.txt", sep=";")
 
         df_network = df_network[["Id_node_src", "Id_node_dst", "AStar", "Id_place_src", "Id_place_dst"]]
         #print(df_agents.to_string())
         #print(df_places.head().to_string())
-        #print(df_nodes.head().to_string())
-        #print(df_network.head().to_string())
+        print(df_nodes.head().to_string())
+        print(df_network.head().to_string())
 
         dct_meta, grd_ids = inp.asc_raster(file="./demo/benchmark1/benchmark1.asc", dtype="uint32")
 
@@ -821,21 +829,21 @@ if __name__ == "__main__":
             b_return=False
         )
         print("\n\n")
-        print(o["Agents_start"])
+        print(o["Agents_Start"])
         print()
-        print(o["Agents_end"])
+        print(o["Agents_End"])
 
-        plt.scatter(o["Agents_start"]["x"], o["Agents_start"]["y"])
-        plt.scatter(o["Agents_end"]["x"], o["Agents_end"]["y"])
+        plt.scatter(o["Agents_Start"]["x"], o["Agents_Start"]["y"])
+        plt.scatter(o["Agents_End"]["x"], o["Agents_End"]["y"])
         plt.ylim(0, 20)
         plt.xlim(0, 20)
         plt.show()
 
-        plt.plot(o["Agents_start"]["Trait"])
-        plt.plot(o["Agents_end"]["Trait"])
+        plt.plot(o["Agents_Start"]["Trait"])
+        plt.plot(o["Agents_End"]["Trait"])
         plt.show()
 
-        plt.plot(o["Places_start"]["Trait"])
-        plt.plot(o["Places_end"]["Trait"])
+        plt.plot(o["Places_Start"]["Trait"])
+        plt.plot(o["Places_End"]["Trait"])
         plt.show()
 

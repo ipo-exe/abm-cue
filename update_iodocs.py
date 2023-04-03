@@ -6,6 +6,7 @@ def append_table(df):
     global lst_file
 
     def append_line(lst_items):
+        #print(lst_items)
         s_main = " | ".join(lst_items)
         lst_file.append("|{}|\n".format(s_main))
 
@@ -47,7 +48,9 @@ def append_fields(lst_fields):
     lst_lcl_descr = list()
     lst_lcl_units = list()
     for f in lst_fields:
+        #print(f)
         df_lcl = df_gloss.query('Name == "{}"'.format(f.strip()))
+        #print(df_lcl.to_string())
         lst_lcl_field.append("`{}`".format(f))
         # s_field_dtype = df_lcl['Dtype'].values[0]
         lst_lcl_dtype.append(df_lcl["Dtype"].values[0])
@@ -137,6 +140,7 @@ if __name__ == "__main__":
     # files loop
     for i in range(len(lst_dfs)):
         df = lst_dfs[i]
+        #print(df.to_string())
         lst_file.append("\n# {}\n".format(lst_heads[i]))
         lst_file.append("{}\n\n".format(lst_descr[i]))
         # table

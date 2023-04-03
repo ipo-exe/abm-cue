@@ -38,3 +38,14 @@ Count;positive integer number;Counting units;-;field
 H;real number;Shannon Entropy;Bits;field
 H_agents;real number;Shannon Entropy of Agents;Bits;field
 H_places;real number;Shannon Entropy of Places;Bits;field
+Id_node;unique integer number;Category numerical identifyier of Nodes;-;field
+Id_node_src;unique integer number;Category numerical identifyier of Source Node in Network;-;field
+Id_node_dst;unique integer number;Category numerical identifyier of Destiny Node in Network;-;field
+Id_place;unique integer number;Category numerical identifyier of Place in Network;-;field
+Id_place_src;unique integer number;Category numerical identifyier of Source Place in Network;-;field
+Id_place_dst;unique integer number;Category numerical identifyier of Destiny Place in Network;-;field
+Geom;text;Feature geometry encoded in Well Known Text;-;field
+Euclidean;positive real number;Euclidean distance;map units;field
+AStar;positive real number;Non-euclidean distance computed by the A-Star algorithm;map units;field
+i;positive integer number;Position coordinate in the y axis;cell units;variable
+j;positive integer number;Position coordinate in the x axis;cell units;variable
