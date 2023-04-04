@@ -453,8 +453,8 @@ def get_network(grd_places, df_places):
     df_nodes = pd.DataFrame(
         {
             "Id_node": lst_nodes,
-            "i": lst_i,
             "j": lst_j,
+            "i": lst_i,
             "Id_place": lst_place,
         }
     )

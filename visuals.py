@@ -522,6 +522,10 @@ def plot_cue_2d_pannel(
     plt.ylabel("y")
     plt.xlabel("x")
 
+
+    # plot agents paths
+
+    # plot agents
     plt.scatter(
         vct_agents_x,
         vct_agents_y,

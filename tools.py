@@ -664,7 +664,6 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
 
         # ----------------------------------------------------------------------------------------
         # deploy places dict
-
         dct_traced_places_traits = {
             "Step": np.arange(0, n_steps)
         }
@@ -710,6 +709,18 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
         )
         df_traced_places_traits.to_csv(
             "{}/traced_places_traits.txt".format(s_dir_out), sep=";", index=False
+        )
+
+        # ----------------------------------------------------------------------------------------
+        # retrieve paths
+
+        df_paths = retrieve_paths(
+            df_network=df_network,
+            df_traced_agents_x=df_traced_agents_x,
+            df_traced_agents_y=df_traced_agents_y
+        )
+        df_paths.to_csv(
+            "{}/traced_agents_paths.txt".format(s_dir_out), sep=";", index=False
         )
 
         # ----------------------------------------------------------------------------------------
@@ -791,6 +802,67 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
                 s_dir_frames=s_dir_frames,
                 s_dir_out=s_dir_out
             )
+
+
+
+def retrieve_paths(df_network, df_traced_agents_x, df_traced_agents_y):
+    df_network = df_network[["i_src", "j_src", "i_dst", "j_dst", "Euclidean", "AStar", "Path_i", "Path_j", "Geom"]]
+
+    df_traced_agents_x = df_traced_agents_x.set_index("Step")
+    df_traced_agents_y = df_traced_agents_y.set_index("Step")
+
+    lst_agent = list()
+    lst_step = list()
+    lst_geoms = list()
+    lst_path_i = list()
+    lst_path_j = list()
+    lst_euclid = list()
+    lst_astar = list()
+
+    for a in df_traced_agents_x.columns:
+        s_agent = a[:-2]
+        a_x = df_traced_agents_x["{}_x".format(s_agent)].values
+        a_y = df_traced_agents_y["{}_y".format(s_agent)].values
+        for i in range(1, len(a_x)):
+            src_x = a_x[i - 1]
+            src_y = a_y[i - 1]
+            dst_x = a_x[i]
+            dst_y = a_y[i]
+            s_query = "i_src == {} and j_src == {} and i_dst == {} and j_dst == {}".format(
+                src_y, src_x, dst_y, dst_x)
+            df_query = df_network.query(
+                "i_src == {} and j_src == {} and i_dst == {} and j_dst == {}".format(
+                    src_y, src_x, dst_y, dst_x
+                )
+            )
+            if len(df_query) > 0:
+                s_path_i = df_query["Path_i"].values[0]
+                s_path_j = df_query["Path_j"].values[0]
+                s_geom = df_query["Geom"].values[0]
+                n_euclidean = df_query["Euclidean"].values[0]
+                n_astar = df_query["AStar"].values[0]
+
+                lst_step.append(i)
+                lst_agent.append(s_agent)
+                lst_geoms.append(s_geom)
+                lst_path_i.append(s_path_i)
+                lst_path_j.append(s_path_j)
+                lst_euclid.append(n_euclidean)
+                lst_astar.append(n_astar)
+
+    df_out = pd.DataFrame(
+        {
+            "Agent": lst_agent,
+            "Step": lst_step,
+            "Euclidean": lst_euclid,
+            "AStar": lst_astar,
+            "Path_i": lst_path_i,
+            "Path_j": lst_path_j,
+            "Geom": lst_geoms
+        }
+    )
+
+    return df_out
 
 
 def animate_frames_1d(
@@ -1013,4 +1085,6 @@ if __name__ == "__main__":
 
     # --------------------------------------------------------------------------------------------
     # run 2d network
-    run_cue2d(s_fsim="./samples/param_simulation_network_2d.txt", b_network=True)
+    #fsim = "./demo/benchmark1/benchmark1_param_simulation.txt"
+    fsim = "./demo/saoleo/saoleo_param_simulation.txt"
+    run_cue2d(s_fsim=fsim, b_network=True)

@@ -1,0 +1,14 @@
+Metadata;Value
+Timestamp;2022/08/25 16:48:07.86
+Input Folder;./demo/benchmark1
+Run Folder;C:/bin
+Places Map;./demo/benchmark1/benchmark1.asc
+Places File;./demo/benchmark1/benchmark1_places.txt
+Agents File;./demo/benchmark1/benchmark1_agents.txt
+Nodes File;./demo/benchmark1/benchmark1_nodes.txt
+Network File;./demo/benchmark1/benchmark1_network.txt
+Steps;20
+Weighting;Linear
+Return Agents;False
+Trace Back;True
+Plot Steps;True

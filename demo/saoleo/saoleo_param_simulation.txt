@@ -1,0 +1,14 @@
+Metadata;Value
+Timestamp;2022/08/25 16:48:07.86
+Input Folder;./demo/saoleo
+Run Folder;C:/bin
+Places Map;./demo/saoleo/saoleo_small_map.asc
+Places File;./demo/saoleo/saoleo_small_places.txt
+Agents File;./demo/saoleo/saoleo_small_agents.txt
+Nodes File;./demo/saoleo/saoleo_small_nodes.txt
+Network File;./demo/saoleo/saoleo_small_network.txt
+Steps;50
+Weighting;Linear
+Return Agents;False
+Trace Back;True
+Plot Steps;True
