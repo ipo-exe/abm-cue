@@ -545,15 +545,15 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
         lcl_i = df_agents["y"].values[a]
         lcl_j = df_agents["x"].values[a]
         # filter data frame
-        df_aux = df_nodes.query("i == {} and j == {}".format(lcl_i, lcl_j))
+        df_aux = df_nodes.query("y == {} and x == {}".format(lcl_i, lcl_j))
         # if empty, set new agent position
         if len(df_aux) == 0:
             # compute euclidean distances
-            df_nodes["D"] = astar.get_xy_distance(x1=lcl_j, y1=lcl_i, x2=df_nodes["j"].values, y2=df_nodes["i"].values)
+            df_nodes["D"] = astar.get_xy_distance(x1=lcl_j, y1=lcl_i, x2=df_nodes["x"].values, y2=df_nodes["y"].values)
             df_nodes = df_nodes.sort_values(by="D", ignore_index=True)
             # reset positions
-            df_agents["y"].values[a] = df_nodes["i"].values[0]
-            df_agents["x"].values[a] = df_nodes["j"].values[0]
+            df_agents["y"].values[a] = df_nodes["y"].values[0]
+            df_agents["x"].values[a] = df_nodes["x"].values[0]
     '''
     plt.imshow(grd_ids)
     plt.scatter(df_agents["x"], df_agents["y"], c="orange")
@@ -604,7 +604,6 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
         # agents loop
         for a in range(len(df_agents)):
 
-
             # ----------------------------------------------------------------------------------
             # get agents variables
             a_id = df_agents["Id"].values[a]
@@ -625,7 +624,7 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
             # get available places
 
             # finde node id
-            node_id = df_nodes.query("i == {} and j == {}".format(a_y, a_x))["Id_node"].values[0]
+            node_id = df_nodes.query("y == {} and x == {}".format(a_y, a_x))["Id_node"].values[0]
             #print("Node : {}".format(node_id))
 
             # get node window
@@ -688,8 +687,8 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
 
                 # ------------------------------------------------------------------------------
                 # move agent to next node
-                df_agents["y"].values[a] = df_next_node["i"].values[0]
-                df_agents["x"].values[a] = df_next_node["j"].values[0]
+                df_agents["y"].values[a] = df_next_node["y"].values[0]
+                df_agents["x"].values[a] = df_next_node["x"].values[0]
 
                 # ------------------------------------------------------------------------------
                 # interact agent with place in new node

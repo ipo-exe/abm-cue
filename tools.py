@@ -803,10 +803,35 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
                 s_dir_out=s_dir_out
             )
 
+def compute_network(f_map, f_places, s_dir_out="C:/bin"):
+    import astar
 
+    # -----------------------------------------------------------------------------------------------------------
+    # Load map
+    dct_meta, grd_places = inp.asc_raster(file=f_map, dtype="float32")
+
+    # -----------------------------------------------------------------------------------------------------------
+    # Load places data frame
+    dct_places = inp.import_data_table(s_table_name="param_places_2d", s_filepath=f_places)
+    df_places = dct_places["df"]
+    df_places["Trait"] = df_places["Trait"].astype("float64")
+
+    # -----------------------------------------------------------------------------------------------------------
+    # Compute network
+    df_net, df_nodes = astar.get_network(grd_places=grd_places, df_places=df_places, tui=True)
+
+    # -----------------------------------------------------------------------------------------------------------
+    # Compute Geometries
+    df_wkt_nodes = astar.get_nodes_wkt(df_nodes=df_nodes, metadata=dct_meta)
+    df_wkt_net = astar.get_network_wkt(df_network=df_net, metadata=dct_meta)
+
+    # -----------------------------------------------------------------------------------------------------------
+    # Export
+    df_wkt_nodes.to_csv("{}/nodes.txt".format(s_dir_out), sep=";", index=False)
+    df_wkt_net.to_csv("{}/network.txt".format(s_dir_out), sep=";", index=False)
 
 def retrieve_paths(df_network, df_traced_agents_x, df_traced_agents_y):
-    df_network = df_network[["i_src", "j_src", "i_dst", "j_dst", "Euclidean", "AStar", "Path_i", "Path_j", "Geom"]]
+    df_network = df_network.copy()
 
     df_traced_agents_x = df_traced_agents_x.set_index("Step")
     df_traced_agents_y = df_traced_agents_y.set_index("Step")
@@ -823,26 +848,25 @@ def retrieve_paths(df_network, df_traced_agents_x, df_traced_agents_y):
         s_agent = a[:-2]
         a_x = df_traced_agents_x["{}_x".format(s_agent)].values
         a_y = df_traced_agents_y["{}_y".format(s_agent)].values
-        for i in range(1, len(a_x)):
-            src_x = a_x[i - 1]
-            src_y = a_y[i - 1]
-            dst_x = a_x[i]
-            dst_y = a_y[i]
-            s_query = "i_src == {} and j_src == {} and i_dst == {} and j_dst == {}".format(
+        for t in range(1, len(a_x)):
+
+            src_x = a_x[t - 1]
+            src_y = a_y[t - 1]
+            dst_x = a_x[t]
+            dst_y = a_y[t]
+            s_query = "y_src == {} and x_src == {} and y_dst == {} and x_dst == {}".format(
                 src_y, src_x, dst_y, dst_x)
-            df_query = df_network.query(
-                "i_src == {} and j_src == {} and i_dst == {} and j_dst == {}".format(
-                    src_y, src_x, dst_y, dst_x
-                )
-            )
+            #print(s_query)
+            df_query = df_network.query(s_query)
             if len(df_query) > 0:
-                s_path_i = df_query["Path_i"].values[0]
-                s_path_j = df_query["Path_j"].values[0]
+                #print("{} - step {}".format(s_agent, t))
+                s_path_i = df_query["Path_y"].values[0]
+                s_path_j = df_query["Path_x"].values[0]
                 s_geom = df_query["Geom"].values[0]
                 n_euclidean = df_query["Euclidean"].values[0]
                 n_astar = df_query["AStar"].values[0]
-
-                lst_step.append(i)
+                # append
+                lst_step.append(t)
                 lst_agent.append(s_agent)
                 lst_geoms.append(s_geom)
                 lst_path_i.append(s_path_i)
@@ -856,8 +880,8 @@ def retrieve_paths(df_network, df_traced_agents_x, df_traced_agents_y):
             "Step": lst_step,
             "Euclidean": lst_euclid,
             "AStar": lst_astar,
-            "Path_i": lst_path_i,
-            "Path_j": lst_path_j,
+            "Path_x": lst_path_j,
+            "Path_y": lst_path_i,
             "Geom": lst_geoms
         }
     )
@@ -1088,3 +1112,10 @@ if __name__ == "__main__":
     #fsim = "./demo/benchmark1/benchmark1_param_simulation.txt"
     fsim = "./demo/saoleo/saoleo_param_simulation.txt"
     run_cue2d(s_fsim=fsim, b_network=True)
+
+    # --------------------------------------------------------------------------------------------
+    # run network analyst
+    #fmap = "./demo/benchmark1/benchmark1.asc"
+    #fmap = "./demo/saoleo/saoleo_small_map.asc"
+    #fplaces = "./demo/saoleo/saoleo_small_places.txt"
+    #compute_network(f_map=fmap, f_places=fplaces, s_dir_out="C:/bin")

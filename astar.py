@@ -133,8 +133,8 @@ def get_nodes_wkt(df_nodes, metadata):
     df_nodes = df_nodes.copy()
     df_nodes["Geom"] = "-"
     for i in range(len(df_nodes)):
-        vct_i = df_nodes["i"].values[i]
-        vct_j = df_nodes["j"].values[i]
+        vct_i = df_nodes["y"].values[i]
+        vct_j = df_nodes["x"].values[i]
         df_nodes["Geom"].values[i] = node_to_wkt(node_i=vct_i, node_j=vct_j, metadata=metadata)
     return df_nodes
 
@@ -149,8 +149,8 @@ def get_network_wkt(df_network, metadata):
     df_network = df_network.copy()
     df_network["Geom"] = "-"
     for i in range(len(df_network)):
-        vct_i = np.array(list(map(int, df_network["Path_i"].values[i].split("-"))))
-        vct_j = np.array(list(map(int, df_network["Path_j"].values[i].split("-"))))
+        vct_i = np.array(list(map(int, df_network["Path_y"].values[i].split("-"))))
+        vct_j = np.array(list(map(int, df_network["Path_x"].values[i].split("-"))))
         df_network["Geom"].values[i] = path_to_wkt(vct_i, vct_j, metadata)
     return df_network
 
@@ -409,13 +409,18 @@ def get_astar_path(grid_maze, grid_h, src_i, src_j, dst_i, dst_j):
     return route_df
 
 
-def get_network(grd_places, df_places):
+def get_network(grd_places, df_places, tui=False):
     from scipy import ndimage
+
+    if tui:
+        import backend
+
     # -----------------------------------------------------------------------------------------------------------
     # get NODES dataframe
 
     # Scanning loop to find nodes
-
+    if tui:
+        backend.status("Network analyst :: Searching Nodes in Places Map")
     n_rows = len(grd_places)
     n_cols = len(grd_places[0])
     lst_nodes = []
@@ -453,8 +458,8 @@ def get_network(grd_places, df_places):
     df_nodes = pd.DataFrame(
         {
             "Id_node": lst_nodes,
-            "j": lst_j,
-            "i": lst_i,
+            "x": lst_j,
+            "y": lst_i,
             "Id_place": lst_place,
         }
     )
@@ -473,7 +478,9 @@ def get_network(grd_places, df_places):
     # number of paths to compute
     n_paths = int((n_indoors * (n_indoors - 1)) / 2)
 
-    #print("Number of paths to find: {}".format(n_paths))
+    if tui:
+        backend.status("Network analyst :: Number of nodes found = {}".format(len(df_nodes)))
+        backend.status("Network analyst :: Number of single paths = {}".format(n_paths))
 
     '''
     plt.imshow(grd_maze, "Greys")
@@ -483,22 +490,25 @@ def get_network(grd_places, df_places):
 
     # -----------------------------------------------------------------------------------------------------------
     # get NETWORK dataframe
-
+    if tui:
+        backend.status("Network analyst :: Processing Paths")
     df_network = pd.DataFrame(
         {
             "Id_node_src": np.zeros(n_paths, dtype="uint16"),
-            "i_src": np.zeros(n_paths, dtype="uint16"),
-            "j_src": np.zeros(n_paths, dtype="uint16"),
+            "x_src": np.zeros(n_paths, dtype="uint16"),
+            "y_src": np.zeros(n_paths, dtype="uint16"),
             "Id_node_dst": np.zeros(n_paths, dtype="uint16"),
-            "i_dst": np.zeros(n_paths, dtype="uint16"),
-            "j_dst": np.zeros(n_paths, dtype="uint16"),
+            "x_dst": np.zeros(n_paths, dtype="uint16"),
+            "y_dst": np.zeros(n_paths, dtype="uint16"),
             "Euclidean": np.zeros(n_paths, dtype="float32"),
             "AStar": np.zeros(n_paths, dtype="float32"),
         }
     )
-    df_network["Path_i"] = "-"
-    df_network["Path_j"] = "-"
+    df_network["Path_x"] = "-"
+    df_network["Path_y"] = "-"
 
+    if tui:
+        backend.status("Network analyst :: Setting source and destination nodes")
     c = 0
     for n in range(len(df_nodes)):
         for m in range(len(df_nodes)):
@@ -509,35 +519,44 @@ def get_network(grd_places, df_places):
                 df_network["Id_node_src"].values[c] = df_nodes["Id_node"].values[n]
                 df_network["Id_node_dst"].values[c] = df_nodes["Id_node"].values[m]
                 # set coordinates
-                df_network["i_src"].values[c] = df_nodes["i"].values[n]
-                df_network["i_dst"].values[c] = df_nodes["i"].values[m]
-                df_network["j_src"].values[c] = df_nodes["j"].values[n]
-                df_network["j_dst"].values[c] = df_nodes["j"].values[m]
+                df_network["y_src"].values[c] = df_nodes["y"].values[n]
+                df_network["y_dst"].values[c] = df_nodes["y"].values[m]
+                df_network["x_src"].values[c] = df_nodes["x"].values[n]
+                df_network["x_dst"].values[c] = df_nodes["x"].values[m]
                 c = c + 1
 
+    # -----------------------------------------------------------------------------------------------------------
     # compute euclidean distance
+
+    if tui:
+        backend.status("Network analyst :: Computing euclidean distances")
     df_network["Euclidean"] = get_xy_distance(
-        x1=df_network["j_src"].values,
-        y1=df_network["i_src"].values,
-        x2=df_network["j_dst"].values,
-        y2=df_network["i_dst"].values
+        x1=df_network["x_src"].values,
+        y1=df_network["y_src"].values,
+        x2=df_network["x_dst"].values,
+        y2=df_network["y_dst"].values
     )
 
+    # -----------------------------------------------------------------------------------------------------------
     # compute AStar distance and path
 
     # instantiate heuristics grid
     grid_h_blank = np.ones(shape=np.shape(grd_places), dtype='uint32')
 
-    print("processing A-Star distance...")
+    if tui:
+        backend.status("Network analyst :: Computing non-euclidean distances")
     for i in range(len(df_network)):
-        print("computing iteration {} of {}".format(i + 1, len(df_network)))
+        if tui:
+            n_percent = 100 * ((i + 1) / len(df_network))
+            backend.status("Network analyst :: AStar algorithm ---- {} of {} [{:.2f}%]".format(
+                i + 1, len(df_network), n_percent
+                )
+            )
         n_dst_id = df_network["Id_node_dst"].values[i]
-        n_src_j = df_network["j_src"].values[i]
-        n_src_i = df_network["i_src"].values[i]
-        n_dst_j = df_network["j_dst"].values[i]
-        n_dst_i = df_network["i_dst"].values[i]
-        print("from ({},{}) to ({},{})".format(n_src_i, n_src_j, n_dst_i, n_dst_j))
-
+        n_src_j = df_network["x_src"].values[i]
+        n_src_i = df_network["y_src"].values[i]
+        n_dst_j = df_network["x_dst"].values[i]
+        n_dst_i = df_network["y_dst"].values[i]
         # get distance heuristic grid for each node
         grd_h_distance = grid_h_blank.copy()
         grd_h_distance[n_dst_i][n_dst_j] = 0
@@ -558,49 +577,41 @@ def get_network(grd_places, df_places):
             vct_y=df_path["i"].values,
         )
         df_network["AStar"].values[i] = n_dist
-        s_path_i = "-".join(df_path["i"].astype(str))
-        s_path_j = "-".join(df_path["j"].astype(str))
-        df_network["Path_i"].values[i] = s_path_i
-        df_network["Path_j"].values[i] = s_path_j
+        s_path_i = "-".join(df_path["j"].astype(str))
+        s_path_j = "-".join(df_path["i"].astype(str))
+        df_network["Path_x"].values[i] = s_path_j
+        df_network["Path_y"].values[i] = s_path_i
 
+    if tui:
+        backend.status("Network analyst :: Append reverse network")
+
+    # -----------------------------------------------------------------------------------------------------------
     # append inverse network
+
     df_network_inv = df_network.copy()
     df_network_inv["Id_node_src"] = df_network["Id_node_dst"].values
     df_network_inv["Id_node_dst"] = df_network["Id_node_src"].values
-    df_network_inv["i_src"] = df_network["i_dst"].values
-    df_network_inv["i_dst"] = df_network["i_src"].values
-    df_network_inv["j_src"] = df_network["j_dst"].values
-    df_network_inv["j_dst"] = df_network["j_src"].values
+    df_network_inv["y_src"] = df_network["y_dst"].values
+    df_network_inv["y_dst"] = df_network["y_src"].values
+    df_network_inv["x_src"] = df_network["x_dst"].values
+    df_network_inv["x_dst"] = df_network["x_src"].values
     df_network = pd.concat([df_network, df_network_inv], ignore_index=True)
 
-    # merge Places attributes in src
+    # -----------------------------------------------------------------------------------------------------------
+    # merge Places ID attributes
+
+    if tui:
+        backend.status("Network analyst :: Merge Places Id attributes")
     df_network = df_network.merge(df_nodes[["Id_node", "Id_place"]], how="left", left_on="Id_node_src", right_on="Id_node")
     df_network = df_network.drop(columns=["Id_node"])
     df_network = df_network.rename(columns={"Id_place": "Id_place_src"})
-    df_network = df_network.merge(df_places, how="left", left_on="Id_place_src", right_on="Id")
-    df_network = df_network.drop(columns=["Id"])
-    df_network = df_network.rename(
-        columns={
-            "Trait": "Trait_src",
-            "C": "C_src",
-            "Name": "Name_src",
-        }
-    )
 
     # merge Places attributes in dst
     df_network = df_network.merge(df_nodes[["Id_node", "Id_place"]], how="left", left_on="Id_node_dst",
                                   right_on="Id_node")
     df_network = df_network.drop(columns=["Id_node"])
     df_network = df_network.rename(columns={"Id_place": "Id_place_dst"})
-    df_network = df_network.merge(df_places, how="left", left_on="Id_place_dst", right_on="Id")
-    df_network = df_network.drop(columns=["Id"])
-    df_network = df_network.rename(
-        columns={
-            "Trait": "Trait_dst",
-            "C": "C_dst",
-            "Name": "Name_dst",
-        }
-    )
+
 
     return df_network, df_nodes
 
@@ -641,7 +652,6 @@ if __name__ == "__main__":
     # -----------------------------------------------------------------------------------------------------------
     # Compute network
     df_net, df_nodes = get_network(grd_places=grd_places, df_places=df_places)
-
 
     df_wkt = get_nodes_wkt(df_nodes=df_nodes, metadata=dct_meta)
     df_wkt.to_csv("./demo/benchmark1/benchmark1_nodes.txt", sep=";", index=False)
