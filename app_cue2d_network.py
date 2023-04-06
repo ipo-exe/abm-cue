@@ -1,6 +1,6 @@
 """
 
-CUE 2d GUI source code
+CUE 2d - Network method GUI source code
 
 Copyright (C) 2022 Iporã Brito Possantti
 
@@ -77,6 +77,17 @@ def call_agents_tool():
     import subprocess
     subprocess.run(["python", "app_set_agents_2d.py"])
 
+
+def call_network_tool():
+    """
+    call the network tool
+    :return:
+    :rtype:
+    """
+    import subprocess
+    subprocess.run(["python", "app_set_agents_2d.py"])
+
+
 # todo replace this
 def command_demo():
     print("Hey")
@@ -128,6 +139,7 @@ def save_as():
             s_metadata_filepath = s_ans
         else:
             s_metadata_filepath = s_ans + '.txt'
+        # save
         save()
         # enable save
         menu_file.entryconfig(2, state=NORMAL)
@@ -272,7 +284,12 @@ def run():
 
             # ---------------------------------
             # RUN
-            dct_out = tools.run_cue2d(s_fsim=fsim, b_wkplc=False, s_dir_out=s_folder)
+            dct_out = tools.run_cue2d(
+                s_fsim=fsim,
+                b_wkplc=False,
+                b_network=True,
+                s_dir_out=s_folder
+            )
             # ---------------------------------
 
             # report
@@ -773,14 +790,18 @@ root = tkinter.Tk()
 # workplace
 lst_lbls_wplc = ["Input Folder", "Run Folder"]
 # input files
-lst_lbls_inp = ["Places Map", "Places File", "Agents File"]
+lst_lbls_inp = ["Places Map", "Places File", "Agents File", "Nodes File", "Network File"]
 lst_urls_inp = [
     "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#map_places_2dasc",
     "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_places_2dtxt",
-    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agents_2dtxt"
+    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agents_2dtxt",
+    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#nodes_2dtxt",
+    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#network_2dtxt"
 ]
 lst_types_inp = [
     ("ASC File", "*.asc"),
+    ("Text File", "*.txt"),
+    ("Text File", "*.txt"),
     ("Text File", "*.txt"),
     ("Text File", "*.txt")
 ]
@@ -803,7 +824,7 @@ s_platform = platform.system().lower()
 df_setup = pd.read_csv('./gui/setup.txt', sep=';', skipinitialspace=True)
 # try to set
 try:
-    n_height = df_setup.loc[df_setup["Name"] == 'height', s_platform].values[0]
+    n_height = 1.1 * df_setup.loc[df_setup["Name"] == 'height', s_platform].values[0]
     n_width = df_setup.loc[df_setup["Name"] == 'width', s_platform].values[0]
     n_entry_label_width = df_setup.loc[df_setup["Name"] == 'entry label width', s_platform].values[0]
     n_entry_width_file = df_setup.loc[df_setup["Name"] == 'entry width file', s_platform].values[0]
@@ -890,7 +911,7 @@ root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
 
 # --------------------------------------------------------------------------------------------------
 # files setup
-s_title = "CUE2d Tool"
+s_title = "CUE2d Network Tool"
 root.title(s_title)
 
 # --------------------------------------------------------------------------------------------------
@@ -976,7 +997,6 @@ menu_tools.add_command(
     activeforeground=color_fg,
     command=call_place_tool,
 )
-# todo change the tool for 2D
 # add menu items to the Settings menu
 menu_tools.add_command(
     label="Agents File Tool",
@@ -985,6 +1005,15 @@ menu_tools.add_command(
     foreground=color_fg,
     activeforeground=color_fg,
     command=call_agents_tool,
+)
+# add menu items to the Settings menu
+menu_tools.add_command(
+    label="Network Tool",
+    image=img_tool,
+    compound=LEFT,
+    foreground=color_fg,
+    activeforeground=color_fg,
+    command=call_network_tool,
 )
 # add the File menu to the menubar
 menubar.add_cascade(
@@ -1235,18 +1264,21 @@ for i in range(len(lst_lbls_inp)):
     dct_btn_about_inp[s_lcl_key].grid(
         row=i, column=4, pady=n_widg_pady, padx=n_widg_padx
     )
-    # tool button
-    dct_btn_tool_inp[s_lcl_key] = tkinter.Button(
-        frame_inputfiles,
-        image=img_tool,
-        bg=color_bg,
-        activebackground=color_actbg,
-        foreground=color_fg,
-        activeforeground=color_fg,
-        highlightbackground=color_bg,
-        bd=0,
-    )
-    dct_btn_tool_inp[s_lcl_key].grid(row=i, column=5, pady=n_widg_pady, padx=n_widg_padx)
+    if i == 0 or i == 4:
+        pass
+    else:
+        # tool button
+        dct_btn_tool_inp[s_lcl_key] = tkinter.Button(
+            frame_inputfiles,
+            image=img_tool,
+            bg=color_bg,
+            activebackground=color_actbg,
+            foreground=color_fg,
+            activeforeground=color_fg,
+            highlightbackground=color_bg,
+            bd=0,
+        )
+        dct_btn_tool_inp[s_lcl_key].grid(row=i, column=5, pady=n_widg_pady, padx=n_widg_padx)
 
 # config input update buttons commmands
 dct_btn_upd_inp[lst_lbls_inp[0]].config(
@@ -1280,6 +1312,20 @@ dct_btn_search_inp[lst_lbls_inp[2]].config(
         s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
     )
 )
+dct_btn_search_inp[lst_lbls_inp[3]].config(
+    command=lambda: pick_file(
+        s_entry=lst_lbls_inp[3],
+        tpl_file_type=lst_types_inp[3],
+        s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
+    )
+)
+dct_btn_search_inp[lst_lbls_inp[4]].config(
+    command=lambda: pick_file(
+        s_entry=lst_lbls_inp[4],
+        tpl_file_type=lst_types_inp[4],
+        s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
+    )
+)
 # config input about buttons commands
 dct_btn_about_inp[lst_lbls_inp[0]].config(
     command=lambda: open_about_input(n_entry=0)
@@ -1290,12 +1336,21 @@ dct_btn_about_inp[lst_lbls_inp[1]].config(
 dct_btn_about_inp[lst_lbls_inp[2]].config(
     command=lambda: open_about_input(n_entry=2)
 )
+dct_btn_about_inp[lst_lbls_inp[3]].config(
+    command=lambda: open_about_input(n_entry=3)
+)
+dct_btn_about_inp[lst_lbls_inp[4]].config(
+    command=lambda: open_about_input(n_entry=4)
+)
 # config input tool buttons commmands
 dct_btn_tool_inp[lst_lbls_inp[1]].config(
     command=call_place_tool
 )
 dct_btn_tool_inp[lst_lbls_inp[2]].config(
     command=call_agents_tool
+)
+dct_btn_tool_inp[lst_lbls_inp[3]].config(
+    command=call_network_tool
 )
 
 # --------------------------------------------------------------------------------------------------

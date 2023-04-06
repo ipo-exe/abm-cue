@@ -1,10 +1,10 @@
 Id;x;y;Trait;D;R;M;C;Name;Alias;Color
-1;187;152;10;20;100;5;0.1;Agent A;A;red
-2;142;215;10;10;100;5;0.1;Agent B;B;orange
-3;150;206;10;5;100;5;0.1;Agent C;C;tab:red
-4;159;154;10;5;100;5;0.1;Agent D;D;blue
-5;100;127;10;5;100;5;0.1;Agent E;E;tab:blue
-6;149;95;10;5;100;5;0.1;Agent F;F;green
-7;139;211;10;5;100;5;0.1;Agent G;G;tab:green
-8;190;78;10;5;100;5;0.1;Agent H;H;magenta
-9;145;166;10;5;100;5;0.1;Agent I;I;cyan
+1;187;152;10;20;20;5;0.1;Agent A;A;red
+2;142;215;10;10;20;5;0.1;Agent B;B;orange
+3;150;206;10;5;20;5;0.1;Agent C;C;tab:red
+4;159;154;10;5;20;5;0.1;Agent D;D;blue
+5;100;127;10;5;20;5;0.1;Agent E;E;tab:blue
+6;149;95;10;5;20;5;0.1;Agent F;F;green
+7;139;211;10;5;20;5;0.1;Agent G;G;tab:green
+8;190;78;10;5;20;5;0.1;Agent H;H;magenta
+9;145;166;10;5;20;5;0.1;Agent I;I;cyan
