@@ -756,7 +756,7 @@ def print_report_header():
     report header
     :return:
     """
-    print_report_msg(s_msg=" {} Basic Tool {} ".format("*" * 30, "*" * 30))
+    print_report_msg(s_msg=" {} CUE1d Tool {} ".format("*" * 30, "*" * 30))
     print_report_msg(s_msg="Initiate session")
 
 

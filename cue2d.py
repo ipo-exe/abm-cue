@@ -633,7 +633,7 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
             # apply Spatial distance constrain
             df_window = df_window.query("AStar <= {}".format(a_r)).copy()
 
-            # merge current destiny traits
+            # merge CURRENT destiny traits
             df_window = pd.merge(df_window, df_places[["Id", "Trait", "C"]], how="left", left_on="Id_place_dst", right_on="Id")
 
             # ---------------------------------------------------------------------
@@ -652,7 +652,9 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
                     df_window["Prob"] = 1 / a_d
                 elif s_weight.lower() == 'linear':
                     df_window["Prob"] = 1 / a_d
-                    if len(df_window) > 1:
+                    if df_window["Delta"].max() == df_window["Delta"].min():
+                        pass
+                    elif len(df_window) > 1:
                         # linear interaction score
                         df_window["Prob"] = linear_prob(
                             x=df_window['Delta'].values,
@@ -664,7 +666,8 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
                 # normalize
                 df_window["Prob"] = df_window["Prob"].values / df_window["Prob"].sum()
                 df_window = df_window.sort_values(by="Prob", ascending=False, ignore_index=True)
-
+                if df_window["Prob"].isnull().values.any():
+                    print(df_window.to_string())
                 # ---------------------------------------------------------------------
                 # weighted random sampling
                 n_next_index = np.random.choice(
@@ -730,11 +733,15 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
     return dct_out
 
 
+def batch_play_network():
+    pass
+
+
 if __name__ == "__main__":
 
     b_cue2d = False
-    b_cue2d_network = True
-
+    b_cue2d_network = False
+    b_batch = True
 
     if b_cue2d:
         import matplotlib.pyplot as plt
@@ -845,4 +852,26 @@ if __name__ == "__main__":
         plt.plot(o["Places_Start"]["Trait"])
         plt.plot(o["Places_End"]["Trait"])
         plt.show()
+
+    if b_batch:
+
+        df_batch = pd.DataFrame(
+            {
+                "Parameter": ["D", "R", "M", "C"],
+                "Min": [2, 2, 3, 0.01],
+                "Max": [100, 200, 10, 1.2],
+                "Grid": [10, 10, 10, 10]
+            }
+        )
+
+        dct_agents = inp.import_data_table(s_table_name="param_agents_2d", s_filepath="./demo/benchmark1/benchmark1_agents.txt")
+        df_agents = dct_agents["df"]
+        #df_agents = pd.read_csv("./demo/benchmark1/benchmark1_agents.txt", sep=";")
+
+        print(df_agents.to_string())
+        df_agents["D"] = df_agents["D"] / df_agents["D"].min()
+
+        print(df_agents.to_string())
+        R_upper = 10
+        D_lower = 1
 

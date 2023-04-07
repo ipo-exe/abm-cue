@@ -755,7 +755,7 @@ def print_report_header():
     report header
     :return:
     """
-    print_report_msg(s_msg=" {} Basic Tool {} ".format("*" * 30, "*" * 30))
+    print_report_msg(s_msg=" {} CUE1d Tool {} ".format("*" * 30, "*" * 30))
     print_report_msg(s_msg="Initiate session")
 
 
@@ -1063,7 +1063,7 @@ label_logo = tkinter.Label(
     activeforeground=color_fg,
 )
 label_logo.pack(side=RIGHT)
-s_head_msg = "CUE1d Application Tool"
+s_head_msg = "CUE2d Application Tool"
 label_infos = tkinter.Label(
     frame_info,
     text=s_head_msg,

@@ -142,14 +142,17 @@ def get_seed():
     return int(sg + mn + hr)
 
 
-def create_rundir(label="", wkplc="C:"):
+def create_rundir(label="", wkplc="C:", b_timestamp=True):
     """
     Create a run directory
     :param label: string label
     :param wkplc: string folder path
     :return: string path to directory
     """
-    dir_nm = wkplc + "/" + label + "_" + timestamp()
+    s_aux = ""
+    if b_timestamp:
+        s_aux = "_" + timestamp()
+    dir_nm = wkplc + "/" + label + s_aux
     os.mkdir(dir_nm)
     return dir_nm
 

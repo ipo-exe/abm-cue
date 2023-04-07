@@ -185,6 +185,7 @@ def reload_entries():
         dct_etr_inp[k].delete(0, END)
         # insert
         dct_etr_inp[k].insert(0, s_reload)
+    '''
     # parameters
     for k in dct_etr_params:
         df_lcl = df_meta.query('Metadata == "{}"'.format(k))
@@ -206,6 +207,8 @@ def reload_entries():
             dct_var_opts[k].set(True)
         else:
             dct_var_opts[k].set(False)
+    '''
+
 
 
 def new_session():
@@ -272,10 +275,10 @@ def run():
         # Create run dir
         backend.status("creating output directory", process=True)
         s_lcl_wkplc = df_meta[df_meta["Metadata"] == "Run Folder"]["Value"].values[0]
-        s_folder = backend.create_rundir(label="CUE2d_Network", wkplc=s_lcl_wkplc)
+        s_folder = backend.create_rundir(label="Network", wkplc=s_lcl_wkplc)
         # save metadata to run dir
         backend.status("saving simulation parameters", process=True)
-        fsim = "{}/param_simulation_2d.txt".format(s_folder)
+        fsim = "{}/param_network.txt".format(s_folder)
         df_meta.to_csv(fsim, sep=";", index=False)
 
         # run things
@@ -284,12 +287,21 @@ def run():
 
             # ---------------------------------
             # RUN
+            s_fmap = df_meta[df_meta["Metadata"] == "Places Map"]["Value"].values[0]
+            s_fplaces = df_meta[df_meta["Metadata"] == "Places File"]["Value"].values[0]
+            tools.compute_network(
+                f_map=s_fmap,
+                f_places=s_fplaces,
+                s_dir_out=s_folder
+            )
+            """
             dct_out = tools.run_cue2d(
                 s_fsim=fsim,
                 b_wkplc=False,
                 b_network=True,
                 s_dir_out=s_folder
             )
+            """
             # ---------------------------------
 
             # report
@@ -349,6 +361,7 @@ def get_entry_metadata():
         s_lcl_key = lst_lbls_inp[i]
         lst_metadata.append(s_lcl_key)
         lst_values.append(dct_etr_inp[s_lcl_key].get())
+    '''
     # update paramters
     for i in range(len(lst_lbls_params)):
         s_lcl_key = lst_lbls_params[i]
@@ -359,6 +372,7 @@ def get_entry_metadata():
         s_lcl_key = lst_lbls_opts[i]
         lst_metadata.append(s_lcl_key)
         lst_values.append(dct_var_opts[s_lcl_key].get())
+    '''
     # re-instantiate dataframe
     df_meta = pd.DataFrame(
         {
@@ -469,6 +483,7 @@ def update_all_entries(
             b_report_error=b_report_error,
             b_report_update=b_report_update,
         )
+    '''
     # parameters
     for i in range(len(lst_lbls_params)):
         update_parameter(
@@ -478,6 +493,9 @@ def update_all_entries(
             b_report_error=b_report_error,
             b_report_update=b_report_update,
         )
+    
+    '''
+
 
 
 def update_folder(s_entry, b_popup=True, b_report_error=True, b_report_update=True):
@@ -772,7 +790,7 @@ def print_report_header():
     report header
     :return:
     """
-    print_report_msg(s_msg=" {} CUE2d Network Tool {} ".format("*" * 30, "*" * 30))
+    print_report_msg(s_msg=" {} Network Tool {} ".format("*" * 30, "*" * 30))
     print_report_msg(s_msg="Initiate session")
 
 
@@ -790,27 +808,26 @@ root = tkinter.Tk()
 # workplace
 lst_lbls_wplc = ["Input Folder", "Run Folder"]
 # input files
-lst_lbls_inp = ["Places Map", "Places File", "Agents File", "Nodes File", "Network File"]
+lst_lbls_inp = ["Places Map", "Places File"]
 lst_urls_inp = [
     "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#map_places_2dasc",
-    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_places_2dtxt",
-    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_agents_2dtxt",
-    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#nodes_2dtxt",
-    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#network_2dtxt"
+    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_places_2dtxt"
 ]
 lst_types_inp = [
     ("ASC File", "*.asc"),
-    ("Text File", "*.txt"),
-    ("Text File", "*.txt"),
-    ("Text File", "*.txt"),
     ("Text File", "*.txt")
 ]
+'''
 # parameters
 lst_lbls_params = ["Steps", "Weighting"]
 lst_widget_params = ["Int", "Str"]
 lst_size_entry_params = [6, 12]
+
 # boolean options
 lst_lbls_opts = ["Return Agents", "Trace Back", "Plot Steps"]
+
+'''
+
 
 # reset status
 reset_status()
@@ -824,7 +841,7 @@ s_platform = platform.system().lower()
 df_setup = pd.read_csv('./gui/setup.txt', sep=';', skipinitialspace=True)
 # try to set
 try:
-    n_height = 1.1 * df_setup.loc[df_setup["Name"] == 'height', s_platform].values[0]
+    n_height = 0.85 * df_setup.loc[df_setup["Name"] == 'height', s_platform].values[0]
     n_width = df_setup.loc[df_setup["Name"] == 'width', s_platform].values[0]
     n_entry_label_width = df_setup.loc[df_setup["Name"] == 'entry label width', s_platform].values[0]
     n_entry_width_file = df_setup.loc[df_setup["Name"] == 'entry width file', s_platform].values[0]
@@ -1092,7 +1109,7 @@ label_logo = tkinter.Label(
     activeforeground=color_fg,
 )
 label_logo.pack(side=RIGHT)
-s_head_msg = "CUE2d Network Application Tool"
+s_head_msg = "Network Application Tool"
 label_infos = tkinter.Label(
     frame_info,
     text=s_head_msg,
@@ -1287,9 +1304,6 @@ dct_btn_upd_inp[lst_lbls_inp[0]].config(
 dct_btn_upd_inp[lst_lbls_inp[1]].config(
     command=lambda: update_file(s_entry=lst_lbls_inp[1])
 )
-dct_btn_upd_inp[lst_lbls_inp[2]].config(
-    command=lambda: update_file(s_entry=lst_lbls_inp[2])
-)
 # config input search buttons commmands
 dct_btn_search_inp[lst_lbls_inp[0]].config(
     command=lambda: pick_file(
@@ -1305,27 +1319,7 @@ dct_btn_search_inp[lst_lbls_inp[1]].config(
         s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
     )
 )
-dct_btn_search_inp[lst_lbls_inp[2]].config(
-    command=lambda: pick_file(
-        s_entry=lst_lbls_inp[2],
-        tpl_file_type=lst_types_inp[2],
-        s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
-    )
-)
-dct_btn_search_inp[lst_lbls_inp[3]].config(
-    command=lambda: pick_file(
-        s_entry=lst_lbls_inp[3],
-        tpl_file_type=lst_types_inp[3],
-        s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
-    )
-)
-dct_btn_search_inp[lst_lbls_inp[4]].config(
-    command=lambda: pick_file(
-        s_entry=lst_lbls_inp[4],
-        tpl_file_type=lst_types_inp[4],
-        s_initialdir=dct_etr_wplc[lst_lbls_wplc[0]].get(),
-    )
-)
+
 # config input about buttons commands
 dct_btn_about_inp[lst_lbls_inp[0]].config(
     command=lambda: open_about_input(n_entry=0)
@@ -1333,29 +1327,15 @@ dct_btn_about_inp[lst_lbls_inp[0]].config(
 dct_btn_about_inp[lst_lbls_inp[1]].config(
     command=lambda: open_about_input(n_entry=1)
 )
-dct_btn_about_inp[lst_lbls_inp[2]].config(
-    command=lambda: open_about_input(n_entry=2)
-)
-dct_btn_about_inp[lst_lbls_inp[3]].config(
-    command=lambda: open_about_input(n_entry=3)
-)
-dct_btn_about_inp[lst_lbls_inp[4]].config(
-    command=lambda: open_about_input(n_entry=4)
-)
+
 # config input tool buttons commmands
 dct_btn_tool_inp[lst_lbls_inp[1]].config(
     command=call_place_tool
 )
-dct_btn_tool_inp[lst_lbls_inp[2]].config(
-    command=call_agents_tool
-)
-dct_btn_tool_inp[lst_lbls_inp[3]].config(
-    command=call_network_tool
-)
 
 # --------------------------------------------------------------------------------------------------
 # >> Parameters
-dct_lbls_params = dict()
+'''dct_lbls_params = dict()
 dct_etr_params = dict()
 dct_btn_upd_params = dict()
 for i in range(len(lst_lbls_params)):
@@ -1411,9 +1391,10 @@ dct_btn_upd_params[lst_lbls_params[1]].config(
         s_entry_type=lst_widget_params[1]
     )
 )
-
+'''
 # --------------------------------------------------------------------------------------------------
 # >> Tool Options
+'''
 # place options checkbuttons
 dct_lbls_opts = dict()
 dct_checks_opts = dict()
@@ -1443,6 +1424,7 @@ for i in range(len(lst_lbls_opts)):
     dct_lbls_opts[s_lcl_key].pack(side=LEFT)
     dct_checks_opts[s_lcl_key].pack(side=LEFT)
 
+'''
 # --------------------------------------------------------------------------------------------------
 # >> Main Board
 # run button

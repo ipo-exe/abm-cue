@@ -40,6 +40,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 """
 import os.path
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import inp, backend
@@ -372,7 +374,8 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
             )
     return {"Output folder": s_dir_out, "Error Status": "OK"}
 
-def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
+
+def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin", b_tui=True):
     import cue2d
     # ------------------------------------------------------------------------------------------
     # import param_simulation_2d.txt
@@ -529,7 +532,7 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
             df_network=df_network,
             n_steps=n_steps,
             s_weight=s_weighting,
-            b_tui=True,
+            b_tui=b_tui,
             b_return=b_return,
             b_trace=b_trace
         )
@@ -541,7 +544,7 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
             grd_ids=grd_ids,
             n_steps=n_steps,
             s_weight=s_weighting,
-            b_tui=True,
+            b_tui=b_tui,
             b_return=b_return,
             b_trace=b_trace
         )
@@ -569,7 +572,8 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
 
     #--------------------------------------------------------------------------------------------
     # export results
-    status("exporting start/end results datasets")
+    if b_tui:
+        status("exporting start/end results datasets")
     df_agents_start.to_csv(
         "{}/param_agents_2d_start.txt".format(s_dir_out), sep=";", index=False
     )
@@ -582,7 +586,8 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
     df_places_end.to_csv(
         "{}/param_places_2d_end.txt".format(s_dir_out), sep=";", index=False
     )
-    status("exporting start/end analyst")
+    if b_tui:
+        status("exporting start/end analyst")
     df_analyst.to_csv(
         "{}/analyst_start_end.txt".format(s_dir_out), sep=";", index=False
     )
@@ -630,7 +635,8 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
     # --------------------------------------------------------------------------------------------
     # plot traced variables
     if b_trace:
-        status("exporting traced results datasets")
+        if b_tui:
+            status("exporting traced results datasets")
 
         # ----------------------------------------------------------------------------------------
         # transpose grids
@@ -713,15 +719,15 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
 
         # ----------------------------------------------------------------------------------------
         # retrieve paths
-
-        df_paths = retrieve_paths(
-            df_network=df_network,
-            df_traced_agents_x=df_traced_agents_x,
-            df_traced_agents_y=df_traced_agents_y
-        )
-        df_paths.to_csv(
-            "{}/traced_agents_paths.txt".format(s_dir_out), sep=";", index=False
-        )
+        if b_network:
+            df_paths = retrieve_paths(
+                df_network=df_network,
+                df_traced_agents_x=df_traced_agents_x,
+                df_traced_agents_y=df_traced_agents_y
+            )
+            df_paths.to_csv(
+                "{}/traced_agents_paths.txt".format(s_dir_out), sep=";", index=False
+            )
 
         # ----------------------------------------------------------------------------------------
         # plot series
@@ -800,8 +806,10 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin"):
                 s_traced_agents_traits="{}/traced_agents_traits.txt".format(s_dir_out),
                 s_traced_places_traits="{}/traced_places_traits.txt".format(s_dir_out),
                 s_dir_frames=s_dir_frames,
-                s_dir_out=s_dir_out
+                s_dir_out=s_dir_out,
+                b_tui=b_tui
             )
+
 
 def compute_network(f_map, f_places, s_dir_out="C:/bin"):
     import astar
@@ -829,6 +837,7 @@ def compute_network(f_map, f_places, s_dir_out="C:/bin"):
     # Export
     df_wkt_nodes.to_csv("{}/nodes.txt".format(s_dir_out), sep=";", index=False)
     df_wkt_net.to_csv("{}/network.txt".format(s_dir_out), sep=";", index=False)
+
 
 def retrieve_paths(df_network, df_traced_agents_x, df_traced_agents_y):
     df_network = df_network.copy()
@@ -990,7 +999,8 @@ def animate_frames_2d(
         s_traced_agents_traits,
         s_traced_places_traits,
         s_dir_frames,
-        s_dir_out='C:/'
+        s_dir_out='C:/',
+        b_tui=True
 ):
     """
     tool for a posteriori plotting of the CUE1d model
@@ -1052,14 +1062,16 @@ def animate_frames_2d(
 
     # -------------------------------------------------------------------------------------------
     # plot animation frames
-    status("plotting frames", process=True)
+    if b_tui:
+        status("plotting frames", process=True)
     s_cmap = "viridis"  # 'tab20c'
     for t in range(n_steps):
-        status(
-            "CUE2d :: plotting step {} [{:.2f}%]".format(
-                t, 100 * (t + 1) / n_steps
+        if b_tui:
+            status(
+                "CUE2d :: plotting step {} [{:.2f}%]".format(
+                    t, 100 * (t + 1) / n_steps
+                )
             )
-        )
         # --------------------------------------------------------------------------------------
         # map traits
         grd_traits = cue2d.map_traits(
@@ -1086,7 +1098,8 @@ def animate_frames_2d(
             b_dark=False,
         )
     # export animation
-    status("generating gif animation", process=True)
+    if b_tui:
+        status("generating gif animation", process=True)
     export_gif(
         dir_output=s_dir_out,
         dir_images=s_dir_frames,
@@ -1095,6 +1108,128 @@ def animate_frames_2d(
         suf="", #
     )
 
+
+
+def sal_agents_cue2dnet(s_fsim, s_dir_out="C:/bin"):
+
+    # ------------------------------------------------------------------------------------------
+    # import reference simulation param_simulation_2d.txt
+    dct_fsim = inp.import_data_table(s_table_name="param_simulation_network_2d", s_filepath=s_fsim)
+    df_param_sim = dct_fsim["df"]
+
+    # ------------------------------------------------------------------------------------------
+    # get agents file
+    f_agents = (
+        df_param_sim.loc[df_param_sim["Metadata"] == "Agents File", "Value"]
+            .values[0]
+            .strip()
+    )
+
+    # -------------------------------------------------------------------------------------------
+    # import agents file
+    dct_agents = inp.import_data_table(s_table_name="param_agents_2d", s_filepath=f_agents)
+    df_agents = dct_agents["df"]
+    df_agents["Trait"] = df_agents["Trait"].astype("float64")
+
+    # ------------------------------------------------------------------------------------------
+    # import batch file
+    df_batch = pd.DataFrame(
+        {
+            "Parameter": ["D", "R"],
+            "Min": [10, 5],
+            "Max": [40, 50],
+            "Grid": [3, 3]
+        }
+    )
+
+    s_dir_out = backend.create_rundir(label="Batch_CUE2d_NET", wkplc=s_dir_out)
+    s_dir_runs = backend.create_rundir(label="Batch_runs", wkplc=s_dir_out, b_timestamp=False)
+
+    # parameter 1
+    p1_name = df_batch["Parameter"].values[0].strip()
+    p1_min = df_batch["Min"].values[0]
+    p1_max = df_batch["Max"].values[0]
+    p1_grid = df_batch["Grid"].values[0]
+
+    # parameter 2
+    p2_name = df_batch["Parameter"].values[1].strip()
+    p2_min = df_batch["Min"].values[1]
+    p2_max = df_batch["Max"].values[1]
+    p2_grid = df_batch["Grid"].values[1]
+    p1_values = np.linspace(p1_min, p1_max, p1_grid)
+    p2_values = np.linspace(p2_min, p2_max, p2_grid)
+
+    # number of runs
+    n_runs = len(p2_values) * len(p1_values)
+    grd_analyst = np.zeros(shape=(len(p1_values), len(p2_values)))
+
+
+    for i in range(len(p1_values)):
+        p1 = p1_values[i]
+        for j in range(len(p2_values)):
+            p2 = p2_values[j]
+            # ------------------------------------------------------------------------------------------
+            # set local simulation dir
+            s_label = "Batch_{}{}_{}{}".format(p1_name, int(p1), p2_name, int(p2))
+            backend.status(s_label)
+            s_dir = backend.create_rundir(label=s_label, b_timestamp=False, wkplc=s_dir_runs)
+
+            # ------------------------------------------------------------------------------------------
+            # set local simulation parameters
+            df_param_sim_lcl = df_param_sim.copy()
+
+            # ------------------------------------------------------------------------------------------
+            # update timestamp value
+            df_param_sim_lcl.loc[
+                df_param_sim["Metadata"] == "Timestamp", "Value"
+            ] = backend.timestamp_log()
+
+            # ------------------------------------------------------------------------------------------
+            # update run dir value
+            df_param_sim_lcl.loc[
+                df_param_sim["Metadata"] == "Run Folder", "Value"
+            ] = s_dir
+
+            # ------------------------------------------------------------------------------------------
+            # set local agents file
+            df_agents_lcl = df_agents.copy()
+            # scale values to the grid reference value
+            df_agents_lcl[p1_name] = p1 * (df_agents_lcl[p1_name] / df_agents_lcl[p1_name].min())
+            df_agents_lcl[p2_name] = p2 * (df_agents_lcl[p2_name] / df_agents_lcl[p2_name].min())
+
+            # ------------------------------------------------------------------------------------------
+            # update agents file
+            f_agents_lcl = "{}/param_agents_2d_input.txt".format(s_dir)
+            df_agents_lcl.to_csv(f_agents_lcl, sep=";", index=False)
+            # update
+            df_param_sim_lcl.loc[
+                df_param_sim["Metadata"] == "Agents File", "Value"
+            ] = f_agents_lcl
+
+            # ------------------------------------------------------------------------------------------
+            # export simulation network
+            fsim_lcl = "{}/param_simulation_network_2d.txt".format(s_dir)
+            df_param_sim_lcl.to_csv(fsim_lcl, sep=";", index=False)
+
+            # ------------------------------------------------------------------------------------------
+            # run tool
+            run_cue2d(s_fsim=fsim_lcl, b_network=True, s_dir_out=s_dir, b_wkplc=False, b_tui=False)
+
+            # ------------------------------------------------------------------------------------------
+            # collect analyst data
+            df_traced_agents = pd.read_csv("{}/traced_agents_traits.txt".format(s_dir), sep=";")
+            h_start_agents = df_traced_agents["H"].values[0]
+            h_end_agents = df_traced_agents["H"].values[-1]
+            h_delta_agents = h_end_agents - h_start_agents
+
+            df_traced_places = pd.read_csv("{}/traced_places_traits.txt".format(s_dir), sep=";")
+            h_start_places = df_traced_places["H"].values[0]
+            h_end_places = df_traced_places["H"].values[-1]
+            h_delta_places = h_end_places - h_start_places
+            grd_analyst[i][j] = h_delta_places
+
+    plt.imshow(grd_analyst)
+    plt.show()
 
 
 if __name__ == "__main__":
@@ -1110,8 +1245,8 @@ if __name__ == "__main__":
     # --------------------------------------------------------------------------------------------
     # run 2d network
     #fsim = "./demo/benchmark1/benchmark1_param_simulation.txt"
-    fsim = "./demo/saoleo/saoleo_param_simulation.txt"
-    run_cue2d(s_fsim=fsim, b_network=True)
+    #fsim = "./demo/saoleo/saoleo_param_simulation.txt"
+    #run_cue2d(s_fsim=fsim, b_network=True)
 
     # --------------------------------------------------------------------------------------------
     # run network analyst
@@ -1119,3 +1254,10 @@ if __name__ == "__main__":
     #fmap = "./demo/saoleo/saoleo_small_map.asc"
     #fplaces = "./demo/saoleo/saoleo_small_places.txt"
     #compute_network(f_map=fmap, f_places=fplaces, s_dir_out="C:/bin")
+
+    # --------------------------------------------------------------------------------------------
+    # run batch
+    fsim = "./demo/benchmark1/benchmark1_param_simulation.txt"
+    sal_agents_cue2dnet(s_fsim=fsim)
+
+
