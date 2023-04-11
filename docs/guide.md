@@ -162,7 +162,7 @@ An application with a simple Graphic User Interface is available to run the mode
 
 To execute the app, [see here](https://github.com/ipo-exe/abm-cue/blob/main/docs/install_windows.md#5-execute-the-application-file) in the installation tutorial. 
 
-## CUE 2D Model Guide
+## CUE 2D Model Guide (Euclidean)
 
 ### Files to run the model
 
@@ -231,3 +231,27 @@ The header (first 6 lines) of the file is related to georreferencing metadata an
 > **Note**: Clone cells are allowed in the raster map. 
 
 > **Note**: The `Id = 0` is reserved for `Outdoor` Places. 
+
+
+## CUE 2D Network Model Guide
+
+### Files to run the model
+
+There are 4 files needed to run the model:
+1) the simulation parameters file (`param_simulation_network_2d.txt`);
+2) the Agents parameters file (`param_agents_2d.txt`);
+3) the Places parameters file (`param_places_2d.txt`);
+4) the Places Map file (`map_places_2d.asc`);
+5) the Nodes File ();
+6) the Network File ().
+
+All files to run the model are plain `.txt` files except the Places Map file.
+
+> **Note**: the model is not sensitive to file names, as long as the formatting is correct. 
+
+> **Note**: see the Input/Output documentation for proper formatting:
+> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
+
+### Nodes and Network Files
+
+The 
