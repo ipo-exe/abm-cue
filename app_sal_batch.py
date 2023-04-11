@@ -792,7 +792,7 @@ def print_report_header():
     report header
     :return:
     """
-    print_report_msg(s_msg=" {} Network Tool {} ".format("*" * 30, "*" * 30))
+    print_report_msg(s_msg=" {} Batch Tool {} ".format("*" * 30, "*" * 30))
     print_report_msg(s_msg="Initiate session")
 
 
@@ -810,25 +810,15 @@ root = tkinter.Tk()
 # workplace
 lst_lbls_wplc = ["Input Folder", "Run Folder"]
 # input files
-lst_lbls_inp = ["Places Map", "Places File"]
+lst_lbls_inp = ["Simulation File", "Batch File"]
 lst_urls_inp = [
     "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#map_places_2dasc",
     "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_places_2dtxt"
 ]
 lst_types_inp = [
-    ("ASC File", "*.asc"),
+    ("Text File", "*.txt"),
     ("Text File", "*.txt")
 ]
-'''
-# parameters
-lst_lbls_params = ["Steps", "Weighting"]
-lst_widget_params = ["Int", "Str"]
-lst_size_entry_params = [6, 12]
-
-# boolean options
-lst_lbls_opts = ["Return Agents", "Trace Back", "Plot Steps"]
-
-'''
 
 
 # reset status
@@ -930,7 +920,7 @@ root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
 
 # --------------------------------------------------------------------------------------------------
 # files setup
-s_title = "CUE2d Network Tool"
+s_title = "CUE2d Network Batch Tool"
 root.title(s_title)
 
 # --------------------------------------------------------------------------------------------------
@@ -999,45 +989,6 @@ menu_file.add_command(
 menubar.add_cascade(
     label="File",
     menu=menu_file,
-    activeforeground=color_fg,
-    activebackground=color_actbg,
-)
-
-# >> create the Tool Menu
-menu_tools = tkinter.Menu(
-    menubar, tearoff=0, bg=color_bg_alt, activebackground=color_actbg
-)
-# add menu items to the Settings menu
-menu_tools.add_command(
-    label="Places File Tool",
-    image=img_tool,
-    compound=LEFT,
-    foreground=color_fg,
-    activeforeground=color_fg,
-    command=call_place_tool,
-)
-# add menu items to the Settings menu
-menu_tools.add_command(
-    label="Agents File Tool",
-    image=img_tool,
-    compound=LEFT,
-    foreground=color_fg,
-    activeforeground=color_fg,
-    command=call_agents_tool,
-)
-# add menu items to the Settings menu
-menu_tools.add_command(
-    label="Network Tool",
-    image=img_tool,
-    compound=LEFT,
-    foreground=color_fg,
-    activeforeground=color_fg,
-    command=call_network_tool,
-)
-# add the File menu to the menubar
-menubar.add_cascade(
-    label="Tools",
-    menu=menu_tools,
     activeforeground=color_fg,
     activebackground=color_actbg,
 )
@@ -1111,7 +1062,7 @@ label_logo = tkinter.Label(
     activeforeground=color_fg,
 )
 label_logo.pack(side=RIGHT)
-s_head_msg = "Network Application Tool"
+s_head_msg = "Batch Application Tool"
 label_infos = tkinter.Label(
     frame_info,
     text=s_head_msg,

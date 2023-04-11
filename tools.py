@@ -1111,6 +1111,7 @@ def animate_frames_2d(
 
 
 def sal_agents_cue2dnet(s_fsim, s_dir_out="C:/bin"):
+    from analyst import shannon_entropy
 
     # ------------------------------------------------------------------------------------------
     # import reference simulation param_simulation_2d.txt
@@ -1136,9 +1137,9 @@ def sal_agents_cue2dnet(s_fsim, s_dir_out="C:/bin"):
     df_batch = pd.DataFrame(
         {
             "Parameter": ["D", "R"],
-            "Min": [10, 5],
+            "Min": [20, 5],
             "Max": [40, 50],
-            "Grid": [3, 3]
+            "Grid": [20, 20]
         }
     )
 
@@ -1161,9 +1162,12 @@ def sal_agents_cue2dnet(s_fsim, s_dir_out="C:/bin"):
 
     # number of runs
     n_runs = len(p2_values) * len(p1_values)
-    grd_analyst = np.zeros(shape=(len(p1_values), len(p2_values)))
+    grd_h_delta_agents = np.zeros(shape=(len(p1_values), len(p2_values)))
+    grd_h_delta_places = np.zeros(shape=(len(p1_values), len(p2_values)))
 
-
+    # ------------------------------------------------------------------------------------------
+    # main batch loop
+    c = 1
     for i in range(len(p1_values)):
         p1 = p1_values[i]
         for j in range(len(p2_values)):
@@ -1171,7 +1175,7 @@ def sal_agents_cue2dnet(s_fsim, s_dir_out="C:/bin"):
             # ------------------------------------------------------------------------------------------
             # set local simulation dir
             s_label = "Batch_{}{}_{}{}".format(p1_name, int(p1), p2_name, int(p2))
-            backend.status(s_label)
+            backend.status("{}\tStep {} of {}\t[{:.2f} %]".format(s_label, c, n_runs, 100 * c /n_runs))
             s_dir = backend.create_rundir(label=s_label, b_timestamp=False, wkplc=s_dir_runs)
 
             # ------------------------------------------------------------------------------------------
@@ -1217,19 +1221,55 @@ def sal_agents_cue2dnet(s_fsim, s_dir_out="C:/bin"):
 
             # ------------------------------------------------------------------------------------------
             # collect analyst data
-            df_traced_agents = pd.read_csv("{}/traced_agents_traits.txt".format(s_dir), sep=";")
-            h_start_agents = df_traced_agents["H"].values[0]
-            h_end_agents = df_traced_agents["H"].values[-1]
-            h_delta_agents = h_end_agents - h_start_agents
 
-            df_traced_places = pd.read_csv("{}/traced_places_traits.txt".format(s_dir), sep=";")
-            h_start_places = df_traced_places["H"].values[0]
-            h_end_places = df_traced_places["H"].values[-1]
-            h_delta_places = h_end_places - h_start_places
-            grd_analyst[i][j] = h_delta_places
+            # agents analysis
+            df_agents_start = pd.read_csv("{}/param_agents_2d_start.txt".format(s_dir), sep=";")
+            df_agents_end = pd.read_csv("{}/param_agents_2d_end.txt".format(s_dir), sep=";")
+            h_agents_start = shannon_entropy(grd=df_agents_start["Trait"].values)
+            h_agents_end = shannon_entropy(grd=df_agents_end["Trait"].values)
+            h_agents_delta = h_agents_end - h_agents_start
+            grd_h_delta_agents[i][j] = h_agents_delta
 
-    plt.imshow(grd_analyst)
-    plt.show()
+            # places analysis
+            df_places_start = pd.read_csv("{}/param_places_2d_start.txt".format(s_dir), sep=";")
+            df_places_end = pd.read_csv("{}/param_places_2d_end.txt".format(s_dir), sep=";")
+            h_places_start = shannon_entropy(grd=df_places_start["Trait"].values)
+            h_places_end = shannon_entropy(grd=df_places_end["Trait"].values)
+            h_places_delta = h_places_end - h_places_start
+            grd_h_delta_places[i][j] = h_places_delta
+
+            # update counter
+            c = c + 1
+
+    # plot batch visuals
+
+    vmax = np.max(np.abs([grd_h_delta_agents, grd_h_delta_places]))
+
+    visuals.plot_sal_grid(
+        grd=grd_h_delta_places,
+        p1_values=np.round(p1_values, 1),
+        p2_values=np.round(p2_values, 1),
+        p1_name=p1_name,
+        p2_name=p2_name,
+        s_dir_out=s_dir_out,
+        v_max=vmax,
+        s_file_name="DeltaH-SAL_places_{}_{}".format(p1_name, p2_name),
+        s_ttl="Delta H of Places Traits | Variables: {} and {}".format(p1_name, p2_name),
+        b_show=False
+    )
+
+    visuals.plot_sal_grid(
+        grd=grd_h_delta_agents,
+        p1_values=np.round(p1_values, 1),
+        p2_values=np.round(p2_values, 1),
+        p1_name=p1_name,
+        p2_name=p2_name,
+        s_dir_out=s_dir_out,
+        v_max=vmax,
+        s_file_name="DeltaH-SAL_agents_{}_{}".format(p1_name, p2_name),
+        s_ttl="Delta H of Agents Traits | Variables: {} and {}".format(p1_name, p2_name),
+        b_show=False
+    )
 
 
 if __name__ == "__main__":

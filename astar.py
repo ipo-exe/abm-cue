@@ -431,7 +431,7 @@ def get_network(grd_places, df_places, tui=False):
     for i in range(len(grd_places)):
         for j in range(len(grd_places[i])):
             n_lcl_value = grd_places[i][j]
-            if n_lcl_value == 0:  # is outdoor
+            if n_lcl_value == 0 or n_lcl_value == 1:  # not place condition
                 pass
             elif n_lcl_value in lst_place:  # already assessed
                 pass

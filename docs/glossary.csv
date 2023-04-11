@@ -47,3 +47,5 @@ Id_place_dst;unique integer number;Category numerical identifyier of Destiny Pla
 Geom;text;Feature geometry encoded in Well Known Text;-;field
 Euclidean;positive real number;Euclidean distance;map units;field
 AStar;positive real number;Non-euclidean distance computed by the A-Star algorithm;map units;field
+Parameter;text;Name of variable set as a parameter in the sensitivity analysis;-;field
+Grid;positive integer number;Number of segments for sampling the parameter space;-;field

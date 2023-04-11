@@ -581,3 +581,71 @@ def plot_cue_2d_pannel(
         del fig
         return filepath
 
+
+def plot_sal_grid(
+        grd,
+        p1_values,
+        p2_values,
+        p1_name,
+        p2_name,
+        v_max,
+        s_dir_out="C:/bin",
+        s_file_name="sal_grid",
+        s_suff="",
+        s_ttl="",
+        b_show=True,
+        b_dark=False,
+        n_dpi=100
+):
+
+    fig = plt.figure(figsize=(8, 5))  # Width, Height
+    plt.suptitle(s_ttl)
+
+    im = plt.imshow(grd, cmap="bwr", origin="lower", vmin=-v_max, vmax=v_max)
+    plt.colorbar(im, shrink=0.4)
+
+    if len(p2_values) > 10:
+        lst_ticks = list()
+        lst_values = list()
+        n_steps = int(len(p2_values) / 10)
+        if n_steps <= 1:
+            n_steps = 2
+        for i in range(0, len(p2_values), n_steps):
+            lst_ticks.append(i)
+            lst_values.append(p2_values[i])
+        plt.xticks(ticks=lst_ticks, labels=lst_values)
+    else:
+        plt.xticks(ticks=np.arange(0, len(p2_values)), labels=p2_values)
+
+    if len(p1_values) > 10:
+        lst_ticks = list()
+        lst_values = list()
+        n_steps = int(len(p1_values) / 10)
+        if n_steps <= 1:
+            n_steps = 2
+        for i in range(0, len(p1_values), n_steps):
+            lst_ticks.append(i)
+            lst_values.append(p1_values[i])
+        plt.yticks(ticks=lst_ticks, labels=lst_values)
+    else:
+        plt.yticks(ticks=np.arange(0, len(p1_values)), labels=p1_values)
+
+
+
+    plt.ylabel(p1_name)
+    plt.xlabel(p2_name)
+
+    if b_show:
+        plt.show()
+        plt.close(fig)
+        del fig
+    else:
+        # export file
+        if s_suff == "":
+            filepath = s_dir_out + "/" + s_file_name + ".png"
+        else:
+            filepath = s_dir_out + "/" + s_file_name + "_" + s_suff + ".png"
+        plt.savefig(filepath, dpi=n_dpi)
+        plt.close(fig)
+        del fig
+        return filepath
