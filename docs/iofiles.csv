@@ -5,7 +5,7 @@ param_places_1d;txt;imported by user;Data Table;Table of places parameters and i
 param_places_2d;txt;imported by user;Data Table;Table of places parameters and initial conditions;none;none;none;none;Id & Trait & C & Name & Alias & Color;none;none
 map_places_2d;asc;imported by user;Raster Map;Map of places IDs;int16;none;none;none;none;none;none
 nodes_places;txt;process output;Data Table;Table of nodes in the Map of Places;none;none;none;none;Id_node & y & x & Id_place & Geom;none;none
-network_places;txt;process output;Data Table;Table of topological network of nodes in the Map of Places;none;none;none;none; Id_node_src & Id_node_dst & Euclidean & AStar & Id_place_src & Id_place_dst & Geom;none;none
+network_places;txt;process output;Data Table;Table of topological network of nodes in the Map of Places;none;none;none;none; Id_node_src & Id_node_dst & Euclidean & AStar & Id_place_src & Id_place_dst & Path_x & Path_y & Geom;none;none
 param_simulation_1d;txt;imported by user;Data Table;Table of simulation parameters;none;none;none;none;Metadata & Value;none;none
 param_simulation_2d;txt;imported by user;Data Table;Table of simulation parameters;none;none;none;none;Metadata & Value;none;none
 param_simulation_network_2d;txt;imported by user;Data Table;Table of simulation parameters;none;none;none;none;Metadata & Value;none;none
