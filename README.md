@@ -19,13 +19,22 @@ This repository includes:
 5) Agents interact with places only if they are related enough;
 7) During interaction, agents influence the place orientation trait to a certain extent, and vice-versa.
 
-The result is an evolving urban environment in 1-D:
+The result is an evolving urban environment in 1-D world:
 
 ![intro](https://github.com/ipo-exe/abm-cue/blob/main/figs/intro1d.gif "intro")
 
-Or in 2-D:
+Or in 2-D world:
 
-![intro](https://github.com/ipo-exe/abm-cue/blob/main/figs/intro2d.gif "intro")
+![intro](https://github.com/ipo-exe/abm-cue/blob/main/figs/intro2d.gif "intro2")
+
+Topology features of simulations may be assessed via integration with GIS applications:
+
+![intro](https://github.com/ipo-exe/abm-cue/blob/main/figs/fig_output_network.PNG "intro3")
+
+Large batch processing may be used for in-depth insights with sensitivity analysis:
+
+![intro](https://github.com/ipo-exe/abm-cue/blob/main/figs/fig_output_batch.PNG "intro4")
+
 
 ## Installing and Running CUE on a local machine
 

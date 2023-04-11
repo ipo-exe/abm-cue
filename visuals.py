@@ -42,7 +42,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-
+mpl.use("Agg")
 
 def plot_sigle_frame(
     grd,

@@ -124,6 +124,10 @@ The `M` parameter is a parameter of Agents. It defines the memory size for each 
 
 ## CUE 1d model guide
 
+### Description
+
+This model is the basic toy-model
+
 ### GUI apps
 
 The main Graphical User Interface application is the script called `app_cue1d.py`.
@@ -240,6 +244,17 @@ The header (first 6 lines) of the file is related to georreferencing metadata an
 
 ## CUE 2D Network Model Guide
 
+### Description
+
+This model considers the non-euclidean distances between Places to constrain the
+set of available places in the random walk. 
+It uses the `A-Star` algorithm to compute the route-distance. 
+In order to make the model computationally feasible the user must pre-process the 
+map file prior to simulations.
+
+Outputs can include all paths used by agents in every simulation step so the 
+user can visualize post-process the features in standard GIS applications.
+
 ### GUI apps
 
 The main Graphical User Interface application is the script called `app_cue2d.py`.
@@ -278,9 +293,20 @@ All files to run the model are plain `.txt` files except the Places Map file.
 The `nodes_places.txt` and the `network_places.txt` files must be derived _prior_ to model execution. 
 This step may require large computational power. 
 
-> **Note**: nodes and networks are georreferenced features that can be visualized and post-processed in standard GIS applications, like QGIS.
+> **Note**: nodes and networks are georreferenced features that can be visualized 
+> and post-processed in standard GIS applications, like QGIS.
 
-## Sensitivity of pairs of Agents Parameters
+## Sensitivity of Entropy to pairs of Agents Parameters
+
+### Description
+This application is designed to assess the sensitivity of H to pairs of the 
+`D`, `R`, `M` and `C` parameters of Agents.
+Individual Agent values are scaled-up by the assessed parameter value. 
+For instance, if there are four agents with `R` = [1, 6, 2, 3] and the assessed value is `R`=3, 
+then individual values are set as `R`=[3, 18, 6, 9].
+
+The computed output is the _delta H_ (i.e., `H_end - H_start`) of simulations and plotted 
+in a gridded format.
 
 ### GUI app
 
@@ -294,10 +320,4 @@ There are 2 files needed to run the model:
 
 > **Note**: see the Input/Output documentation for proper formatting:
 > [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
-
-### Description
-This application is designed to assess the sensitivity of pairs of the `D`, `R`, `M` and `C` parameters of Agents.
-Individual Agent values are scaled-up by the assessed parameter value. 
-For instance, if there are four agents with `R` = [1, 6, 2, 3] and the assessed value is `R`=3, 
-then individual values are set as `R`=[3, 18, 6, 9].
 

@@ -507,11 +507,11 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin", b_tui=T
     if b_network:
         # ------------------------------------------------------------------------------------------
         # import nodes file
-        dct_nodes = inp.import_data_table(s_table_name="nodes_2d", s_filepath=f_nodes)
+        dct_nodes = inp.import_data_table(s_table_name="nodes_places", s_filepath=f_nodes)
         df_nodes = dct_nodes["df"]
         # ------------------------------------------------------------------------------------------
         # import network file
-        dct_network = inp.import_data_table(s_table_name="network_2d", s_filepath=f_network)
+        dct_network = inp.import_data_table(s_table_name="network_places", s_filepath=f_network)
         df_network = dct_network["df"]
         # filter
         df_network_filter = df_network[["Id_node_src", "Id_node_dst", "AStar", "Id_place_src", "Id_place_dst"]]
@@ -1259,10 +1259,17 @@ def sal_agents_cue2dnet(s_fsim, s_fbat, s_dir_out="C:/bin", b_wkplc=True):
 
     vmax = np.max(np.abs([grd_h_delta_agents, grd_h_delta_places]))
 
+    p1_decimals = 1
+    if p1_name == "C":
+        p1_decimals = 2
+    p2_decimals = 1
+    if p2_name == "C":
+        p2_decimals = 2
+
     visuals.plot_sal_grid(
         grd=grd_h_delta_places,
-        p1_values=np.round(p1_values, 2),
-        p2_values=np.round(p2_values, 2),
+        p1_values=np.round(p1_values, p1_decimals),
+        p2_values=np.round(p2_values, p2_decimals),
         p1_name=p1_name,
         p2_name=p2_name,
         s_dir_out=s_dir_out,
@@ -1274,8 +1281,8 @@ def sal_agents_cue2dnet(s_fsim, s_fbat, s_dir_out="C:/bin", b_wkplc=True):
 
     visuals.plot_sal_grid(
         grd=grd_h_delta_agents,
-        p1_values=np.round(p1_values, 2),
-        p2_values=np.round(p2_values, 2),
+        p1_values=np.round(p1_values, p1_decimals),
+        p2_values=np.round(p2_values, p2_decimals),
         p1_name=p1_name,
         p2_name=p2_name,
         s_dir_out=s_dir_out,

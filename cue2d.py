@@ -324,16 +324,19 @@ def play(df_agents, df_places, grd_ids, n_steps, s_weight='uniform',
                     # get sampling probability
                     if s_weight.lower() == 'uniform':
                         # uniform interaction prob
-                        df_wnd_move["Prob"] = 1 / a_d
+                        df_wnd_move["Prob"] = 1 / len(df_wnd_move)
                     elif s_weight.lower() == 'linear':
-                        # linear interaction score
-                        df_wnd_move["Prob"] = linear_prob(
-                            x=df_wnd_move['Discr'].values,
-                            x_max=a_d
-                        )
+                        if len(df_wnd_move) == 1:
+                            df_wnd_move["Prob"] = 1
+                        else:
+                            df_wnd_move["Prob"] = 1 - (df_wnd_move['Discr'].values / df_wnd_move['Discr'].sum())
+                            df_wnd_move["Prob"] = df_wnd_move["Prob"] / df_wnd_move["Prob"].sum()
                     else:
                         # uniform interaction prob
-                        df_wnd_move["Prob"] = 1 / a_d
+                        df_wnd_move["Prob"] = 1 / len(df_wnd_move)
+                    # reset index
+                    df_wnd_move = df_wnd_move.sort_values(by="Prob", ascending=False, ignore_index=True)
+
 
                     # ---------------------------------------------------------------------
                     # apply cutoff criterion
