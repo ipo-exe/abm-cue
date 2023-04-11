@@ -1041,7 +1041,7 @@ menubar.add_cascade(
     activeforeground=color_fg,
     activebackground=color_actbg,
 )
-
+'''
 # >> create the Help Menu
 menu_help = tkinter.Menu(
     menubar, tearoff=0, bg=color_bg_alt, activebackground=color_actbg
@@ -1062,7 +1062,7 @@ menubar.add_cascade(
     activeforeground=color_fg,
     activebackground=color_actbg,
 )
-
+'''
 # --------------------------------------------------------------------------------------------------
 ## >>> Frames layout
 

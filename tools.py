@@ -1110,8 +1110,9 @@ def animate_frames_2d(
 
 
 
-def sal_agents_cue2dnet(s_fsim, s_dir_out="C:/bin"):
+def sal_agents_cue2dnet(s_fsim, s_fbat, s_dir_out="C:/bin", b_wkplc=True):
     from analyst import shannon_entropy
+
 
     # ------------------------------------------------------------------------------------------
     # import reference simulation param_simulation_2d.txt
@@ -1134,24 +1135,19 @@ def sal_agents_cue2dnet(s_fsim, s_dir_out="C:/bin"):
 
     # ------------------------------------------------------------------------------------------
     # import batch file
-    df_batch = pd.DataFrame(
-        {
-            "Parameter": ["D", "R"],
-            "Min": [20, 5],
-            "Max": [40, 50],
-            "Grid": [20, 20]
-        }
-    )
+    dct_fbat = inp.import_data_table(s_table_name="param_batch_simulation", s_filepath=s_fbat)
+    df_batch = dct_fbat["df"]
 
-    s_dir_out = backend.create_rundir(label="Batch_CUE2d_NET", wkplc=s_dir_out)
-    s_dir_runs = backend.create_rundir(label="Batch_runs", wkplc=s_dir_out, b_timestamp=False)
 
+
+    # ------------------------------------------------------------------------------------------
     # parameter 1
     p1_name = df_batch["Parameter"].values[0].strip()
     p1_min = df_batch["Min"].values[0]
     p1_max = df_batch["Max"].values[0]
     p1_grid = df_batch["Grid"].values[0]
 
+    # ------------------------------------------------------------------------------------------
     # parameter 2
     p2_name = df_batch["Parameter"].values[1].strip()
     p2_min = df_batch["Min"].values[1]
@@ -1160,10 +1156,22 @@ def sal_agents_cue2dnet(s_fsim, s_dir_out="C:/bin"):
     p1_values = np.linspace(p1_min, p1_max, p1_grid)
     p2_values = np.linspace(p2_min, p2_max, p2_grid)
 
+    # ------------------------------------------------------------------------------------------
     # number of runs
     n_runs = len(p2_values) * len(p1_values)
     grd_h_delta_agents = np.zeros(shape=(len(p1_values), len(p2_values)))
     grd_h_delta_places = np.zeros(shape=(len(p1_values), len(p2_values)))
+
+    # ------------------------------------------------------------------------------------------
+    # get run folder
+    if b_wkplc:
+        s_workplace = (
+            df_param_sim.loc[df_param_sim["Metadata"] == "Run Folder", "Value"]
+            .values[0]
+            .strip()
+        )
+        s_dir_out = backend.create_rundir(label="Batch_CUE2d_NET", wkplc=s_workplace)
+    s_dir_runs = backend.create_rundir(label="Batch_runs", wkplc=s_dir_out, b_timestamp=False)
 
     # ------------------------------------------------------------------------------------------
     # main batch loop
@@ -1271,6 +1279,7 @@ def sal_agents_cue2dnet(s_fsim, s_dir_out="C:/bin"):
         b_show=False
     )
 
+    return s_dir_out
 
 if __name__ == "__main__":
 
@@ -1297,7 +1306,11 @@ if __name__ == "__main__":
 
     # --------------------------------------------------------------------------------------------
     # run batch
+    fbat = "./samples/param_batch_simulation.txt"
     fsim = "./demo/benchmark1/benchmark1_param_simulation.txt"
-    sal_agents_cue2dnet(s_fsim=fsim)
+    sal_agents_cue2dnet(
+        s_fsim=fsim,
+        s_fbat=fbat
+    )
 
 

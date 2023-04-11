@@ -649,25 +649,18 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
                 # get sampling probability
                 if s_weight.lower() == 'uniform':
                     # uniform interaction prob
-                    df_window["Prob"] = 1 / a_d
+                    df_window["Prob"] = 1 / len(df_window)
                 elif s_weight.lower() == 'linear':
-                    df_window["Prob"] = 1 / a_d
-                    if df_window["Delta"].max() == df_window["Delta"].min():
-                        pass
-                    elif len(df_window) > 1:
-                        # linear interaction score
-                        df_window["Prob"] = linear_prob(
-                            x=df_window['Delta'].values,
-                            x_max=a_d
-                        )
+                    if len(df_window) == 1:
+                        df_window["Prob"] = 1
+                    else:
+                        df_window["Prob"] = 1 - (df_window['Delta'].values / df_window['Delta'].sum())
+                        df_window["Prob"] = df_window["Prob"] / df_window["Prob"].sum()
                 else:
                     # uniform interaction prob
-                    df_window["Prob"] = 1 / a_d
-                # normalize
-                df_window["Prob"] = df_window["Prob"].values / df_window["Prob"].sum()
+                    df_window["Prob"] = 1 / len(df_window)
+                # reset index
                 df_window = df_window.sort_values(by="Prob", ascending=False, ignore_index=True)
-                if df_window["Prob"].isnull().values.any():
-                    print(df_window.to_string())
                 # ---------------------------------------------------------------------
                 # weighted random sampling
                 n_next_index = np.random.choice(

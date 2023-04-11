@@ -274,36 +274,21 @@ def run():
         # freeze button
         button_run.config(state=DISABLED)
         #
-        # Create run dir
-        backend.status("creating output directory", process=True)
-        s_lcl_wkplc = df_meta[df_meta["Metadata"] == "Run Folder"]["Value"].values[0]
-        s_folder = backend.create_rundir(label="Network", wkplc=s_lcl_wkplc)
-        # save metadata to run dir
-        backend.status("saving simulation parameters", process=True)
-        fsim = "{}/param_network.txt".format(s_folder)
-        df_meta.to_csv(fsim, sep=";", index=False)
-
         # run things
         backend.status("running model", process=True)
         try:
 
             # ---------------------------------
             # RUN
-            s_fmap = df_meta[df_meta["Metadata"] == "Places Map"]["Value"].values[0]
-            s_fplaces = df_meta[df_meta["Metadata"] == "Places File"]["Value"].values[0]
-            tools.compute_network(
-                f_map=s_fmap,
-                f_places=s_fplaces,
-                s_dir_out=s_folder
+            s_lcl_wkplc = df_meta[df_meta["Metadata"] == "Run Folder"]["Value"].values[0]
+            s_fsim = df_meta[df_meta["Metadata"] == "Simulation File"]["Value"].values[0]
+            s_fbat = df_meta[df_meta["Metadata"] == "Batch File"]["Value"].values[0]
+            s_folder = tools.sal_agents_cue2dnet(
+                s_fsim=s_fsim,
+                s_fbat=s_fbat,
+                s_dir_out=s_lcl_wkplc,
+                b_wkplc=True,
             )
-            """
-            dct_out = tools.run_cue2d(
-                s_fsim=fsim,
-                b_wkplc=False,
-                b_network=True,
-                s_dir_out=s_folder
-            )
-            """
             # ---------------------------------
 
             # report
@@ -812,14 +797,13 @@ lst_lbls_wplc = ["Input Folder", "Run Folder"]
 # input files
 lst_lbls_inp = ["Simulation File", "Batch File"]
 lst_urls_inp = [
-    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#map_places_2dasc",
-    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_places_2dtxt"
+    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_places_2dtxt",
+    "https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md#param_batch_simulationtxt"
 ]
 lst_types_inp = [
     ("Text File", "*.txt"),
     ("Text File", "*.txt")
 ]
-
 
 # reset status
 reset_status()
@@ -915,6 +899,7 @@ img_brush = tkinter.PhotoImage(file="gui/brush.png")
 img_chat = tkinter.PhotoImage(file="gui/chat.png")
 img_terminal = tkinter.PhotoImage(file="gui/terminal.png")
 
+# --------------------------------------------------------------------------------------------------
 # set icon
 root.iconphoto(False, tkinter.PhotoImage(file="./gui/terminal.png"))
 
@@ -993,26 +978,6 @@ menubar.add_cascade(
     activebackground=color_actbg,
 )
 
-# >> create the Help Menu
-menu_help = tkinter.Menu(
-    menubar, tearoff=0, bg=color_bg_alt, activebackground=color_actbg
-)
-# add menu items to the Settings menu
-menu_help.add_command(
-    label="About",
-    image=img_about,
-    compound=LEFT,
-    foreground=color_fg,
-    activeforeground=color_fg,
-    command=command_demo, # todo replace this command
-)
-# add the Help menu to the menubar
-menubar.add_cascade(
-    label="Help",
-    menu=menu_help,
-    activeforeground=color_fg,
-    activebackground=color_actbg,
-)
 
 # --------------------------------------------------------------------------------------------------
 ## >>> Frames layout
@@ -1234,21 +1199,6 @@ for i in range(len(lst_lbls_inp)):
     dct_btn_about_inp[s_lcl_key].grid(
         row=i, column=4, pady=n_widg_pady, padx=n_widg_padx
     )
-    if i == 0 or i == 4:
-        pass
-    else:
-        # tool button
-        dct_btn_tool_inp[s_lcl_key] = tkinter.Button(
-            frame_inputfiles,
-            image=img_tool,
-            bg=color_bg,
-            activebackground=color_actbg,
-            foreground=color_fg,
-            activeforeground=color_fg,
-            highlightbackground=color_bg,
-            bd=0,
-        )
-        dct_btn_tool_inp[s_lcl_key].grid(row=i, column=5, pady=n_widg_pady, padx=n_widg_padx)
 
 # config input update buttons commmands
 dct_btn_upd_inp[lst_lbls_inp[0]].config(
@@ -1279,11 +1229,6 @@ dct_btn_about_inp[lst_lbls_inp[0]].config(
 )
 dct_btn_about_inp[lst_lbls_inp[1]].config(
     command=lambda: open_about_input(n_entry=1)
-)
-
-# config input tool buttons commmands
-dct_btn_tool_inp[lst_lbls_inp[1]].config(
-    command=call_place_tool
 )
 
 # --------------------------------------------------------------------------------------------------
