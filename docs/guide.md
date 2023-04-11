@@ -124,6 +124,16 @@ The `M` parameter is a parameter of Agents. It defines the memory size for each 
 
 ## CUE 1d model guide
 
+### GUI apps
+
+The main Graphical User Interface application is the script called `app_cue1d.py`.
+
+Helper application tools are:
+* `app_set_agents_1d.py` -- application to help setting the Agents file for 1D model.
+* `app_set_places_1d.py` -- application to help setting the Places file for 1D model.
+
+> **Note**: To execute the apps on Windows, [see here](https://github.com/ipo-exe/abm-cue/blob/main/docs/install_windows.md#5-execute-the-application-file) in the installation tutorial. 
+
 ### Files to run the model
 
 There are 3 files needed to run the model:
@@ -151,18 +161,20 @@ file_simulation = "C:/You/Documents/abm-cue/param_simulation_1d.txt"
 
 # call the function
 run_cue1d(s_fsim=file_simulation)
-
 ```
-
 > **Note**: the file of the script must be created in the same directory of the source code. 
 
-### Running the model by using the GUI application
-
-An application with a simple Graphic User Interface is available to run the model. Data Management Tools are also available to setup the Agents and Places parameters files.
-
-To execute the app, [see here](https://github.com/ipo-exe/abm-cue/blob/main/docs/install_windows.md#5-execute-the-application-file) in the installation tutorial. 
-
 ## CUE 2D Model Guide (Euclidean)
+
+### GUI apps
+
+The main Graphical User Interface application is the script called `app_cue2d.py`.
+
+Helper application tools are:
+* `app_set_agents_2d.py` -- application to help setting the Agents file for 1D model.
+* `app_set_places_2d.py` -- application to help setting the Places file for 1D model.
+
+> **Note**: To execute the apps on Windows, [see here](https://github.com/ipo-exe/abm-cue/blob/main/docs/install_windows.md#5-execute-the-application-file) in the installation tutorial. 
 
 ### Files to run the model
 
@@ -194,14 +206,7 @@ file_simulation = "C:/You/Documents/abm-cue/param_simulation_2d.txt"
 run_cue2d(s_fsim=file_simulation)
 
 ```
-
 > **Note**: the file of the script must be created in the same directory of the source code. 
-
-### Running the model by using the GUI application
-
-An application with a simple Graphic User Interface is available to run the model. Data Management Tools are also available to setup the Agents and Places parameters files.
-
-To execute the app, [see here](https://github.com/ipo-exe/abm-cue/blob/main/docs/install_windows.md#5-execute-the-application-file) in the installation tutorial.
 
 ### The Places Map file
 
@@ -235,23 +240,64 @@ The header (first 6 lines) of the file is related to georreferencing metadata an
 
 ## CUE 2D Network Model Guide
 
+### GUI apps
+
+The main Graphical User Interface application is the script called `app_cue2d.py`.
+
+Helper application tools are:
+* `app_set_agents_2d.py` -- application to help setting the Agents file for 1D model.
+* `app_set_places_2d.py` -- application to help setting the Places file for 1D model.
+* `app_get_network.py` -- application for generating nodes and network topology datasets.
+
+
+> **Note**: To execute the apps on Windows, [see here](https://github.com/ipo-exe/abm-cue/blob/main/docs/install_windows.md#5-execute-the-application-file) in the installation tutorial. 
+
 ### Files to run the model
 
-There are 4 files needed to run the model:
+There are 6 files needed to run the model:
 1) the simulation parameters file (`param_simulation_network_2d.txt`);
 2) the Agents parameters file (`param_agents_2d.txt`);
 3) the Places parameters file (`param_places_2d.txt`);
 4) the Places Map file (`map_places_2d.asc`);
-5) the Nodes File ();
-6) the Network File ().
+5) the Nodes File (`nodes_places.txt`);
+6) the Network File (`network_places.txt`).
 
 All files to run the model are plain `.txt` files except the Places Map file.
 
 > **Note**: the model is not sensitive to file names, as long as the formatting is correct. 
 
+> **Note**: In the map file, `Id = 0` is reserved for `Outdoor` Places. 
+
+> **Note**: In the map file, `Id = 1` is reserved for `Null` Places. 
+
 > **Note**: see the Input/Output documentation for proper formatting:
 > [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
 
-### Nodes and Network Files
+### Processing Nodes and Network Files
 
-The 
+The `nodes_places.txt` and the `network_places.txt` files must be derived _prior_ to model execution. 
+This step may require large computational power. 
+
+> **Note**: nodes and networks are georreferenced features that can be visualized and post-processed in standard GIS applications, like QGIS.
+
+## Sensitivity of pairs of Agents Parameters
+
+### GUI app
+
+The main Graphical User Interface application is the script called `app_sal_batch.py`.
+
+### Files to run the model
+
+There are 2 files needed to run the model:
+1) the simulation parameters file (`param_simulation_network_2d.txt`);
+2) the batch parameters file (`param_batch_simulation.txt`);
+
+> **Note**: see the Input/Output documentation for proper formatting:
+> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
+
+### Description
+This application is designed to assess the sensitivity of pairs of the `D`, `R`, `M` and `C` parameters of Agents.
+Individual Agent values are scaled-up by the assessed parameter value. 
+For instance, if there are four agents with `R` = [1, 6, 2, 3] and the assessed value is `R`=3, 
+then individual values are set as `R`=[3, 18, 6, 9].
+
