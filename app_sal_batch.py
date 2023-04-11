@@ -301,12 +301,6 @@ def run():
             # report
             print_report_msg(s_msg="Run : Memory Error")
             messagebox.showerror(title="Run Status", message="Memory Error")
-        except TypeError:
-            # report
-            print_report_msg(s_msg="Run : Type Error in input files. Check out data.")
-            messagebox.showerror(
-                title="Run Status", message="Type Error in input files. Check out data."
-            )
         except KeyError:
             # report
             print_report_msg(
@@ -316,6 +310,13 @@ def run():
                 title="Run Status",
                 message="Key Error in input files. Check out field names.",
             )
+        except TypeError:
+            # report
+            print_report_msg(s_msg="Run : Type Error in input files. Check out data.")
+            messagebox.showerror(
+                title="Run Status", message="Type Error in input files. Check out data."
+            )
+
         # enable button
         button_run.config(state=NORMAL)
     else:

@@ -1138,8 +1138,6 @@ def sal_agents_cue2dnet(s_fsim, s_fbat, s_dir_out="C:/bin", b_wkplc=True):
     dct_fbat = inp.import_data_table(s_table_name="param_batch_simulation", s_filepath=s_fbat)
     df_batch = dct_fbat["df"]
 
-
-
     # ------------------------------------------------------------------------------------------
     # parameter 1
     p1_name = df_batch["Parameter"].values[0].strip()
@@ -1178,12 +1176,20 @@ def sal_agents_cue2dnet(s_fsim, s_fbat, s_dir_out="C:/bin", b_wkplc=True):
     c = 1
     for i in range(len(p1_values)):
         p1 = p1_values[i]
+        if p1 >= 1:
+            p1_sval = str(int(p1))
+        else:
+            p1_sval = str(int(100 * p1))
         for j in range(len(p2_values)):
             p2 = p2_values[j]
+            if p2 >= 1:
+                p2_sval = str(int(p2))
+            else:
+                p2_sval = str(int(100 * p2))
             # ------------------------------------------------------------------------------------------
             # set local simulation dir
-            s_label = "Batch_{}{}_{}{}".format(p1_name, int(p1), p2_name, int(p2))
-            backend.status("{}\tStep {} of {}\t[{:.2f} %]".format(s_label, c, n_runs, 100 * c /n_runs))
+            s_label = "Batch_{}{}_{}{}".format(p1_name, p1_sval, p2_name, p2_sval)
+            backend.status("{}\t\tStep {} of {}\t[{:.2f} %]".format(s_label, c, n_runs, 100 * c /n_runs))
             s_dir = backend.create_rundir(label=s_label, b_timestamp=False, wkplc=s_dir_runs)
 
             # ------------------------------------------------------------------------------------------
@@ -1255,8 +1261,8 @@ def sal_agents_cue2dnet(s_fsim, s_fbat, s_dir_out="C:/bin", b_wkplc=True):
 
     visuals.plot_sal_grid(
         grd=grd_h_delta_places,
-        p1_values=np.round(p1_values, 1),
-        p2_values=np.round(p2_values, 1),
+        p1_values=np.round(p1_values, 2),
+        p2_values=np.round(p2_values, 2),
         p1_name=p1_name,
         p2_name=p2_name,
         s_dir_out=s_dir_out,
@@ -1268,8 +1274,8 @@ def sal_agents_cue2dnet(s_fsim, s_fbat, s_dir_out="C:/bin", b_wkplc=True):
 
     visuals.plot_sal_grid(
         grd=grd_h_delta_agents,
-        p1_values=np.round(p1_values, 1),
-        p2_values=np.round(p2_values, 1),
+        p1_values=np.round(p1_values, 2),
+        p2_values=np.round(p2_values, 2),
         p1_name=p1_name,
         p2_name=p2_name,
         s_dir_out=s_dir_out,

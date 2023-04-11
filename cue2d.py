@@ -587,7 +587,7 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
     # allocate memory variables
     dct_memory = dict()
     for a in range(n_agents):
-        n_memory = df_agents["M"].values[a]
+        n_memory = int(df_agents["M"].values[a])
         n_trait = df_agents["Trait"].values[a]
         dct_memory[str(df_agents["Id"].values[a])] = n_trait * np.ones(n_memory)
 

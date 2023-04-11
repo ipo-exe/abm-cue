@@ -601,7 +601,7 @@ def plot_sal_grid(
     fig = plt.figure(figsize=(8, 5))  # Width, Height
     plt.suptitle(s_ttl)
 
-    im = plt.imshow(grd, cmap="bwr", origin="lower", vmin=-v_max, vmax=v_max)
+    im = plt.imshow(grd, cmap="bwr", origin="lower", vmin=-v_max, vmax=v_max, aspect="equal")
     plt.colorbar(im, shrink=0.4)
 
     if len(p2_values) > 10:
@@ -629,8 +629,6 @@ def plot_sal_grid(
         plt.yticks(ticks=lst_ticks, labels=lst_values)
     else:
         plt.yticks(ticks=np.arange(0, len(p1_values)), labels=p1_values)
-
-
 
     plt.ylabel(p1_name)
     plt.xlabel(p2_name)
