@@ -182,7 +182,11 @@ if __name__ == "__main__":
                 s_path = "./samples/{}.{}".format(s_filename, s_extension)
                 try:
                     df_sample = pd.read_csv(s_path, sep=";", dtype=str)
-                    # rename columns fields
+                    if "nodes_places" in s_path:
+                        df_sample = df_sample.head(10)
+                    if "network_places" in s_path:
+                        df_sample = df_sample.head(10)
+                        # rename columns fields
                     lst_aux = list()
                     for k in range(len(df_sample.columns)):
                         if k < len(df_sample.columns) - 1:
