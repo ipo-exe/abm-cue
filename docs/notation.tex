@@ -25,6 +25,8 @@
 
 \begin{itemize}
     \item $t$ -- Timestep;
+    \item $i$ -- Agent ID: unique integer number;
+    \item $j$ -- Place ID: unique integer number;
     \item $T$ -- Total number of timesteps;
     \item $x$ -- position coordinate;
     \item $y$ -- position coordinate;
@@ -51,21 +53,23 @@
 
 \begin{itemize}
     \item $A^{i}_{\sigma}(t)$ -- $\sigma$ of $A^{i}$ in time step $t$;
-    \item $A^{i}_{x}(t)$ -- $x$ position of $A^{i}$ in time step $t$;
-    \item $A^{i}_{y}(t)$ -- $y$ position  of $A^{i}$ in time step $t$;
+    \item $A^{i}_{x}(t)$ -- $x$ position coordinate of $A^{i}$ in time step $t$;
+    \item $A^{i}_{y}(t)$ -- $y$ position coordinate of $A^{i}$ in time step $t$;
 \end{itemize}
 
 
 \section{Places}
 
-\par Places are denoted by $P$. Any specific Place is denoted by it's own position: $P^{x,y}$ in 2D or $P^{x}$ in 1D.
+\par Places are denoted by $P$. Any specific Agent is denoted by $P^{j}$, where $j$ is the ID number of the Place in a world of $N_P$ Places. Any specific Place $j$ is also denoted by it's own unique position: $P_{x,y}$ in 2D or $P_{x}$ in 1D.
 
 \subsection{Parameters of Places}
 
 \par Parameters are those static, constant attributes. They can be accessed by their names in the Agent subscript:
 
 \begin{itemize}
-    \item $P^{x,y}_{C}$ -- $C$ of $P^{x,y}$;
+    \item $P^{j}_{C}$ -- $C$ of $P^{j}$;
+    \item $P^{j}_{x}$ -- $x$ position coordinate of $P^{j}$;
+    \item $P^{j}_{y}$ -- $y$ position coordinate of $P^{j}$;
 \end{itemize}
 
 \subsection{Variables of Places}
@@ -73,7 +77,7 @@
 \par Variables are those mutable, changing attributes. They can be accessed by their names in the Place subscript and by time step $t$ in the Place superscript: 
 
 \begin{itemize}
-    \item $P^{x,y}_{\sigma}(t)$ -- $\sigma$ of $P^{x,y}$ in time step $t$;
+    \item $P^{j}_{\sigma}(t)$ -- $\sigma$ of $P^{j}$ in time step $t$;
 \end{itemize}
 
 \section{Model equations}
@@ -82,13 +86,13 @@
 
 \par When Agents interact with Places, both get some contamination from each other. Their next $t+1$ value of $\sigma$ changes by the following equations. For Agents:  
 \begin{equation}
-    A^{i}_{\sigma}(t + 1) = \frac{A^{i}_{\bar{\sigma}}(t) + P^{X,Y}_{\sigma}(t) \cdot A^{i}_{C}}{1 + A^{i}_{C}} \quad \forall i, t
+    A^{i}_{\sigma}(t + 1) = \frac{A^{i}_{\bar{\sigma}}(t) + P^{j}_{\sigma}(t) \cdot A^{i}_{C}}{1 + A^{i}_{C}} \quad \forall i, t
 \end{equation}
 And for Places:
 \begin{equation}
-    P^{X,Y}_{\sigma}(t + 1) = \frac{P^{X,Y}_{\sigma}(t) + A^{i}_{\bar{\sigma}}(t)\cdot P^{X,Y}_{C}}{1 + P^{X,Y}_{C}} \quad \forall i, t
+    P^{j}_{\sigma}(t + 1) = \frac{P^{j}_{\sigma}(t) + A^{i}_{\bar{\sigma}}(t)\cdot P^{j}_{C}}{1 + P^{j}_{C}} \quad \forall i, j, t
 \end{equation}
-Where $X = A^{i}_{x}(t)$ and $Y = A^{i}_{y}(t)$. The value of $A^{i, t}_{\bar{\sigma}}$ is a function of the Agent's previous traits ($A_{\sigma}$) and memory size ($A_M$):
+Where $P^{j}_{x} = A^{i}_{x}(t)$ and $P^{j}_{x} = A^{i}_{y}(t)$. The value of $A^{i, t}_{\bar{\sigma}}$ is a function of the Agent's previous traits ($A_{\sigma}$) and memory size ($A_M$):
 \begin{equation}
     A^{i}_{\bar{\sigma}}(t) = \Psi(A^{i}_{\sigma}, A^{i}_{M}) \quad \forall i, t
 \end{equation}
@@ -102,32 +106,39 @@ Currently, the function $\Psi$ the average of $\sigma$ values allocated in the A
 
 \subsubsection{Set of candidate Places}
 
-\par At any time step, each Agent has a set $\mathbb{P}$ of candidate Places to move in so they can interact. This set is made of Places $P$ within the Agent's window of sight of size $A_{R}$ and below the Agent's interaction threshold $A_{D}$. Hence:
+\par At any time step, each Agent has a set $\mathbb{P}$ of candidate Places to move in so they can interact. This set is made of Places $P$ within the Agent's window of sight of size $A_{R}$ and below the Agent's interaction threshold $A_{D}$. 
+
+\par In the case of considering \textbf{euclidean} distances between positions:
 \begin{equation}
-    P \in \mathbb{P} \;\big|\;|X - A_{x}| \leq A_{R} \cap |Y - A_{y}| \leq A_{R} \cap |P_{\sigma} - A_{\bar{\sigma}}| \leq A_{D} 
+    P \in \mathbb{P} \;\big|\;|P_{x} - A_{x}| \leq A_{R} \cap |P_{y} - A_{y}| \leq A_{R} \cap |P_{\sigma} - A_{\bar{\sigma}}| \leq A_{D} 
 \end{equation}
+
+\par In the case of considering \textbf{non-euclidean} distances between positions:
+\begin{equation}
+    P \in \mathbb{P} \;\big|\; \Phi(A_{x,y},P_{x,y}) \leq A_{R} \cap |P_{\sigma} - A_{\bar{\sigma}}| \leq A_{D} 
+\end{equation}
+Where $\Phi(A_{x,y},P_{x,y})$ is a function that returns the \textbf{path distance} from position $A_{x,y}$ to $P_{x,y}$. 
 
 \subsubsection{Uniform weighting function}
 
 \par The \texttt{uniform} weighting function is defined to set all available places the same likelihood to be chosen by a given Agent. Therefore:
 \begin{equation}
-    P_L = \frac{1}{{\mathbb{P}_N}} 
+    P^{j}_L = \frac{1}{{\mathbb{P}_N}} 
 \end{equation}
-Where $P_L$ is the likelihood of the candidate Place $P$ and ${\mathbb{P}_N}$ is the number of candidate Places in $\mathbb{P}$.
+Where $P^{j}_L$ is the likelihood of the candidate Place $P^{j}$ and ${\mathbb{P}_N}$ is the number of candidate Places in $\mathbb{P}$.
 
 \subsubsection{Linear weighting function}
 
-\par \par The \texttt{linear} weighting function is defined to set the likelihoods of candidate Places proportinal to the $\sigma$ discrepancy. Therefore, Agents are biased to go to Places like themselves. The function:
+\par The \texttt{linear} weighting function is defined to set the likelihoods of candidate Places proportinal to the $\sigma$ discrepancy. Therefore, Agents are biased to go to Places like themselves. The function:
 \begin{equation}
-     P_L = -\frac{2}{\delta_{max}^2} \delta + \frac{2}{\delta_{max}}
+     P^{j}_L = 1 - \frac{|A_{\sigma} - P^{j}_{\sigma}|}{\sum_{j=0}^{\mathbb{P}_N} |A_{\sigma} - P^{j}_{\sigma}|}
 \end{equation}
-Where $P_L$ is the likelihood of the candidate Place $P$, $\delta = |A_{\sigma} - P_{\sigma}|$ and $\delta_{max}$ is the highest $\delta$ value found in $\mathbb{P}$.
+Where $P^{j}_L$ is the likelihood of the candidate Place $P^{j}$ and ${\mathbb{P}_N}$ is the number of candidate Places in $\mathbb{P}$.
 
-\subsubsection{Exception case}
+\subsubsection{Exception cases}
 
-\par When the set $\mathbb{P}$ of candidate Places is empty so ${\mathbb{P}}_N = 0$ then the set is recomputed without the interaction threshold constrain and \texttt{uniform} function is used. In this case:
-\begin{equation}
-    P \in \mathbb{P} \;\big|\;|X - A_{x}| \leq A_{R} \cap |Y - A_{y}| \leq A_{R} 
-\end{equation}
+\par When the set $\mathbb{P}$ of candidate Places is empty so ${\mathbb{P}}_N = 0$ then there is no interaction. This Agent will remain quiet until the suroundings Places yield an non-empty set $\mathbb{P}$.
+
+\par When the set $\mathbb{P}$ of candidate Places holds only one candidade place so ${\mathbb{P}}_N = 1$ then the likelihood of interaction is unity (100\%).
 
 \end{document}
