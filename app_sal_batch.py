@@ -88,9 +88,8 @@ def call_network_tool():
     subprocess.run(["python", "app_set_agents_2d.py"])
 
 
-# todo replace this
-def command_demo():
-    print("Hey")
+def open_about_model():
+    webbrowser.open(url="https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#sensitivity-of-entropy-to-pairs-of-agents-parameters")
 
 
 def quit():
@@ -975,6 +974,28 @@ menu_file.add_command(
 menubar.add_cascade(
     label="File",
     menu=menu_file,
+    activeforeground=color_fg,
+    activebackground=color_actbg,
+)
+
+
+# >> create the Help Menu
+menu_help = tkinter.Menu(
+    menubar, tearoff=0, bg=color_bg_alt, activebackground=color_actbg
+)
+# add menu items to the Settings menu
+menu_help.add_command(
+    label="About",
+    image=img_about,
+    compound=LEFT,
+    foreground=color_fg,
+    activeforeground=color_fg,
+    command=open_about_model,
+)
+# add the Help menu to the menubar
+menubar.add_cascade(
+    label="Help",
+    menu=menu_help,
     activeforeground=color_fg,
     activebackground=color_actbg,
 )

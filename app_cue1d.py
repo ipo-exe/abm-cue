@@ -77,9 +77,9 @@ def call_agents_tool():
     import subprocess
     subprocess.run(["python", "app_set_agents_1d.py"])
 
-# todo replace this
-def command_demo():
-    print("Hey")
+
+def open_about_model():
+    webbrowser.open(url="https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#cue-1d-model-guide")
 
 
 def quit():
@@ -988,7 +988,7 @@ menubar.add_cascade(
     activeforeground=color_fg,
     activebackground=color_actbg,
 )
-'''
+
 # >> create the Help Menu
 menu_help = tkinter.Menu(
     menubar, tearoff=0, bg=color_bg_alt, activebackground=color_actbg
@@ -1000,7 +1000,7 @@ menu_help.add_command(
     compound=LEFT,
     foreground=color_fg,
     activeforeground=color_fg,
-    command=command_demo, # todo replace this command
+    command=open_about_model
 )
 # add the Help menu to the menubar
 menubar.add_cascade(
@@ -1009,7 +1009,7 @@ menubar.add_cascade(
     activeforeground=color_fg,
     activebackground=color_actbg,
 )
-'''
+
 # --------------------------------------------------------------------------------------------------
 ## >>> Frames layout
 

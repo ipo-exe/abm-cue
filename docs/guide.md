@@ -5,9 +5,11 @@
  - [The random walk](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#the-random-walk)
  - [Attributes of Agents and Places](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#attributes-of-agents-and-places)
  - [Model parameters](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#model-parameters)
+ - [Applications list](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#applications-list)
  - [CUE 1D guide](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#cue-1d-model-guide)
  - [CUE 2D guide](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#cue-2d-model-guide)
-
+ - [CUE 2D Network guide](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#cue-2d-network-model-guide)
+ - [Sensitivity of Entropy Batch](https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#sensitivity-of-entropy-to-pairs-of-agents-parameters)
 > **Note**: see the theoretical notation PDF:
 > [`notation.pdf`](https://github.com/ipo-exe/abm-cue/blob/main/docs/notation.pdf);
 
@@ -308,11 +310,23 @@ All files to run the model are plain `.txt` files except the Places Map file.
 
 ### Processing Nodes and Network Files
 
-The `nodes_places.txt` and the `network_places.txt` files must be derived _prior_ to model execution. 
+The `nodes_places.txt` and the `network_places.txt` files must be derived _prior_ to model execution with the Network app. 
 This step may require large computational power. 
 
-> **Note**: nodes and networks are georreferenced features that can be visualized 
-> and post-processed in standard GIS applications, like QGIS.
+### GUI app
+
+The main Graphical User Interface application is the script called `app_get_network.py`.
+
+### Files to run the app
+
+There are 2 files needed to run the app:
+1) the Places parameters file (`param_places_2d.txt`);
+2) the Places Map file (`map_places_2d.asc`);
+
+> **Note**: see the Input/Output documentation for proper formatting:
+> [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
+
+> **Note**: nodes and networks are georreferenced features that can be visualized and post-processed in standard GIS applications, like QGIS.
 
 ## Sensitivity of Entropy to pairs of Agents Parameters
 
