@@ -85,12 +85,11 @@ def call_network_tool():
     :rtype:
     """
     import subprocess
-    subprocess.run(["python", "app_set_agents_2d.py"])
+    subprocess.run(["python", "app_get_network.py"])
 
 
 def open_about_model():
     webbrowser.open(url="https://github.com/ipo-exe/abm-cue/blob/main/docs/guide.md#cue-2d-network-model-guide")
-
 
 
 def quit():
