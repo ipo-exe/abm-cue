@@ -122,11 +122,26 @@ So:
 
 The `M` parameter is a parameter of Agents. It defines the memory size for each Agent. It has units of time steps. This memory allocates the `M` previous traits so the Agent's `prior_trait` during interaction is the average of the states stored in mem	ory. 
 
-## CUE 1d model guide
+
+## Applications list
+
+|App | Python File | Category | Description|
+|:---|:--- | :---| :---|
+|CUE1d| `app_cue1d.py`| Model| 1-D world CUE model|
+|CUE2d| `app_cue2d.py`| Model| 2-D world CUE model for euclidean distances|
+|CUE2d Network| `app_cue2d_network.py`| Model| 2-D CUE model for non-euclidean distances|
+|Network| `app_get_network.py`| Required Tool| Required tool for pre-processing the nodes and paths (networks) of places in the 2-D Network model|
+|SAL Batch| `app_sal_batch.py`| Analysis Tool| Analysis tool for sensitivity analysis (SAL) of pairs of Agents parameters|
+|Agents_1d| `app_set_agents_1d.py`| Helper Tool| Helper tool for setting the Agents File in the 1-D CUE model|
+|Places_1d| `app_set_places_1d.py`| Helper Tool| Helper tool for setting the Places File in the 1-D CUE model|
+|Agents_2d| `app_set_agents_2d.py`| Helper Tool| Helper tool for setting the Agents File in the 2-D CUE model (both 2-D models)|
+|Places_1d| `app_set_places_2d.py`| Helper Tool| Helper tool for setting the Places File in the 2-D CUE model (both 2-D models)|
+
+## CUE 1d Model guide
 
 ### Description
 
-This model is the basic toy-model
+This model is the basic toy-model for the 2-D versions.
 
 ### GUI apps
 
@@ -168,7 +183,11 @@ run_cue1d(s_fsim=file_simulation)
 ```
 > **Note**: the file of the script must be created in the same directory of the source code. 
 
-## CUE 2D Model Guide (Euclidean)
+## CUE 2D Model Guide
+
+### Description
+
+This model is the 2-D CUE model based on euclidean distances. Candidate places for interaction are all places within the bounding box defined by the Agent's `R` parameter.
 
 ### GUI apps
 
@@ -250,10 +269,9 @@ This model considers the non-euclidean distances between Places to constrain the
 set of available places in the random walk. 
 It uses the `A-Star` algorithm to compute the route-distance. 
 In order to make the model computationally feasible the user must pre-process the 
-map file prior to simulations.
+Place's Map file prior to simulations.
 
-Outputs can include all paths used by agents in every simulation step so the 
-user can visualize post-process the features in standard GIS applications.
+Outputs can include all paths used by agents in every simulation step so the user may visualize post-process the features in standard GIS applications.
 
 ### GUI apps
 
