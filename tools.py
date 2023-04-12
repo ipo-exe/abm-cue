@@ -376,6 +376,21 @@ def run_cue1d(s_fsim, b_wkplc=True, s_dir_out="C:/bin"):
 
 
 def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin", b_tui=True):
+    """
+    run CUE 2-D model
+    :param s_fsim: simulation parameter file
+    :type s_fsim: str
+    :param b_wkplc: workplace flag
+    :type b_wkplc: bool
+    :param b_network: network model flag
+    :type b_network: bool
+    :param s_dir_out: output directory
+    :type s_dir_out: str
+    :param b_tui: display flag
+    :type b_tui: bool
+    :return: None
+    :rtype:
+    """
     import cue2d
     # ------------------------------------------------------------------------------------------
     # import param_simulation_2d.txt
@@ -812,6 +827,17 @@ def run_cue2d(s_fsim, b_wkplc=True, b_network=False, s_dir_out="C:/bin", b_tui=T
 
 
 def compute_network(f_map, f_places, s_dir_out="C:/bin"):
+    """
+
+    :param f_map: map file
+    :type f_map: str
+    :param f_places: places parameter file
+    :type f_places: str
+    :param s_dir_out: output directory
+    :type s_dir_out: str
+    :return:
+    :rtype:
+    """
     import astar
 
     # -----------------------------------------------------------------------------------------------------------
@@ -840,6 +866,17 @@ def compute_network(f_map, f_places, s_dir_out="C:/bin"):
 
 
 def retrieve_paths(df_network, df_traced_agents_x, df_traced_agents_y):
+    """
+    Auxiliar function for retrieving the paths from traced agents
+    :param df_network: network dataframe
+    :type df_network: pandas.DataFrame
+    :param df_traced_agents_x: x coordinates dataframe
+    :type df_traced_agents_x: pandas.DataFrame
+    :param df_traced_agents_y: y coordinates dataframe
+    :type df_traced_agents_y: pandas.DataFrame
+    :return: paths dataframe
+    :rtype: pandas.DataFrame
+    """
     df_network = df_network.copy()
 
     df_traced_agents_x = df_traced_agents_x.set_index("Step")
@@ -1111,6 +1148,19 @@ def animate_frames_2d(
 
 
 def sal_agents_cue2dnet(s_fsim, s_fbat, s_dir_out="C:/bin", b_wkplc=True):
+    """
+    SAL batch for agents (network 2D model)
+    :param s_fsim: simulation file
+    :type s_fsim: str
+    :param s_fbat: batch file
+    :type s_fbat: str
+    :param s_dir_out: output directory
+    :type s_dir_out: str
+    :param b_wkplc: workplace flag
+    :type b_wkplc: bool
+    :return:
+    :rtype:
+    """
     from analyst import shannon_entropy
 
 

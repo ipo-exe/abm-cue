@@ -308,16 +308,32 @@ All files to run the model are plain `.txt` files except the Places Map file.
 > **Note**: see the Input/Output documentation for proper formatting:
 > [`iodocs.md`](https://github.com/ipo-exe/abm-cue/blob/main/docs/iodocs.md);
 
+### Running the model in python script
+
+A simple python script to run the model looks like this:
+
+```python
+# import the function
+from tools import run_cue2d
+
+# define the path to the simulation file
+file_simulation = "C:/You/Documents/abm-cue/param_simulation_network_2d.txt"
+
+# call the function
+run_cue2d(s_fsim=file_simulation, b_network=True)
+
+```
+
 ### Processing Nodes and Network Files
 
 The `nodes_places.txt` and the `network_places.txt` files must be derived _prior_ to model execution with the Network app. 
 This step may require large computational power. 
 
-### GUI app
+#### GUI app
 
 The main Graphical User Interface application is the script called `app_get_network.py`.
 
-### Files to run the app
+#### Files to run the app
 
 There are 2 files needed to run the app:
 1) the Places parameters file (`param_places_2d.txt`);
