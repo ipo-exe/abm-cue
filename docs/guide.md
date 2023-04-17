@@ -302,6 +302,33 @@ on the complexity of the urban map and obstacles.
 ![network](https://github.com/ipo-exe/abm-cue/blob/main/figs/fig_net2.PNG "net2")
 
 
+#### Source to Destination analysis
+
+Any node can be a Source (SRC) node to all the remaining Destination (DST) nodes. 
+Hence, for any SCR node there is the set of all paths that connects to all remaining DST. 
+
+![network](https://github.com/ipo-exe/abm-cue/blob/main/figs/fig_net3.PNG "net3")
+
+The Network informs both the Euclidean distance and the Path distance between SRC and DST. 
+Path distances are always equal or larger than Euclidean distances.
+
+![network](https://github.com/ipo-exe/abm-cue/blob/main/figs/fig_net4.PNG "net4")
+
+#### Agents in the network
+
+During simulation, the agents navigate the network of places. At each time-step, they choose 
+a DST node to go from the SRC node they are. The set of candidate places (nodes) depend on the Path distance 
+(it also depend on the Sigma value of the places). An agent with low R parameter has fewer
+options than an agent with high R value.
+
+![network](https://github.com/ipo-exe/abm-cue/blob/main/figs/fig_net5.PNG "net5")
+
+All paths the agents used during simulation can be retrieved (traced) and visualized 
+after simulation in GIS applications.
+
+![network](https://github.com/ipo-exe/abm-cue/blob/main/figs/fig_net6.PNG "net6")
+
+
 ### GUI apps
 
 The main Graphical User Interface application is the script called `app_cue2d.py`.
