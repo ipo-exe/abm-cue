@@ -331,7 +331,7 @@ after simulation in GIS applications.
 
 ### GUI apps
 
-The main Graphical User Interface application is the script called `app_cue2d.py`.
+The main Graphical User Interface application is the script called `app_cue2d_network.py`.
 
 Helper application tools are:
 * `app_set_agents_2d.py` -- application to help setting the Agents file for 1D model.
