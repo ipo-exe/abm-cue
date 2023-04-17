@@ -269,11 +269,38 @@ The header (first 6 lines) of the file is related to georreferencing metadata an
 
 This model considers the non-euclidean distances between Places to constrain the
 set of available places in the random walk. 
-It uses the `A-Star` algorithm to compute the route-distance. 
+It uses the `A-Star` algorithm to compute the **path distance**. 
 In order to make the model computationally feasible the user must pre-process the 
 Place's Map file prior to simulations.
 
 Outputs can include all paths used by agents in every simulation step so the user may visualize post-process the features in standard GIS applications.
+
+### Model Insights
+
+#### Realistic urban maps
+
+This model allows for realistic map simulation. To avoid position redundancy, 
+places may be defined as single-pixel elements in the map. They must, however, be adjacent
+to open space and potentially connected to all other places. Pixel values of 0 are reserved 
+open spaces and Pixel values of 1 are reserved for obstacles or closed places.
+
+![network](https://github.com/ipo-exe/abm-cue/blob/main/figs/fig_net1.PNG "net1")
+
+#### Nodes and paths
+
+The model pre-computes the network formed by all places. Every place is considered a node in the network.
+All nodes are connected by paths via open spaces. In the simulation, the agents only use the network of places.
+
+The number of paths increases with the square of nodes:
+```
+N_paths = ((N_nodes ^ 2) - N_nodes)) / 2
+```
+To compute any path, the mode uses the A-Star algorithm. This algorithm does not guarantee
+the optimal path, as it uses a heuristic method. Also, run times may take long time, depending 
+on the complexity of the urban map and obstacles.
+
+![network](https://github.com/ipo-exe/abm-cue/blob/main/figs/fig_net2.PNG "net2")
+
 
 ### GUI apps
 
