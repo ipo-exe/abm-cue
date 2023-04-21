@@ -51,3 +51,4 @@ Euclidean;positive real number;Euclidean distance;map units;field
 AStar;positive real number;Non-euclidean distance computed by the A-Star algorithm;map units;field
 Parameter;text;Name of variable set as a parameter in the sensitivity analysis;-;field
 Grid;positive integer number;Number of segments for sampling the parameter space;-;field
+Weighting;text;Keyword for weighting function. Options: `uniform`, `linear`, `exponential` and `gravity`;-;keyword

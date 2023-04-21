@@ -298,20 +298,20 @@ Return Agents;                                                      False
  - **Format**: Data Table;
  - **Formating example**:
 ```
-     Metadata;                                    Value
-    Timestamp;                   2022/08/25 16:48:07.86
- Input Folder;                        ./demo/benchmark1
-   Run Folder;                                   C:/bin
-   Places Map;         ./demo/benchmark1/benchmark1.asc
-  Places File;  ./demo/benchmark1/benchmark1_places.txt
-  Agents File;  ./demo/benchmark1/benchmark1_agents.txt
-   Nodes File;   ./demo/benchmark1/benchmark1_nodes.txt
- Network File; ./demo/benchmark1/benchmark1_network.txt
-        Steps;                                      100
-    Weighting;                                   Linear
-Return Agents;                                    False
-   Trace Back;                                     True
-   Plot Steps;                                     True
+     Metadata;                         Value
+    Timestamp;        2022/08/25 16:48:07.86
+ Input Folder;                     ./samples
+   Run Folder;                        C:/bin
+   Places Map;   ./samples/map_places_2d.asc
+  Places File; ./samples/param_places_2d.txt
+  Agents File; ./samples/param_agents_2d.txt
+   Nodes File;    ./samples/nodes_places.txt
+ Network File;  ./samples/network_places.txt
+        Steps;                           100
+    Weighting;                        Linear
+Return Agents;                         False
+   Trace Back;                          True
+   Plot Steps;                          True
 ```
  - **Requirements**:
 	 - Field separator: semicolon `;`;
@@ -1039,6 +1039,7 @@ Start;  0.863120568566631;               -0.0
 |`Sum` | positive real number | Keyword for `sum` | - | keyword|
 |`Trait` | positive real number | Trait orientation value | trait units | variable|
 |`Value` | miscellaneus | Value of data | - | field|
+|`Weighting` | text | Keyword for weighting function. Options: `uniform`, `linear`, `exponential` and `gravity` | - | keyword|
 |`p05` | positive real number | Keyword for `5% percentile` | - | keyword|
 |`p95` | positive real number | Keyword for `95% percentile` | - | keyword|
 |`x` | positive integer number | Position coordinate in the x axis | cell units | variable|
@@ -1102,6 +1103,7 @@ Start;  0.863120568566631;               -0.0
 |`SD` | positive real number | Keyword for `Standard Deviation` | - | keyword|
 |`Stat` | text | Keyword for `statistic` | - | keyword|
 |`Sum` | positive real number | Keyword for `sum` | - | keyword|
+|`Weighting` | text | Keyword for weighting function. Options: `uniform`, `linear`, `exponential` and `gravity` | - | keyword|
 |`p05` | positive real number | Keyword for `5% percentile` | - | keyword|
 |`p95` | positive real number | Keyword for `95% percentile` | - | keyword|
 
