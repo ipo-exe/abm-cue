@@ -50,6 +50,44 @@ import inp
 from time import sleep
 
 
+def weight_linear(vct):
+    """
+    linear weightinh function
+    :param vct: vector of values
+    :return: normalized (sum=1) weights
+    """
+    _out = 1 - (np.abs(vct) / np.sum(np.abs(vct)))
+    # normalize to sum = 1
+    _out = _out / np.sum(_out)
+    return _out
+
+
+def weight_exp(vct, alfa=1):
+    """
+    exponential weighting function
+    :param vct: vector of values
+    :param alfa: decay parameter
+    :return: normalized (sum=1) weights
+    """
+    _out = np.exp(- alfa * vct)
+    # normalize to sum = 1
+    _out = _out / np.sum(_out)
+    return _out
+
+
+def weight_gravity(vct, gamma=1):
+    """
+    gravitational weighting function
+    :param vct: vector of values
+    :param gamma: decay parameter
+    :return: normalized (sum=1) weights
+    """
+    _out = 1/np.power(vct, gamma)
+    # normalize to sum = 1
+    _out = _out / np.sum(_out)
+    return _out
+
+
 def linear_prob(x, x_max):
     """
     linear probability function
@@ -633,9 +671,11 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
             # get node window
             df_window = df_network.query("Id_node_src == {}".format(node_id)).copy()
 
+            # ---------------------------------------------------------------------
             # apply Spatial distance constrain
             df_window = df_window.query("AStar <= {}".format(a_r)).copy()
 
+            # ---------------------------------------------------------------------
             # merge CURRENT destiny traits
             df_window = pd.merge(df_window, df_places[["Id", "Trait", "C"]], how="left", left_on="Id_place_dst", right_on="Id")
 
@@ -646,31 +686,65 @@ def play_network(df_agents, df_places, grd_ids, df_nodes, df_network, n_steps, s
             df_window = df_window.query("Delta <= {}".format(a_d)).copy()
 
             if len(df_window) == 0:
+                # empty set of candidate places
                 pass
             else:
-                # ---------------------------------------------------------------------
-                # get sampling probability
-                if s_weight.lower() == 'uniform':
-                    # uniform interaction prob
-                    df_window["Prob"] = 1 / len(df_window)
-                elif s_weight.lower() == 'linear':
-                    if len(df_window) == 1:
-                        df_window["Prob"] = 1
-                    else:
-                        df_window["Prob"] = 1 - (df_window['Delta'].values / df_window['Delta'].sum())
-                        df_window["Prob"] = df_window["Prob"] / df_window["Prob"].sum()
+                if len(df_window) == 1:
+                    # there is only one place to go
+                    df_window["Prob"] = 1
+                    n_next_index = 0
                 else:
-                    # uniform interaction prob
-                    df_window["Prob"] = 1 / len(df_window)
-                # reset index
-                df_window = df_window.sort_values(by="Prob", ascending=False, ignore_index=True)
-                # ---------------------------------------------------------------------
-                # weighted random sampling
-                n_next_index = np.random.choice(
-                    a=df_window.index,
-                    size=1,
-                    p=df_window["Prob"].values
-                )[0]  # get the first
+                    # get sampling probability
+                    if s_weight.lower() == 'uniform':
+                        # uniform weighting
+                        df_window["Prob"] = 1 / len(df_window)
+                    elif s_weight.lower() == 'linear':
+                        # linear weighting on traits discrepancy
+                        vct_trait_w = weight_linear(vct=df_window['Delta'].values)
+                        # linear weighting AStar distance
+                        vct_dist_w = weight_linear(vct=df_window['AStar'].values)
+                        # sum
+                        vct_sum = vct_dist_w + vct_trait_w
+                        # normalize sum
+                        vct_sum = vct_sum / np.sum(vct_sum)
+                        # set to Prob
+                        df_window["Prob"] = vct_sum
+                    elif s_weight.lower() == 'exponential':
+                        # exponential weighting on traits discrepancy
+                        vct_trait_w = weight_exp(vct=df_window['Delta'].values)
+                        # exponential weighting AStar distance
+                        vct_dist_w = weight_exp(vct=df_window['AStar'].values)
+                        # sum
+                        vct_sum = vct_dist_w + vct_trait_w
+                        # normalize sum
+                        vct_sum = vct_sum / np.sum(vct_sum)
+                        # set to Prob
+                        df_window["Prob"] = vct_sum
+                    elif s_weight.lower() == 'gravity':
+                        # gravity weighting on traits discrepancy
+                        vct_trait_w = weight_gravity(vct=df_window['Delta'].values)
+                        # gravity weighting AStar distance
+                        vct_dist_w = weight_gravity(vct=df_window['AStar'].values)
+                        # sum
+                        vct_sum = vct_dist_w + vct_trait_w
+                        # normalize sum
+                        vct_sum = vct_sum / np.sum(vct_sum)
+                        # set to Prob
+                        df_window["Prob"] = vct_sum
+                    else:
+                        # uniform interaction prob
+                        df_window["Prob"] = 1 / len(df_window)
+                    # ---------------------------------------------------------------------
+                    # reset index
+                    df_window = df_window.sort_values(by="Prob", ascending=False)
+                    df_window = df_window.reset_index(drop=True)
+                    # ---------------------------------------------------------------------
+                    # weighted random sampling
+                    n_next_index = np.random.choice(
+                        a=df_window.index,
+                        size=1,
+                        p=df_window["Prob"].values
+                    )[0]  # get the first
 
                 # ---------------------------------------------------------------------
                 # get next node and place data

@@ -7,7 +7,7 @@ Places File;./demo/saoleo/saoleo_small_places.txt
 Agents File;./demo/saoleo/saoleo_small_agents.txt
 Nodes File;./demo/saoleo/saoleo_small_nodes.txt
 Network File;./demo/saoleo/saoleo_small_network.txt
-Steps;50
+Steps;100
 Weighting;Linear
 Return Agents;False
 Trace Back;True

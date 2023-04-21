@@ -1356,9 +1356,9 @@ if __name__ == "__main__":
 
     # --------------------------------------------------------------------------------------------
     # run 2d network
-    #fsim = "./demo/benchmark1/benchmark1_param_simulation.txt"
+    fsim = "./demo/benchmark1/benchmark1_param_simulation.txt"
     #fsim = "./demo/saoleo/saoleo_param_simulation.txt"
-    #run_cue2d(s_fsim=fsim, b_network=True)
+    run_cue2d(s_fsim=fsim, b_network=True)
 
     # --------------------------------------------------------------------------------------------
     # run network analyst
@@ -1369,11 +1369,11 @@ if __name__ == "__main__":
 
     # --------------------------------------------------------------------------------------------
     # run batch
-    fbat = "./samples/param_batch_simulation.txt"
-    fsim = "./demo/benchmark1/benchmark1_param_simulation.txt"
-    sal_agents_cue2dnet(
-        s_fsim=fsim,
-        s_fbat=fbat
-    )
+    #fbat = "./samples/param_batch_simulation.txt"
+    #fsim = "./demo/benchmark1/benchmark1_param_simulation.txt"
+    #sal_agents_cue2dnet(
+    #    s_fsim=fsim,
+    #    s_fbat=fbat
+    #)
 
 
